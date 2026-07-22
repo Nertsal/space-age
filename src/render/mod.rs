@@ -42,10 +42,6 @@ impl GameRender {
             (&position, &radius, &trail)
         ) {
             let pos = pos.to_cartesian(planet_position);
-            if pos.z < Coord::ZERO && pos.xy().len() < planet.radius {
-                // Object is behind the planet
-                continue;
-            }
             let scale = (Coord::ONE + pos.z / planet.orbit.distance / r32(2.0))
                 .clamp(Coord::ZERO, r32(2.0)); // TODO: proper math instead of heuristic
 
@@ -53,7 +49,9 @@ impl GameRender {
             let trail = Chain::new(
                 trail
                     .iter()
-                    .map(|pos| pos.to_cartesian(planet_position).xy().as_f32())
+                    .map(|pos| pos.to_cartesian(planet_position))
+                    .filter(|pos| pos.z > Coord::ZERO || pos.xy().len() > planet.radius)
+                    .map(|pos| pos.xy().as_f32())
                     .collect(),
             );
             let trail = draw2d::Chain::new(
@@ -63,6 +61,11 @@ impl GameRender {
                 0,
             );
             self.util.draw_chain(framebuffer, camera, &trail);
+
+            if pos.z < Coord::ZERO && pos.xy().len() < planet.radius {
+                // Object is behind the planet
+                continue;
+            }
 
             // Object
             self.context.geng.draw2d().circle(
