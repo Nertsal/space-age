@@ -96,7 +96,7 @@ impl GameRender {
         let font = &self.context.assets.fonts.default;
 
         self.util.draw_text_fit(
-            format!("Science: {}", 999),
+            format!("Science: {}", model.science),
             ui.science.position,
             font,
             TextRenderOptions::new(ui.pixel_scale * 10.0).align(vec2(0.0, 0.5)),

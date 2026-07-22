@@ -5,7 +5,7 @@ use crate::util::random_angle;
 impl Model {
     pub fn init(&mut self) {
         for _ in 0..10 {
-            self.launch_satellite();
+            self.launch_satellite(false);
         }
     }
 
@@ -25,7 +25,14 @@ impl Model {
         }
     }
 
-    pub fn launch_satellite(&mut self) {
+    pub fn launch_satellite(&mut self, pay_cost: bool) {
+        if pay_cost {
+            if self.science < 30 {
+                return;
+            }
+            self.science -= 30;
+        }
+
         let mut rng = thread_rng();
 
         let orbit = &mut self.planet.orbit;

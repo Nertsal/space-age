@@ -38,8 +38,10 @@ impl Game {
 
     fn execute(&mut self, action: GameAction) {
         match action {
-            GameAction::TheoreticResearch => {}
-            GameAction::LaunchSatellite => self.model.launch_satellite(),
+            GameAction::TheoreticResearch => {
+                self.model.science += 30;
+            }
+            GameAction::LaunchSatellite => self.model.launch_satellite(true),
         }
     }
 }

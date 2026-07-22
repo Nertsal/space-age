@@ -7,11 +7,13 @@ pub type Arena<V> =
 
 pub type FloatTime = R32;
 pub type Coord = R32;
+pub type Science = i64;
 
 pub struct Model {
     pub real_time: FloatTime,
     pub camera: Camera2d,
 
+    pub science: Science,
     pub planet: Planet,
 }
 
@@ -29,6 +31,7 @@ impl Model {
                 },
             },
 
+            science: 0,
             planet: Planet::new(),
         };
         model.init();
