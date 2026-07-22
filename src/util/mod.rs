@@ -12,6 +12,11 @@ pub fn random_angle<T: Float>(rng: &mut impl Rng) -> Angle<T> {
     Angle::from_radians(T::from_f32(radians))
 }
 
+pub fn with_alpha(mut color: Rgba<f32>, alpha: f32) -> Rgba<f32> {
+    color.a *= alpha;
+    color
+}
+
 /// Wrap text based on the relative target max width of the text.
 pub fn wrap_text(font: &Font, text: &str, target_width: f32) -> Vec<String> {
     let mut lines = Vec::new();

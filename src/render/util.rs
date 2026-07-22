@@ -262,11 +262,6 @@ impl UtilRender {
         //     .textured_quad(framebuffer, camera, pos, texture, color);
     }
 
-    // pub fn measure_text(&self, text: impl AsRef<str>, position:vec2<impl Float>, options: TextRenderOptions, font:&Font) -> Aabb2<f32> {
-    //     let align = ;
-    //     let measure = font.measure(text, align).unwrap_or(Aabb2::ZERO);
-    // }
-
     pub fn draw_text(
         &self,
         text: impl AsRef<str>,
@@ -436,6 +431,60 @@ impl UtilRender {
             },
             camera,
             framebuffer,
+        );
+    }
+
+    pub fn draw_chain(
+        &self,
+        framebuffer: &mut ugli::Framebuffer,
+        camera: &impl geng::AbstractCamera2d,
+        chain: &draw2d::Chain,
+    ) {
+        let framebuffer_size = framebuffer.size();
+        ugli::draw(
+            framebuffer,
+            &self.context.assets.shaders.solid,
+            ugli::DrawMode::Triangles,
+            &ugli::VertexBuffer::new_dynamic(self.context.geng.ugli(), chain.vertices.clone()),
+            (
+                ugli::uniforms! {
+                    u_color: Rgba::WHITE,
+                    u_framebuffer_size: framebuffer_size,
+                    u_model_matrix: chain.transform,
+                },
+                camera.uniforms(framebuffer_size.map(|x| x as f32)),
+            ),
+            ugli::DrawParameters {
+                blend_mode: None,
+                ..Default::default()
+            },
+        );
+    }
+
+    pub fn draw_segment(
+        &self,
+        framebuffer: &mut ugli::Framebuffer,
+        camera: &impl geng::AbstractCamera2d,
+        segment: &draw2d::Segment,
+    ) {
+        let framebuffer_size = framebuffer.size();
+        ugli::draw(
+            framebuffer,
+            &self.context.assets.shaders.solid,
+            ugli::DrawMode::TriangleFan,
+            &ugli::VertexBuffer::new_dynamic(self.context.geng.ugli(), segment.vertices.clone()),
+            (
+                ugli::uniforms! {
+                    u_color: Rgba::WHITE,
+                    u_framebuffer_size: framebuffer_size,
+                    u_model_matrix: segment.transform,
+                },
+                camera.uniforms(framebuffer_size.map(|x| x as f32)),
+            ),
+            ugli::DrawParameters {
+                blend_mode: None,
+                ..Default::default()
+            },
         );
     }
 }

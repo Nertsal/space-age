@@ -28,4 +28,5 @@ pub struct Shaders {
     pub crt: Rc<ugli::Program>,
     pub texture: Rc<ugli::Program>,
     pub splitcut: Rc<ugli::Program>,
+    pub solid: Rc<ugli::Program>,
 }
