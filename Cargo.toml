@@ -1,0 +1,19 @@
+[package]
+name = "geng_template"
+version = "0.1.0"
+edition = "2024"
+
+[workspace.dependencies]
+wasm-bindgen = { version = "=0.2.106", features = ["serde"] } # NOTE locks the version to same as cargo-geng
+
+[dependencies]
+geng = "0.18"
+geng-utils = { git = "https://github.com/Nertsal/geng-utils", rev = "6308df54b8437c0368b7c5f0c3d2cf33279797d3" }
+async-compat = "0.2"
+serde = { version = "1", features = ["derive"] }
+
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+wasm-bindgen.workspace = true
+
+[patch.crates-io]
+geng = { git = "https://github.com/geng-engine/geng", rev = "1e35585545463c919ff0da849af4fdad69ab02fa" }

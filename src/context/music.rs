@@ -1,0 +1,179 @@
+#![allow(dead_code)]
+
+use super::*;
+
+use geng_utils::interpolation::SecondOrderState;
+
+type LocalMusic = geng::Sound;
+
+pub struct MusicManager {
+    inner: RefCell<MusicManagerImpl>,
+}
+
+struct MusicManagerImpl {
+    geng: Geng,
+    volume: SecondOrderState<f32>,
+    playing: Option<Music>,
+}
+
+impl MusicManager {
+    pub fn new(geng: Geng) -> Self {
+        Self {
+            inner: RefCell::new(MusicManagerImpl {
+                geng,
+                volume: SecondOrderState::new(3.0, 1.0, 0.0, 0.4),
+                playing: None,
+            }),
+        }
+    }
+
+    pub fn current(&self) -> Option<Rc<LocalMusic>> {
+        self.inner
+            .borrow()
+            .playing
+            .as_ref()
+            .map(|music| music.local.clone())
+    }
+
+    pub fn set_volume(&self, volume: f32) {
+        let mut inner = self.inner.borrow_mut();
+        inner.volume.snap_to(volume, 1.0 / 60.0);
+        if let Some(music) = &mut inner.playing {
+            music.set_volume(volume);
+        }
+    }
+
+    pub fn fade_to_volume(&self, volume: f32) {
+        let mut inner = self.inner.borrow_mut();
+        inner.volume.target = volume;
+    }
+
+    pub fn set_speed(&self, speed: f32) {
+        let mut inner = self.inner.borrow_mut();
+        if let Some(music) = &mut inner.playing
+            && let Some(effect) = &mut music.effect
+        {
+            effect.set_speed(speed);
+        }
+    }
+
+    pub fn update(&self, delta_time: f32) {
+        let mut inner = self.inner.borrow_mut();
+        inner.volume.update(delta_time);
+        let volume = inner.volume.current;
+        if let Some(music) = &mut inner.playing {
+            music.set_volume(volume);
+        }
+    }
+
+    pub fn stop(&self) {
+        let mut inner = self.inner.borrow_mut();
+        if let Some(music) = &mut inner.playing {
+            music.stop();
+        }
+    }
+
+    pub fn is_playing(&self) -> bool {
+        self.inner
+            .borrow()
+            .playing
+            .as_ref()
+            .is_some_and(|music| music.effect.is_some())
+    }
+
+    pub fn switch(&self, music: &Rc<LocalMusic>, looped: bool) {
+        if self
+            .inner
+            .borrow()
+            .playing
+            .as_ref()
+            .is_none_or(|playing| playing.effect.is_none() || !Rc::ptr_eq(&playing.local, music))
+        {
+            self.play(music, looped);
+        }
+    }
+
+    pub fn restart_from(&self, time: Duration) {
+        let mut inner = self.inner.borrow_mut();
+        if let Some(music) = &mut inner.playing {
+            music.play_from(time, false);
+        }
+    }
+
+    pub fn play(&self, music: &Rc<LocalMusic>, looped: bool) {
+        self.play_from(music, Duration::from_secs_f64(0.0), looped)
+    }
+
+    pub fn play_from(&self, music: &Rc<LocalMusic>, time: Duration, looped: bool) {
+        let mut inner = self.inner.borrow_mut();
+        let mut music = Music::new(inner.geng.clone(), music.clone());
+        music.set_volume(inner.volume.current);
+        music.play_from(time, looped);
+        inner.playing = Some(music);
+    }
+}
+
+pub struct Music {
+    geng: Geng,
+    local: Rc<LocalMusic>,
+    effect: Option<geng::SoundEffect>,
+    volume: f32,
+}
+
+impl Drop for Music {
+    fn drop(&mut self) {
+        self.stop();
+    }
+}
+
+impl Debug for Music {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_struct("Music")
+            .field("sound", &"<bytes>")
+            // .field("effect", &self.effect)
+            .field("volume", &self.volume)
+            .finish()
+    }
+}
+
+impl Clone for Music {
+    fn clone(&self) -> Self {
+        let mut m = Self::new(self.geng.clone(), self.local.clone());
+        m.set_volume(self.volume);
+        m
+    }
+}
+
+impl Music {
+    pub fn new(geng: Geng, local: Rc<LocalMusic>) -> Self {
+        Self {
+            geng,
+            local,
+            volume: 0.5,
+            effect: None,
+        }
+    }
+
+    pub fn set_volume(&mut self, volume: f32) {
+        let volume = volume.clamp(0.0, 1.0);
+        self.volume = volume;
+        if let Some(effect) = &mut self.effect {
+            effect.set_volume(volume);
+        }
+    }
+
+    pub fn stop(&mut self) {
+        if let Some(mut effect) = self.effect.take() {
+            effect.stop();
+        }
+    }
+
+    pub fn play_from(&mut self, time: time::Duration, looped: bool) {
+        self.stop();
+        let mut effect = self.local.effect(self.geng.audio().default_type());
+        effect.set_volume(self.volume);
+        effect.play_from(time);
+        effect.set_looped(looped);
+        self.effect = Some(effect);
+    }
+}
