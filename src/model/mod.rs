@@ -56,6 +56,8 @@ impl Planet {
     }
 }
 
+pub const ORBIT_OBJECT_TRAIL_LEN: usize = 60;
+
 pub struct Orbit {
     pub distance: Coord,
     pub satellites: StructOf<Arena<Satellite>>,
@@ -72,7 +74,7 @@ impl Orbit {
     }
 }
 
-#[derive(SplitFields)]
+#[derive(SplitFields, Debug, Clone, PartialEq, Eq)]
 pub struct Satellite {
     pub position: SpherePos,
     pub velocity: SphereVelocity,
@@ -80,7 +82,7 @@ pub struct Satellite {
     pub trail: VecDeque<SpherePos>,
 }
 
-#[derive(SplitFields)]
+#[derive(SplitFields, Debug, Clone, PartialEq, Eq)]
 pub struct Debris {
     pub position: SpherePos,
     pub velocity: SphereVelocity,
@@ -99,7 +101,7 @@ impl PolarPos {
     }
 }
 
-#[derive(SplitFields)]
+#[derive(SplitFields, Debug, Clone, Copy, PartialEq, Eq)]
 pub struct SpherePos {
     pub distance: Coord,
     /// Horizontal angle.
@@ -116,6 +118,7 @@ impl SpherePos {
     }
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct SphereVelocity {
     /// Horizontal angle.
     pub polar: Angle<Coord>,

@@ -13,11 +13,16 @@ impl Model {
         self.real_time += delta_time;
 
         let orbit = &mut self.planet.orbit;
-        for (position, velocity) in
-            query!([orbit.satellites, orbit.debris], (&mut position, &velocity))
-        {
+        for (position, velocity, trail) in query!(
+            [orbit.satellites, orbit.debris],
+            (&mut position, &velocity, &mut trail)
+        ) {
             position.polar += velocity.polar * delta_time;
             position.azimuth += velocity.azimuth * delta_time;
+            if trail.len() >= ORBIT_OBJECT_TRAIL_LEN {
+                trail.pop_back();
+            }
+            trail.push_front(*position);
         }
     }
 
@@ -33,7 +38,7 @@ impl Model {
             },
             velocity: {
                 let direction = random_angle::<Coord>(&mut rng);
-                let speed = r32(rng.gen_range(2.0..3.0));
+                let speed = r32(rng.gen_range(0.5..0.7));
                 let (polar, azimuth) = direction.sin_cos();
                 SphereVelocity {
                     polar: Angle::from_radians(polar * speed),
