@@ -111,10 +111,16 @@ pub struct SpherePos {
 }
 
 impl SpherePos {
-    pub fn to_cartesian(&self, anchor: vec2<Coord>) -> vec3<Coord> {
+    pub fn to_cartesian(self, anchor: vec2<Coord>) -> vec3<Coord> {
         let (polar_sin, polar_cos) = self.polar.sin_cos();
         let (azimuth_sin, azimuth_cos) = self.azimuth.sin_cos();
-        vec3(polar_sin * azimuth_cos, polar_sin * azimuth_sin, polar_cos) * self.distance
+        anchor.extend(Coord::ZERO)
+            + vec3(polar_sin * azimuth_cos, polar_sin * azimuth_sin, polar_cos) * self.distance
+    }
+
+    pub fn add_velocity(&mut self, velocity: SphereVelocity, delta_time: FloatTime) {
+        self.azimuth = (self.azimuth + velocity.azimuth * delta_time).normalized_2pi();
+        self.polar = (self.polar + velocity.polar * delta_time).normalized_2pi();
     }
 }
 

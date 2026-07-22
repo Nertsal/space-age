@@ -17,8 +17,7 @@ impl Model {
             [orbit.satellites, orbit.debris],
             (&mut position, &velocity, &mut trail)
         ) {
-            position.polar += velocity.polar * delta_time;
-            position.azimuth += velocity.azimuth * delta_time;
+            position.add_velocity(*velocity, delta_time);
             if trail.len() >= ORBIT_OBJECT_TRAIL_LEN {
                 trail.pop_back();
             }
@@ -30,16 +29,18 @@ impl Model {
         let mut rng = thread_rng();
 
         let orbit = &mut self.planet.orbit;
+        let position = SpherePos {
+            distance: orbit.distance,
+            polar: random_angle(&mut rng),
+            azimuth: random_angle(&mut rng),
+        };
         orbit.satellites.insert(Satellite {
-            position: SpherePos {
-                distance: orbit.distance,
-                polar: random_angle(&mut rng),
-                azimuth: random_angle(&mut rng),
-            },
+            position,
             velocity: {
                 let direction = random_angle::<Coord>(&mut rng);
                 let speed = r32(rng.gen_range(0.5..0.7));
                 let (polar, azimuth) = direction.sin_cos();
+                // TODO: fix velocity calculation, the proper angle change is nonlinear
                 SphereVelocity {
                     polar: Angle::from_radians(polar * speed),
                     azimuth: Angle::from_radians(azimuth * speed),
