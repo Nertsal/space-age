@@ -16,6 +16,8 @@ pub struct LoadingAssets {
 pub struct Assets {
     pub shaders: Shaders,
     pub fonts: Fonts,
+    pub sounds: Sounds,
+    pub sprites: Sprites,
 }
 
 #[derive(geng::asset::Load)]
@@ -29,4 +31,16 @@ pub struct Shaders {
     pub texture: Rc<ugli::Program>,
     pub splitcut: Rc<ugli::Program>,
     pub solid: Rc<ugli::Program>,
+}
+
+#[derive(geng::asset::Load)]
+pub struct Sounds {
+    pub ui_click: Rc<geng::Sound>,
+    pub ui_hover: Rc<geng::Sound>,
+}
+
+#[derive(geng::asset::Load)]
+pub struct Sprites {
+    pub border: Rc<ugli::Texture>,
+    pub fill: Rc<ugli::Texture>,
 }

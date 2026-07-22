@@ -7,6 +7,7 @@ mod menu;
 mod model;
 mod prelude;
 mod render;
+mod ui;
 mod util;
 
 use crate::context::Context;

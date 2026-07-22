@@ -1,16 +1,28 @@
 pub mod post;
+pub mod ui;
 pub mod util;
 
-use self::util::UtilRender;
+use self::{
+    ui::UiRender,
+    util::{TextRenderOptions, UtilRender},
+};
 
-use crate::{model::*, prelude::*};
+use crate::{game::GameUi, model::*, prelude::*};
 
 pub const BACKGROUND_COLOR: Color = Color::BLACK;
+
+pub fn get_pixel_scale(framebuffer_size: vec2<usize>) -> f32 {
+    const TARGET_SIZE: vec2<usize> = vec2(640, 360);
+    let size = framebuffer_size.as_f32();
+    let ratio = size / TARGET_SIZE.as_f32();
+    ratio.x.min(ratio.y)
+}
 
 #[allow(dead_code)]
 pub struct GameRender {
     pub context: Context,
     pub util: UtilRender,
+    pub ui: UiRender,
 }
 
 impl GameRender {
@@ -18,6 +30,7 @@ impl GameRender {
         Self {
             context: context.clone(),
             util: UtilRender::new(context.clone()),
+            ui: UiRender::new(context.clone()),
         }
     }
 
@@ -74,6 +87,38 @@ impl GameRender {
                 pos.xy().as_f32(),
                 (*radius * scale).as_f32(),
                 Color::try_from("#526985").unwrap(),
+            );
+        }
+    }
+
+    pub fn draw_ui(&mut self, model: &Model, ui: &GameUi, framebuffer: &mut ugli::Framebuffer) {
+        let camera = &geng::PixelPerfectCamera;
+        let font = &self.context.assets.fonts.default;
+
+        self.util.draw_text_fit(
+            format!("Science: {}", 999),
+            ui.science.position,
+            font,
+            TextRenderOptions::new(ui.pixel_scale * 10.0).align(vec2(0.0, 0.5)),
+            camera,
+            framebuffer,
+        );
+
+        for (state, action) in &ui.actions {
+            let color = if state.mouse_left.pressed.is_some() {
+                Color::GRAY
+            } else if state.hovered {
+                Color::try_from("#aaaaaa").unwrap()
+            } else {
+                Color::WHITE
+            };
+            self.util.draw_text_fit(
+                format!("{:?}", action),
+                state.position,
+                font,
+                TextRenderOptions::new(ui.pixel_scale * 10.0).color(color),
+                camera,
+                framebuffer,
             );
         }
     }
