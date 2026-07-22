@@ -72,7 +72,7 @@ fn main() {
     log::info!("Running!");
 
     let mut options = geng::ContextOptions::default();
-    options.window.title = "Geng Game".to_string();
+    options.window.title = "Space Age".to_string();
     options.window.antialias = false;
     options.fixed_delta_time = 1.0 / FIXED_FPS;
     options.with_cli(&opts.geng);
