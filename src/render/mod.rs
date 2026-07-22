@@ -21,5 +21,18 @@ impl GameRender {
         }
     }
 
-    pub fn draw(&mut self, _model: &Model, _framebuffer: &mut ugli::Framebuffer) {}
+    pub fn draw(&mut self, model: &Model, framebuffer: &mut ugli::Framebuffer) {
+        self.draw_planet(model, &model.planet, framebuffer);
+    }
+
+    fn draw_planet(&mut self, model: &Model, planet: &Planet, framebuffer: &mut ugli::Framebuffer) {
+        let camera = &model.camera;
+        self.context.geng.draw2d().circle(
+            framebuffer,
+            camera,
+            planet.position.to_cartesian().as_f32(),
+            planet.radius.as_f32(),
+            Color::try_from("#b56452").unwrap(),
+        );
+    }
 }

@@ -11,6 +11,7 @@ geng = "0.18"
 geng-utils = { git = "https://github.com/Nertsal/geng-utils", rev = "6308df54b8437c0368b7c5f0c3d2cf33279797d3" }
 async-compat = "0.2"
 serde = { version = "1", features = ["derive"] }
+stecs = { git = "https://github.com/Nertsal/stecs", rev = "2158857fe67a696558148fc5592e47f640a6a64c" }
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]
 wasm-bindgen.workspace = true
