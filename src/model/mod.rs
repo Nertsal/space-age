@@ -75,6 +75,7 @@ impl Orbit {
 #[derive(SplitFields)]
 pub struct Satellite {
     pub position: SpherePos,
+    pub velocity: SphereVelocity,
     pub radius: Coord,
     pub trail: VecDeque<SpherePos>,
 }
@@ -82,6 +83,7 @@ pub struct Satellite {
 #[derive(SplitFields)]
 pub struct Debris {
     pub position: SpherePos,
+    pub velocity: SphereVelocity,
     pub radius: Coord,
     pub trail: VecDeque<SpherePos>,
 }
@@ -112,4 +114,11 @@ impl SpherePos {
         let (azimuth_sin, azimuth_cos) = self.azimuth.sin_cos();
         vec3(polar_sin * azimuth_cos, polar_sin * azimuth_sin, polar_cos) * self.distance
     }
+}
+
+pub struct SphereVelocity {
+    /// Horizontal angle.
+    pub polar: Angle<Coord>,
+    /// Vertical angle.
+    pub azimuth: Angle<Coord>,
 }
