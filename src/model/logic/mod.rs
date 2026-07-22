@@ -3,16 +3,14 @@ use super::*;
 use crate::util::random_angle;
 
 impl Model {
-    pub fn init(&mut self) {
-        for _ in 0..10 {
-            self.launch_satellite(false);
-        }
-    }
+    pub fn init(&mut self) {}
 
-    pub fn update(&mut self, delta_time: FloatTime) {
+    pub fn update(&mut self, delta_time: Time) {
         self.real_time += delta_time;
+        let mut rng = thread_rng();
 
         let orbit = &mut self.planet.orbit;
+        // Update positions
         for (position, velocity, trail) in query!(
             [orbit.satellites, orbit.debris],
             (&mut position, &velocity, &mut trail)
@@ -22,6 +20,16 @@ impl Model {
                 trail.pop_back();
             }
             trail.push_front(*position);
+        }
+
+        // Update satellites production
+        for science_timer in query!(orbit.satellites, (&mut science_timer)) {
+            // NOTE: rng timer to desynchronise satelites so each one gives science at a different time
+            science_timer.change(-delta_time - r32(rng.gen_range(-0.01..=0.01)));
+            if science_timer.is_min() {
+                science_timer.set_ratio(Time::ONE);
+                self.science += 1;
+            }
         }
     }
 
@@ -55,6 +63,7 @@ impl Model {
             },
             radius: r32(0.3),
             trail: VecDeque::new(),
+            science_timer: Bounded::new_max(r32(1.0)),
         });
     }
 }

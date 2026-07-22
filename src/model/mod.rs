@@ -5,12 +5,12 @@ use crate::prelude::*;
 pub type Arena<V> =
     stecs::storage::slotmap::SlotMap<stecs::storage::slotmap::slotmap::DefaultKey, V>;
 
-pub type FloatTime = R32;
+pub type Time = R32;
 pub type Coord = R32;
 pub type Science = i64;
 
 pub struct Model {
-    pub real_time: FloatTime,
+    pub real_time: Time,
     pub camera: Camera2d,
 
     pub science: Science,
@@ -20,7 +20,7 @@ pub struct Model {
 impl Model {
     pub fn new() -> Self {
         let mut model = Self {
-            real_time: FloatTime::ZERO,
+            real_time: Time::ZERO,
             camera: Camera2d {
                 center: vec2::ZERO,
                 rotation: Angle::ZERO,
@@ -77,12 +77,13 @@ impl Orbit {
     }
 }
 
-#[derive(SplitFields, Debug, Clone, PartialEq, Eq)]
+#[derive(SplitFields, Debug, Clone)]
 pub struct Satellite {
     pub position: SpherePos,
     pub velocity: SphereVelocity,
     pub radius: Coord,
     pub trail: VecDeque<SpherePos>,
+    pub science_timer: Bounded<Time>,
 }
 
 #[derive(SplitFields, Debug, Clone, PartialEq, Eq)]
@@ -121,7 +122,7 @@ impl SpherePos {
             + vec3(polar_sin * azimuth_cos, polar_sin * azimuth_sin, polar_cos) * self.distance
     }
 
-    pub fn add_velocity(&mut self, velocity: SphereVelocity, delta_time: FloatTime) {
+    pub fn add_velocity(&mut self, velocity: SphereVelocity, delta_time: Time) {
         self.azimuth = (self.azimuth + velocity.azimuth * delta_time).normalized_2pi();
         self.polar = (self.polar + velocity.polar * delta_time).normalized_2pi();
     }

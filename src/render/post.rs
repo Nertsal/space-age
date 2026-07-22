@@ -14,12 +14,12 @@ pub struct PostRender {
 
 #[derive(Debug, Clone)]
 pub struct PostVfx {
-    pub time: FloatTime,
+    pub time: Time,
     pub crt: bool,
 }
 
 impl PostVfx {
-    pub fn new(time: FloatTime, crt: bool) -> Self {
+    pub fn new(time: Time, crt: bool) -> Self {
         Self { time, crt }
     }
 }

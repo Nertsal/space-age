@@ -51,7 +51,7 @@ impl geng::State for Game {
         let delta_time = delta_time as f32;
         self.context.update(delta_time);
         self.ui_context.update(delta_time);
-        let delta_time = FloatTime::new(delta_time);
+        let delta_time = Time::new(delta_time);
         self.model.update(delta_time);
     }
 
