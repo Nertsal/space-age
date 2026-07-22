@@ -2,8 +2,6 @@ mod logic;
 
 use crate::prelude::*;
 
-use stecs::prelude::*;
-
 pub type Arena<V> =
     stecs::storage::slotmap::SlotMap<stecs::storage::slotmap::slotmap::DefaultKey, V>;
 
@@ -19,7 +17,7 @@ pub struct Model {
 
 impl Model {
     pub fn new() -> Self {
-        Self {
+        let mut model = Self {
             real_time: FloatTime::ZERO,
             camera: Camera2d {
                 center: vec2::ZERO,
@@ -32,7 +30,9 @@ impl Model {
             },
 
             planet: Planet::new(),
-        }
+        };
+        model.init();
+        model
     }
 }
 
@@ -51,26 +51,39 @@ impl Planet {
                 angle: Angle::ZERO,
             },
             radius: r32(10.0),
-            orbit: Orbit::default(),
+            orbit: Orbit::new(r32(13.0)),
         }
     }
 }
 
-#[derive(Default)]
 pub struct Orbit {
+    pub distance: Coord,
     pub satellites: StructOf<Arena<Satellite>>,
     pub debris: StructOf<Arena<Debris>>,
+}
+
+impl Orbit {
+    pub fn new(distance: Coord) -> Self {
+        Self {
+            distance,
+            satellites: default(),
+            debris: default(),
+        }
+    }
 }
 
 #[derive(SplitFields)]
 pub struct Satellite {
     pub position: SpherePos,
+    pub radius: Coord,
+    pub trail: VecDeque<SpherePos>,
 }
 
 #[derive(SplitFields)]
 pub struct Debris {
-    #[split(nested)]
     pub position: SpherePos,
+    pub radius: Coord,
+    pub trail: VecDeque<SpherePos>,
 }
 
 pub struct PolarPos {
@@ -86,8 +99,17 @@ impl PolarPos {
 
 #[derive(SplitFields)]
 pub struct SpherePos {
+    pub distance: Coord,
     /// Horizontal angle.
     pub polar: Angle<Coord>,
     /// Vertical angle.
     pub azimuth: Angle<Coord>,
+}
+
+impl SpherePos {
+    pub fn to_cartesian(&self, anchor: vec2<Coord>) -> vec3<Coord> {
+        let (polar_sin, polar_cos) = self.polar.sin_cos();
+        let (azimuth_sin, azimuth_cos) = self.azimuth.sin_cos();
+        vec3(polar_sin * azimuth_cos, polar_sin * azimuth_sin, polar_cos) * self.distance
+    }
 }

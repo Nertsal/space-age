@@ -27,12 +27,30 @@ impl GameRender {
 
     fn draw_planet(&mut self, model: &Model, planet: &Planet, framebuffer: &mut ugli::Framebuffer) {
         let camera = &model.camera;
+
+        let planet_position = planet.position.to_cartesian();
         self.context.geng.draw2d().circle(
             framebuffer,
             camera,
-            planet.position.to_cartesian().as_f32(),
+            planet_position.as_f32(),
             planet.radius.as_f32(),
-            Color::try_from("#b56452").unwrap(),
+            Color::try_from("#1e5c58").unwrap(),
         );
+
+        for (pos, radius, trail) in query!(
+            [planet.orbit.satellites, planet.orbit.debris],
+            (&position, &radius, &trail)
+        ) {
+            // Trail
+
+            // Object
+            self.context.geng.draw2d().circle(
+                framebuffer,
+                camera,
+                pos.to_cartesian(planet_position).xy().as_f32(),
+                radius.as_f32(),
+                Color::try_from("#526985").unwrap(),
+            );
+        }
     }
 }
