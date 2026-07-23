@@ -39,7 +39,8 @@ impl Model {
             kind,
             position,
             velocity: random_orbit_velocity(position, &mut rng),
-            radius: r32(0.3),
+            visual_radius: r32(0.3),
+            radius: r32(0.15),
             trail: VecDeque::new(),
             science_timer: Bounded::new_max(config.interval),
         });

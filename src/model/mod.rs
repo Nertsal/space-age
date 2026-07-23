@@ -138,6 +138,7 @@ pub struct Satellite {
     pub kind: SatelliteKind,
     pub position: SpherePos,
     pub velocity: SphereVelocity,
+    pub visual_radius: Coord,
     pub radius: Coord,
     pub trail: VecDeque<SpherePos>,
     pub science_timer: Bounded<Time>,
@@ -147,6 +148,7 @@ pub struct Satellite {
 pub struct Debris {
     pub position: SpherePos,
     pub velocity: SphereVelocity,
+    pub visual_radius: Coord,
     pub radius: Coord,
     pub trail: VecDeque<SpherePos>,
 }

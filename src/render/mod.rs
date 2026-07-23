@@ -116,10 +116,14 @@ impl GameRender {
 
         let satellite_color = Color::try_from("#526985").unwrap();
         let debris_color = Color::try_from("#4B2F1B").unwrap();
-        for (pos, &radius, trail) in query!(planet.orbit.satellites, (&position, &radius, &trail)) {
+        for (pos, &radius, trail) in
+            query!(planet.orbit.satellites, (&position, &visual_radius, &trail))
+        {
             draw_object(pos, radius, trail, satellite_color, framebuffer);
         }
-        for (pos, &radius, trail) in query!(planet.orbit.debris, (&position, &radius, &trail)) {
+        for (pos, &radius, trail) in
+            query!(planet.orbit.debris, (&position, &visual_radius, &trail))
+        {
             draw_object(pos, radius, trail, debris_color, framebuffer);
         }
     }

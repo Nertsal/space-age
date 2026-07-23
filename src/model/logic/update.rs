@@ -114,7 +114,8 @@ impl Model {
                     orbit.debris.insert(Debris {
                         position: satellite.position,
                         velocity: random_orbit_velocity(satellite.position, &mut rng),
-                        radius: satellite.radius / r32(3.0),
+                        visual_radius: satellite.visual_radius / r32(2.0),
+                        radius: satellite.radius / r32(4.0),
                         trail: trail.take().unwrap_or_default(),
                     });
                 }
