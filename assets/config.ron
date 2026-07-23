@@ -5,11 +5,23 @@
     ),
 
     // Science gains from Theoretic Research
-    theoretic_research: 30,
-    // Science gains from active satellites
+    theoretic_research: 10,
     satellite: (
         launch_cost: 30,
+        // Science gains from active satellites
         science: 1,
         interval: 1,
+    ),
+
+    research: (
+        items: [
+            (
+                name: "Orbit Program",
+                id: 1,
+                after: [],
+                cost: 10,
+                effect: Unlock(Launch(Basic)),
+            ),
+        ],
     ),
 )
