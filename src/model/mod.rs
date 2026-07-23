@@ -20,6 +20,9 @@ pub struct Model {
 
     pub science: Science,
     pub planet: Planet,
+
+    pub theorizing: bool,
+    pub theory_progress: Bounded<Time>,
 }
 
 impl Model {
@@ -43,6 +46,9 @@ impl Model {
 
             science: 0,
             planet: Planet::new(&config.home_planet),
+
+            theorizing: false,
+            theory_progress: Bounded::new_zero(config.theoretic_research.duration),
         };
         model.init();
         model

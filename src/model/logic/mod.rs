@@ -9,6 +9,19 @@ impl Model {
         self.real_time += delta_time;
         let mut rng = thread_rng();
 
+        // Theorycrafting
+        if self.theorizing {
+            self.theory_progress.change(delta_time);
+
+            if self.theory_progress.is_max() {
+                let stat = self.get_stat(Stat::Theorycrafting);
+                self.science += (self.config.theoretic_research.science as f32 * stat.as_f32())
+                    .ceil() as Science;
+                self.theory_progress.set_ratio(Time::ZERO);
+                self.theorizing = false;
+            }
+        }
+
         // Update positions
         let orbit = &mut self.planet.orbit;
         for (position, velocity, trail) in query!(
@@ -48,9 +61,7 @@ impl Model {
 
         match action {
             Action::TheoreticResearch => {
-                let stat = self.get_stat(Stat::Theorycrafting);
-                self.science +=
-                    (self.config.theoretic_research as f32 * stat.as_f32()).ceil() as Science;
+                self.theorizing = true;
             }
             Action::Launch(ty) => self.launch_satellite(true, ty),
             Action::Deorbit => todo!(),

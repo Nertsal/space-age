@@ -6,10 +6,16 @@ use crate::model::*;
 #[load(serde = "ron")]
 pub struct Config {
     pub home_planet: PlanetConfig,
-    pub theoretic_research: Science,
+    pub theoretic_research: TheoryConfig,
     pub satellites: HashMap<SatelliteKind, SatelliteConfig>,
 
     pub research: ResearchConfig,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct TheoryConfig {
+    pub duration: Time,
+    pub science: Science,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]

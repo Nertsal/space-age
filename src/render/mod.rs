@@ -7,7 +7,11 @@ use self::{
     util::{TextRenderOptions, UtilRender},
 };
 
-use crate::{game::GameUi, model::*, prelude::*};
+use crate::{
+    game::{GameAction, GameUi},
+    model::*,
+    prelude::*,
+};
 
 pub const BACKGROUND_COLOR: Color = Color::BLACK;
 
@@ -149,6 +153,20 @@ impl GameRender {
             } else {
                 Color::WHITE
             };
+
+            // Action progress
+            if let GameAction::Action(Action::TheoreticResearch) = action
+                && model.theory_progress.is_above_min()
+            {
+                let t = model.theory_progress.get_ratio().as_f32();
+                self.util.draw_quad(
+                    state.position.with_width(state.position.width() * t, 0.0),
+                    Color::try_from("#333333").unwrap(),
+                    camera,
+                    framebuffer,
+                );
+            }
+
             self.util.draw_text_fit(
                 format!("{:?}", action),
                 state.position,
