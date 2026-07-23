@@ -6,7 +6,8 @@
 
     // Science gains from Theoretic Research
     theoretic_research: (
-        duration: 5,
+        clicks: 10,
+        duration: 10,
         science: 10,
     ),
     satellites: {
@@ -15,11 +16,13 @@
             // Science gains from active satellites
             science: 1,
             interval: 1,
+            lifetime: 60,
         ),
         Communication: (
             launch_cost: 200,
             science: 0,
             interval: 1,
+            lifetime: 120,
         ),
     },
 
