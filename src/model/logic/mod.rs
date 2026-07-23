@@ -52,13 +52,20 @@ impl Model {
         orbit.satellites.insert(Satellite {
             position,
             velocity: {
-                let direction = random_angle::<Coord>(&mut rng);
+                // Find an axis perpendicular to the position to define the orbit
+                let position = position.to_cartesian(vec2::ZERO);
+                let perp_a = vec3(position.y, -position.x, Coord::ZERO);
+                let perp_b = vec3(position.z, Coord::ZERO, -position.x);
+
+                let a = r32(rng.gen_range(-1.0..=1.0));
+                let b = r32(rng.gen_range(-1.0..=1.0));
+
+                let axis = (perp_a * a + perp_b * b).normalize_or_zero();
+
                 let speed = r32(rng.gen_range(0.5..0.7));
-                let (polar, azimuth) = direction.sin_cos();
-                // TODO: fix velocity calculation, the proper angle change is nonlinear
                 SphereVelocity {
-                    polar: Angle::from_radians(polar * speed),
-                    azimuth: Angle::from_radians(azimuth * speed),
+                    speed: Angle::from_radians(speed),
+                    axis,
                 }
             },
             radius: r32(0.3),

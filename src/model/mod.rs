@@ -122,16 +122,30 @@ impl SpherePos {
             + vec3(polar_sin * azimuth_cos, polar_sin * azimuth_sin, polar_cos) * self.distance
     }
 
+    pub fn unit_vec(&self) -> vec3<Coord> {
+        Self {
+            distance: Coord::ONE,
+            ..*self
+        }
+        .to_cartesian(vec2::ZERO)
+    }
+
     pub fn add_velocity(&mut self, velocity: SphereVelocity, delta_time: Time) {
-        self.azimuth = (self.azimuth + velocity.azimuth * delta_time).normalized_2pi();
-        self.polar = (self.polar + velocity.polar * delta_time).normalized_2pi();
+        let a = self.unit_vec();
+        let k = velocity.axis;
+
+        let (sin, cos) = (velocity.speed * delta_time).sin_cos();
+        let b = a * cos + vec3::cross(k, a) * sin + k * vec3::dot(k, a) * (Coord::ONE - cos);
+
+        self.polar = Angle::atan2((b.x.sqr() + b.y.sqr()).sqrt(), b.z);
+        self.azimuth = Angle::atan2(b.y, b.x);
     }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct SphereVelocity {
-    /// Horizontal angle.
-    pub polar: Angle<Coord>,
-    /// Vertical angle.
-    pub azimuth: Angle<Coord>,
+    /// Angle change.
+    pub speed: Angle<Coord>,
+    /// Rotation axis.
+    pub axis: vec3<Coord>,
 }
