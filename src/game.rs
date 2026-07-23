@@ -9,11 +9,13 @@ use crate::{
 };
 
 pub struct Game {
+    ui_context: UiContext,
     context: Context,
     post: PostRender,
     render: GameRender,
+    world_texture: ugli::Texture,
+
     model: Model,
-    ui_context: UiContext,
     ui: GameUi,
 }
 
@@ -28,10 +30,12 @@ impl Game {
         log::info!("Game started!");
         Self {
             context: context.clone(),
+            ui_context: UiContext::new(context.clone()),
             post: PostRender::new(&context),
             render: GameRender::new(context.clone()),
+            world_texture: geng_utils::texture::new_texture(context.geng.ugli(), vec2(1, 1)),
+
             model: Model::new(&context.assets.config),
-            ui_context: UiContext::new(context.clone()),
             ui: GameUi::new(&context),
         }
     }
@@ -70,6 +74,17 @@ impl geng::State for Game {
     }
 
     fn draw(&mut self, screen_buffer: &mut ugli::Framebuffer) {
+        // Update texture size
+        let world_size = (screen_buffer.size().as_f32()
+            / crate::render::get_pixel_scale(screen_buffer.size()))
+        .map(|x| x.round() as usize);
+        geng_utils::texture::update_texture_size(
+            &mut self.world_texture,
+            world_size,
+            self.context.geng.ugli(),
+        );
+
+        // UI
         let mut actions = Vec::new();
         self.ui.layout(
             &self.model,
@@ -87,7 +102,17 @@ impl geng::State for Game {
             .post
             .begin(screen_buffer.size(), crate::render::BACKGROUND_COLOR);
 
-        self.render.draw(&self.model, framebuffer);
+        // Render world
+        let world_buffer = &mut geng_utils::texture::attach_texture(
+            &mut self.world_texture,
+            self.context.geng.ugli(),
+        );
+        ugli::clear(world_buffer, Some(Color::BLACK), None, None);
+        self.render.draw(&self.model, world_buffer);
+        geng_utils::texture::DrawTexture::new(&self.world_texture)
+            .fit_screen(vec2(0.5, 0.5), framebuffer)
+            .draw(&geng::PixelPerfectCamera, &self.context.geng, framebuffer);
+
         self.render.draw_ui(&self.model, &self.ui, framebuffer);
 
         self.post.post_process(
