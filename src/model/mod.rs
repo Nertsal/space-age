@@ -1,4 +1,7 @@
 mod logic;
+mod particles;
+
+pub use self::particles::*;
 
 use crate::prelude::*;
 
@@ -21,6 +24,8 @@ pub struct Model {
 
     pub science: Science,
     pub planet: Planet,
+    pub particles: StructOf<Arena<Particle>>,
+    pub queued_particles: Vec<SpawnParticles>,
 
     pub theory_progress: R32,
 
@@ -57,6 +62,8 @@ impl Model {
 
             science: 0,
             planet: Planet::new(&config.home_planet),
+            particles: default(),
+            queued_particles: Vec::new(),
 
             theory_progress: R32::ZERO,
 

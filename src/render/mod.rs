@@ -41,6 +41,48 @@ impl GameRender {
     pub fn draw(&mut self, model: &Model, framebuffer: &mut ugli::Framebuffer) {
         self.draw_planet(model, &model.planet, framebuffer);
 
+        let planet = &model.planet;
+        let planet_pos = planet.position.to_cartesian();
+        let is_behind_planet = |pos: vec3<Coord>| -> bool {
+            pos.z < Coord::ZERO && (pos.xy() - planet_pos).len() < planet.radius
+        };
+
+        // Particles
+        #[derive(ugli::Vertex)]
+        struct ParticleInstance {
+            pub i_color: Color,
+            pub i_model_matrix: mat3<f32>,
+        }
+        let instances: Vec<_> = query!(model.particles, (&color, &position, &radius, &lifetime))
+            .filter_map(|(&color, &position, &radius, lifetime)| {
+                if is_behind_planet(position) {
+                    return None;
+                }
+                let scale = (Coord::ONE + position.z / planet.orbit.distance / r32(2.0))
+                    .clamp(Coord::ZERO, r32(2.0)); // TODO: proper math instead of heuristic
+                let t = lifetime.get_ratio().as_f32().sqrt();
+                let color = crate::util::with_alpha(color, t);
+                let transform = mat3::translate(position.xy().as_f32())
+                    * mat3::scale_uniform(radius.as_f32() * scale.as_f32() * t);
+                Some(ParticleInstance {
+                    i_color: color,
+                    i_model_matrix: transform,
+                })
+            })
+            .collect();
+        let instances = ugli::VertexBuffer::new_dynamic(self.context.geng.ugli(), instances);
+        ugli::draw(
+            framebuffer,
+            &self.context.assets.shaders.particles,
+            ugli::DrawMode::TriangleFan,
+            ugli::instanced(&self.util.unit_quad, &instances),
+            (
+                ugli::uniforms! {},
+                model.camera.uniforms(framebuffer.size().as_f32()),
+            ),
+            ugli::DrawParameters { ..default() },
+        );
+
         // Selection
         if let Some(id) = model.hovered_object
             && model.hovered_object != model.selected_object

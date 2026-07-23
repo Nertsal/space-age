@@ -49,6 +49,8 @@ impl Model {
                 self.science += (config.science as f32 * sat_eff.as_f32()).ceil() as Science;
             }
         }
+
+        self.update_particles(delta_time);
     }
 
     fn movement(&mut self, delta_time: Time) {
@@ -59,6 +61,7 @@ impl Model {
         }
 
         let planet = &mut self.planet;
+        let planet_pos = planet.position.to_cartesian();
         let orbit = &mut planet.orbit;
 
         // Update positions
@@ -66,6 +69,7 @@ impl Model {
         let mut move_object = |id,
                                position: &mut SpherePos,
                                velocity: &SphereVelocity,
+                               radius: &mut Coord,
                                trail: &mut VecDeque<SpherePos>,
                                deorbiting: bool| {
             position.add_velocity(*velocity, delta_time);
@@ -74,23 +78,79 @@ impl Model {
                 if position.distance < planet.radius {
                     destroyed.push(id);
                 }
+                let pos = position.to_cartesian(planet_pos);
+                let options = SpawnParticles {
+                    density: r32(1.0),
+                    distribution: ParticleDistribution::Circle {
+                        center: pos.xy(),
+                        radius: r32(0.3),
+                    },
+                    z: pos.z,
+                    color: Color::try_from("#ADB3C2aa").unwrap(),
+                    ..default()
+                };
+                if position.distance < planet.radius + r32(1.5) {
+                    // Burning particles (realistic)
+                    *radius -= *radius * r32(0.2) * delta_time;
+                    self.queued_particles.extend([
+                        SpawnParticles {
+                            color: Color::try_from("#F45866aa").unwrap(),
+                            ..options.clone()
+                        },
+                        SpawnParticles {
+                            color: Color::try_from("#F57932aa").unwrap(),
+                            ..options
+                        },
+                    ]);
+                } else {
+                    // Smoke particles (not realistic but to signal that the object is deorbiting)
+                    self.queued_particles.push(options);
+                }
             }
             if trail.len() >= ORBIT_OBJECT_TRAIL_LEN {
                 trail.pop_back();
             }
             trail.push_front(*position);
         };
-        for (id, position, velocity, trail, &deorbiting) in query!(
+        for (id, position, velocity, radius, trail, &deorbiting) in query!(
             orbit.satellites,
-            (id, &mut position, &velocity, &mut trail, &deorbiting)
+            (
+                id,
+                &mut position,
+                &velocity,
+                &mut radius,
+                &mut trail,
+                &deorbiting
+            )
         ) {
-            move_object(Id::Satellite(id), position, velocity, trail, deorbiting);
+            move_object(
+                Id::Satellite(id),
+                position,
+                velocity,
+                radius,
+                trail,
+                deorbiting,
+            );
         }
-        for (id, position, velocity, trail, &deorbiting) in query!(
+        for (id, position, velocity, radius, trail, &deorbiting) in query!(
             orbit.debris,
-            (id, &mut position, &velocity, &mut trail, &deorbiting)
+            (
+                id,
+                &mut position,
+                &velocity,
+                &mut radius,
+                &mut trail,
+                &deorbiting
+            )
         ) {
-            move_object(Id::Debris(id), position, velocity, trail, deorbiting);
+            move_object(
+                Id::Debris(id),
+                position,
+                velocity,
+                radius,
+                trail,
+                deorbiting,
+            );
         }
 
         // Remove destroyed objects

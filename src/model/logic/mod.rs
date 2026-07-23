@@ -1,4 +1,5 @@
 mod action;
+mod particles;
 mod update;
 
 use super::*;
