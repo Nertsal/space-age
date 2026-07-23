@@ -4,6 +4,7 @@ use crate::prelude::*;
 
 pub type Arena<V> =
     stecs::storage::slotmap::SlotMap<stecs::storage::slotmap::slotmap::DefaultKey, V>;
+pub type ArenaId = stecs::storage::slotmap::slotmap::DefaultKey;
 
 pub type Time = R32;
 pub type Coord = R32;

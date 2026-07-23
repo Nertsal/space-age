@@ -68,10 +68,11 @@ impl GameRender {
             },
         );
 
-        for (pos, radius, trail) in query!(
-            [planet.orbit.satellites, planet.orbit.debris],
-            (&position, &radius, &trail)
-        ) {
+        let draw_object = |pos: &SpherePos,
+                           radius: Coord,
+                           trail: &VecDeque<SpherePos>,
+                           color: Color,
+                           framebuffer: &mut ugli::Framebuffer<'_>| {
             let pos = pos.to_cartesian(planet_position);
             let scale = (Coord::ONE + pos.z / planet.orbit.distance / r32(2.0))
                 .clamp(Coord::ZERO, r32(2.0)); // TODO: proper math instead of heuristic
@@ -100,7 +101,7 @@ impl GameRender {
 
             if pos.z < Coord::ZERO && pos.xy().len() < planet.radius {
                 // Object is behind the planet
-                continue;
+                return;
             }
 
             // Object
@@ -108,9 +109,18 @@ impl GameRender {
                 framebuffer,
                 camera,
                 pos.xy().as_f32(),
-                (*radius * scale).as_f32(),
-                Color::try_from("#526985").unwrap(),
+                (radius * scale).as_f32(),
+                color,
             );
+        };
+
+        let satellite_color = Color::try_from("#526985").unwrap();
+        let debris_color = Color::try_from("#4B2F1B").unwrap();
+        for (pos, &radius, trail) in query!(planet.orbit.satellites, (&position, &radius, &trail)) {
+            draw_object(pos, radius, trail, satellite_color, framebuffer);
+        }
+        for (pos, &radius, trail) in query!(planet.orbit.debris, (&position, &radius, &trail)) {
+            draw_object(pos, radius, trail, debris_color, framebuffer);
         }
     }
 

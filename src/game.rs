@@ -26,9 +26,9 @@ pub enum GameAction {
 }
 
 impl Game {
-    pub fn new(context: Context) -> Self {
+    pub fn new(context: Context, cheat: bool) -> Self {
         log::info!("Game started!");
-        Self {
+        let mut game = Self {
             context: context.clone(),
             ui_context: UiContext::new(context.clone()),
             post: PostRender::new(&context),
@@ -37,7 +37,11 @@ impl Game {
 
             model: Model::new(&context.assets.config),
             ui: GameUi::new(&context),
+        };
+        if cheat {
+            game.model.science = 999999;
         }
+        game
     }
 
     fn execute(&mut self, action: GameAction) {

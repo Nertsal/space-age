@@ -26,6 +26,9 @@ struct Opts {
     #[clap(long)]
     fast_load: bool,
 
+    #[clap(long)]
+    cheat: bool,
+
     #[clap(flatten)]
     geng: geng::CliArgs,
 }
@@ -108,7 +111,7 @@ async fn geng_main(geng: Geng, opts: Opts) -> anyhow::Result<()> {
         .ok_or_else(|| anyhow::Error::msg("loading screen failed"))??;
 
     // Run game
-    let state = game::Game::new(context);
+    let state = game::Game::new(context, opts.cheat);
     geng.run_state(state).await;
 
     Ok(())

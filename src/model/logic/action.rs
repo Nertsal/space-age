@@ -38,23 +38,7 @@ impl Model {
         orbit.satellites.insert(Satellite {
             kind,
             position,
-            velocity: {
-                // Find an axis perpendicular to the position to define the orbit
-                let position = position.to_cartesian(vec2::ZERO);
-                let perp_a = vec3(position.y, -position.x, Coord::ZERO);
-                let perp_b = vec3(position.z, Coord::ZERO, -position.x);
-
-                let a = r32(rng.gen_range(-1.0..=1.0));
-                let b = r32(rng.gen_range(-1.0..=1.0));
-
-                let axis = (perp_a * a + perp_b * b).normalize_or_zero();
-
-                let speed = r32(rng.gen_range(0.5..0.7));
-                SphereVelocity {
-                    speed: Angle::from_radians(speed),
-                    axis,
-                }
-            },
+            velocity: random_orbit_velocity(position, &mut rng),
             radius: r32(0.3),
             trail: VecDeque::new(),
             science_timer: Bounded::new_max(config.interval),
@@ -83,5 +67,23 @@ impl Model {
                 *self.stats.entry(stat).or_insert(R32::ONE) += change;
             }
         }
+    }
+}
+
+pub fn random_orbit_velocity(position: SpherePos, rng: &mut impl Rng) -> SphereVelocity {
+    // Find an axis perpendicular to the position to define the orbit
+    let position = position.to_cartesian(vec2::ZERO);
+    let perp_a = vec3(position.y, -position.x, Coord::ZERO);
+    let perp_b = vec3(position.z, Coord::ZERO, -position.x);
+
+    let a = r32(rng.gen_range(-1.0..=1.0));
+    let b = r32(rng.gen_range(-1.0..=1.0));
+
+    let axis = (perp_a * a + perp_b * b).normalize_or_zero();
+
+    let speed = r32(rng.gen_range(0.5..0.7));
+    SphereVelocity {
+        speed: Angle::from_radians(speed),
+        axis,
     }
 }
