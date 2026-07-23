@@ -158,6 +158,14 @@ vec3 spin(vec3 p, float angle)
     );
 }
 
+ const float DEPTH_SPAN = 0.025;
+
+float depth(vec2 uv, float radius)
+{
+    vec2 p = uv / radius;
+    return sqrt(max(0.0, 1.0 - dot(p, p)));
+}
+
 // yoinked from caverim
 vec3 fresnel(float amount, float intensity, vec3 color, vec3 normal, vec3 view)
 {
@@ -170,8 +178,6 @@ void main() {
     }
 
     vec2 uv = v_vt - 0.5;
-    // float pixelate = 4.0 / iResolution.y;
-    // uv = floor(uv / pixelate) * pixelate;
 
     float dist = length(uv);
     
@@ -247,7 +253,30 @@ void main() {
         sky_circle * front_clouds
     );
     
+    // really ugly depth write
+    // might not actually do anything lule
+    float cloud_height = depth(uv, sky_size);
+    float planet_height = depth(uv, planet_size);
+
+    // were checkig random hardcoded depth relative to the mesh z
+    float depth = gl_FragCoord.z;
+
+    if (sky_circle * front_clouds > 0.5) {
+        depth -= DEPTH_SPAN * cloud_height;
+    }
+    else if (planet_circle > 0.5) {
+        depth -= DEPTH_SPAN
+            * (planet_size / sky_size)
+            * planet_height;
+    }
+    else if (sky_circle * back_clouds > 0.5) {
+        depth += DEPTH_SPAN * cloud_height;
+    }
+    else if (final.a <= 0.001) { // skip at low alpha cus atmosphere
+        discard;
+    }
     
+    gl_FragDepth = clamp(depth, 0.0, 1.0);
     gl_FragColor = final;
 }
 #endif
