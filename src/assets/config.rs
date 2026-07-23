@@ -30,6 +30,7 @@ pub struct SatelliteConfig {
     pub launch_cost: Science,
     pub science: Science,
     pub interval: Time,
+    pub lifetime: Time,
 }
 
 impl Default for SatelliteConfig {
@@ -38,6 +39,7 @@ impl Default for SatelliteConfig {
             launch_cost: 0,
             science: 0,
             interval: Time::ONE,
+            lifetime: r32(60.0),
         }
     }
 }

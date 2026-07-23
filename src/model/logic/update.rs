@@ -23,7 +23,15 @@ impl Model {
         // Update satellites production
         let sat_eff = self.get_stat(Stat::SatelliteEfficiency);
         let orbit = &mut self.planet.orbit;
-        for (kind, science_timer) in query!(orbit.satellites, (&kind, &mut science_timer)) {
+        for (kind, science_timer, lifetime) in
+            query!(orbit.satellites, (&kind, &mut science_timer, &mut lifetime))
+        {
+            lifetime.change(-delta_time - r32(rng.gen_range(-0.01..=0.01)));
+            if lifetime.is_min() {
+                // This satellite is non-functioning
+                continue;
+            }
+
             let config = self
                 .config
                 .satellites

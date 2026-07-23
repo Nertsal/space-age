@@ -140,6 +140,7 @@ pub struct Satellite {
     pub radius: Coord,
     pub trail: VecDeque<SpherePos>,
     pub science_timer: Bounded<Time>,
+    pub lifetime: Bounded<Time>,
 }
 
 #[derive(SplitFields, Debug, Clone, PartialEq, Eq)]

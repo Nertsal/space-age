@@ -43,6 +43,7 @@ impl Model {
             radius: r32(0.15),
             trail: VecDeque::new(),
             science_timer: Bounded::new_max(config.interval),
+            lifetime: Bounded::new_max(config.lifetime),
         });
     }
 

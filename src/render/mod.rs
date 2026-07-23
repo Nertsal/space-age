@@ -72,7 +72,8 @@ impl GameRender {
                            radius: Coord,
                            trail: &VecDeque<SpherePos>,
                            color: Color,
-                           framebuffer: &mut ugli::Framebuffer<'_>| {
+                           framebuffer: &mut ugli::Framebuffer<'_>|
+         -> Option<Coord> {
             let pos = pos.to_cartesian(planet_position);
             let scale = (Coord::ONE + pos.z / planet.orbit.distance / r32(2.0))
                 .clamp(Coord::ZERO, r32(2.0)); // TODO: proper math instead of heuristic
@@ -101,7 +102,7 @@ impl GameRender {
 
             if pos.z < Coord::ZERO && pos.xy().len() < planet.radius {
                 // Object is behind the planet
-                return;
+                return None;
             }
 
             // Object
@@ -112,14 +113,35 @@ impl GameRender {
                 (radius * scale).as_f32(),
                 color,
             );
+
+            Some(scale)
         };
 
         let satellite_color = Color::try_from("#526985").unwrap();
         let debris_color = Color::try_from("#4B2F1B").unwrap();
-        for (pos, &radius, trail) in
-            query!(planet.orbit.satellites, (&position, &visual_radius, &trail))
-        {
-            draw_object(pos, radius, trail, satellite_color, framebuffer);
+        let satellite_active_color = Color::try_from("#1789FC").unwrap();
+        let satellite_inactive_color = Color::try_from("#D72638").unwrap();
+        for (pos, &radius, trail, lifetime) in query!(
+            planet.orbit.satellites,
+            (&position, &visual_radius, &trail, &lifetime)
+        ) {
+            let Some(scale) = draw_object(pos, radius, trail, satellite_color, framebuffer) else {
+                continue;
+            };
+            let blink_pos = pos.to_cartesian(planet_position).xy()
+                + vec2::splat(r32(std::f32::consts::FRAC_1_SQRT_2)) * r32(0.8) * radius * scale;
+            let blink_color = if lifetime.is_above_min() {
+                satellite_active_color
+            } else {
+                satellite_inactive_color
+            };
+            self.context.geng.draw2d().circle(
+                framebuffer,
+                camera,
+                blink_pos.as_f32(),
+                (radius * scale).as_f32() * 0.25,
+                blink_color,
+            );
         }
         for (pos, &radius, trail) in
             query!(planet.orbit.debris, (&position, &visual_radius, &trail))
