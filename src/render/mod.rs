@@ -48,7 +48,7 @@ impl GameRender {
         let planet_position = planet.position.to_cartesian();
         let planet_color = Color::try_from("#1e5c58").unwrap();
         let planet_transform =
-            mat3::translate(planet_position) * mat3::scale_uniform(planet.radius);
+            mat3::translate(planet_position) * mat3::scale_uniform(planet.radius * r32(2.0));
 
         ugli::draw(
             framebuffer,
