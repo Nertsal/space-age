@@ -15,7 +15,8 @@ pub struct Model {
     pub camera: Camera2d,
 
     pub researched: HashSet<u64>,
-    pub actions: HashSet<Action>,
+    pub abilities: HashSet<Ability>,
+    pub stats: HashMap<Stat, R32>,
 
     pub science: Science,
     pub planet: Planet,
@@ -37,7 +38,8 @@ impl Model {
             },
 
             researched: HashSet::new(),
-            actions: hashset! {Action::TheoreticResearch},
+            abilities: hashset! {Ability::Action(Action::TheoreticResearch)},
+            stats: HashMap::new(),
 
             science: 0,
             planet: Planet::new(&config.home_planet),
@@ -56,18 +58,34 @@ pub enum ResearchState {
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum Research {
-    Unlock(Action),
+    Upgrade(Stat, R32),
+    Unlock(Ability),
+}
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq, Hash)]
+pub enum Stat {
+    Theorycrafting,
+    SatelliteLongevity,
+    SatelliteEfficiency,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
+pub enum Ability {
+    Action(Action),
+    DeorbitAuto,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum Action {
     TheoreticResearch,
-    Launch(SatelliteType),
+    Launch(SatelliteKind),
+    Deorbit,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
-pub enum SatelliteType {
+pub enum SatelliteKind {
     Basic,
+    Communication,
 }
 
 pub struct Planet {
@@ -110,6 +128,7 @@ impl Orbit {
 
 #[derive(SplitFields, Debug, Clone)]
 pub struct Satellite {
+    pub kind: SatelliteKind,
     pub position: SpherePos,
     pub velocity: SphereVelocity,
     pub radius: Coord,

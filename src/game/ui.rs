@@ -38,7 +38,7 @@ impl GameUi {
                 ),
                 (
                     WidgetState::new().with_sfx(WidgetSfxConfig::hover_left()),
-                    GameAction::Action(Action::Launch(SatelliteType::Basic)),
+                    GameAction::Action(Action::Launch(SatelliteKind::Basic)),
                 ),
             ],
 

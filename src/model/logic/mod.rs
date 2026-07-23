@@ -9,8 +9,8 @@ impl Model {
         self.real_time += delta_time;
         let mut rng = thread_rng();
 
-        let orbit = &mut self.planet.orbit;
         // Update positions
+        let orbit = &mut self.planet.orbit;
         for (position, velocity, trail) in query!(
             [orbit.satellites, orbit.debris],
             (&mut position, &velocity, &mut trail)
@@ -23,35 +23,54 @@ impl Model {
         }
 
         // Update satellites production
-        for science_timer in query!(orbit.satellites, (&mut science_timer)) {
+        let sat_eff = self.get_stat(Stat::SatelliteEfficiency);
+        let orbit = &mut self.planet.orbit;
+        for (kind, science_timer) in query!(orbit.satellites, (&kind, &mut science_timer)) {
+            let config = self
+                .config
+                .satellites
+                .get(kind)
+                .cloned()
+                .unwrap_or_default();
             // NOTE: rng timer to desynchronise satelites so each one gives science at a different time
             science_timer.change(-delta_time - r32(rng.gen_range(-0.01..=0.01)));
             if science_timer.is_min() {
                 science_timer.set_ratio(Time::ONE);
-                self.science += self.config.satellite.science;
+                self.science += (config.science as f32 * sat_eff.as_f32()).ceil() as Science;
             }
         }
     }
 
     pub fn action(&mut self, action: Action) {
-        if !self.actions.contains(&action) {
+        if !self.abilities.contains(&Ability::Action(action.clone())) {
             return;
         }
 
         match action {
             Action::TheoreticResearch => {
-                self.science += self.config.theoretic_research;
+                let stat = self.get_stat(Stat::Theorycrafting);
+                self.science +=
+                    (self.config.theoretic_research as f32 * stat.as_f32()).ceil() as Science;
             }
             Action::Launch(ty) => self.launch_satellite(true, ty),
+            Action::Deorbit => todo!(),
         }
     }
 
-    fn launch_satellite(&mut self, pay_cost: bool, ty: SatelliteType) {
+    pub fn get_stat(&self, stat: Stat) -> R32 {
+        self.stats.get(&stat).copied().unwrap_or(R32::ONE)
+    }
+
+    fn launch_satellite(&mut self, pay_cost: bool, kind: SatelliteKind) {
+        let Some(config) = self.config.satellites.get(&kind) else {
+            log::error!("Satellite kind missing config: {:?}", kind);
+            return;
+        };
         if pay_cost {
-            if self.science < self.config.satellite.launch_cost {
+            if self.science < config.launch_cost {
                 return;
             }
-            self.science -= self.config.satellite.launch_cost;
+            self.science -= config.launch_cost;
         }
 
         let mut rng = thread_rng();
@@ -63,6 +82,7 @@ impl Model {
             azimuth: random_angle(&mut rng),
         };
         orbit.satellites.insert(Satellite {
+            kind,
             position,
             velocity: {
                 // Find an axis perpendicular to the position to define the orbit
@@ -83,7 +103,7 @@ impl Model {
             },
             radius: r32(0.3),
             trail: VecDeque::new(),
-            science_timer: Bounded::new_max(self.config.satellite.interval),
+            science_timer: Bounded::new_max(config.interval),
         });
     }
 
@@ -119,8 +139,11 @@ impl Model {
         self.science -= research.cost;
         self.researched.insert(id);
         match &research.effect {
-            Research::Unlock(action) => {
-                self.actions.insert(action.clone());
+            Research::Unlock(ability) => {
+                self.abilities.insert(ability.clone());
+            }
+            &Research::Upgrade(stat, change) => {
+                *self.stats.entry(stat).or_insert(R32::ONE) += change;
             }
         }
     }

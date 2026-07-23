@@ -7,7 +7,7 @@ use crate::model::*;
 pub struct Config {
     pub home_planet: PlanetConfig,
     pub theoretic_research: Science,
-    pub satellite: SatelliteConfig,
+    pub satellites: HashMap<SatelliteKind, SatelliteConfig>,
 
     pub research: ResearchConfig,
 }
@@ -23,6 +23,16 @@ pub struct SatelliteConfig {
     pub launch_cost: Science,
     pub science: Science,
     pub interval: Time,
+}
+
+impl Default for SatelliteConfig {
+    fn default() -> Self {
+        Self {
+            launch_cost: 0,
+            science: 0,
+            interval: Time::ONE,
+        }
+    }
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
