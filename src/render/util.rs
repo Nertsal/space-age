@@ -455,7 +455,7 @@ impl UtilRender {
                 camera.uniforms(framebuffer_size.map(|x| x as f32)),
             ),
             ugli::DrawParameters {
-                blend_mode: None,
+                blend_mode: Some(ugli::BlendMode::straight_alpha()),
                 ..Default::default()
             },
         );

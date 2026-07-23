@@ -67,12 +67,17 @@ impl GameRender {
                     .map(|pos| pos.xy().as_f32())
                     .collect(),
             );
-            let trail = draw2d::Chain::new(
+            let mut trail = draw2d::Chain::new(
                 trail,
                 radius.as_f32() * 0.5 * scale.as_f32(),
                 crate::util::with_alpha(Color::WHITE, 0.5),
                 0,
             );
+            let len = trail.vertices.len();
+            for (i, v) in trail.vertices.iter_mut().enumerate() {
+                let t = 1.0 - (i + 1) as f32 / len as f32;
+                v.a_color.a *= geng_utils::interpolation::smoothstep(t);
+            }
             self.util.draw_chain(framebuffer, camera, &trail);
 
             if pos.z < Coord::ZERO && pos.xy().len() < planet.radius {
