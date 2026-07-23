@@ -47,8 +47,8 @@ impl GameUi {
                 center: vec2::ZERO,
                 rotation: Angle::ZERO,
                 fov: Camera2dFov::Cover {
-                    width: 10.0,
-                    height: 10.0,
+                    width: 7.0,
+                    height: 7.0,
                     scale: 1.0,
                 },
             },
@@ -61,15 +61,12 @@ impl GameUi {
     fn populate_research(&mut self, config: &Config) {
         self.research_items.clear();
 
-        let mut position = vec2::ZERO;
         for item in &config.research.items {
             self.research_items.push(ResearchItemWidget {
-                position: Aabb2::point(position).extend_symmetric(vec2(1.0, 1.0) / 2.0),
+                position: Aabb2::point(item.pos.as_f32()).extend_symmetric(vec2::splat(0.4) / 2.0),
                 state: WidgetState::new(),
                 id: item.id,
             });
-
-            position += vec2(0.0, 1.5);
         }
     }
 
@@ -124,8 +121,16 @@ impl GameUi {
                         .unwrap_either()
                 });
                 item.state.update(position, context);
-                if item.state.mouse_left.clicked
-                    && let ResearchState::Available { .. } = model.get_research_state(item.id)
+
+                let state = model.get_research_state(item.id);
+
+                item.state.set_visibility(matches!(
+                    state,
+                    ResearchState::Researched | ResearchState::Available { .. }
+                ));
+
+                if let ResearchState::Available { .. } = state
+                    && item.state.mouse_left.clicked
                 {
                     actions.push(GameAction::Research(item.id));
                 }

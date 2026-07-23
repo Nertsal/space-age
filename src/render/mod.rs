@@ -184,6 +184,10 @@ impl GameRender {
 
         let mut hovered = None;
         for item in &ui.research_items {
+            if !item.state.visible {
+                continue;
+            }
+
             let state = model.get_research_state(item.id);
             let color = match state {
                 ResearchState::Researched => color_researched,

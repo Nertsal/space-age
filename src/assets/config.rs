@@ -46,6 +46,7 @@ pub struct ResearchItemConfig {
     pub description: Arc<str>,
     pub id: u64,
     pub after: Vec<u64>,
+    pub pos: vec2<Coord>,
     pub cost: Science,
     pub effect: Research,
 }

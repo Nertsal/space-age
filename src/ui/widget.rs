@@ -113,6 +113,10 @@ impl WidgetState {
         self.mouse_right = WidgetMouseState::default();
     }
 
+    pub fn set_visibility(&mut self, visible: bool) {
+        if visible { self.show() } else { self.hide() }
+    }
+
     pub fn toggle_visibility(&mut self) {
         if self.visible {
             self.hide()
