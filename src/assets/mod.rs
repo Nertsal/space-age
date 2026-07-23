@@ -1,6 +1,7 @@
+mod config;
 mod options;
 
-pub use self::options::*;
+pub use self::{config::*, options::*};
 
 use geng::prelude::*;
 
@@ -18,6 +19,7 @@ pub struct Assets {
     pub fonts: Fonts,
     pub sounds: Sounds,
     pub sprites: Sprites,
+    pub config: Config,
 }
 
 #[derive(geng::asset::Load)]

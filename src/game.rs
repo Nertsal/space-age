@@ -30,7 +30,7 @@ impl Game {
             context: context.clone(),
             post: PostRender::new(&context),
             render: GameRender::new(context.clone()),
-            model: Model::new(),
+            model: Model::new(&context.assets.config),
             ui_context: UiContext::new(context.clone()),
             ui: GameUi::new(&context),
         }
@@ -39,7 +39,7 @@ impl Game {
     fn execute(&mut self, action: GameAction) {
         match action {
             GameAction::TheoreticResearch => {
-                self.model.science += 30;
+                self.model.science += self.model.config.theoretic_research;
             }
             GameAction::LaunchSatellite => self.model.launch_satellite(true),
         }

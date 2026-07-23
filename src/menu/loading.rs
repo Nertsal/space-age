@@ -7,6 +7,7 @@ pub struct LoadingScreen<T> {
     geng: Geng,
     assets: Rc<LoadingAssets>,
     post_render: PostRender,
+    #[allow(dead_code)]
     unit_quad: ugli::VertexBuffer<draw2d::TexturedVertex>,
     gif_texture: ugli::Texture,
     options: Options,

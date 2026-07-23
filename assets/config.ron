@@ -1,0 +1,15 @@
+(
+    home_planet: (
+        radius: 10.0,
+        orbit_distance: 3.0,
+    ),
+
+    // Science gains from Theoretic Research
+    theoretic_research: 30,
+    // Science gains from active satellites
+    satellite: (
+        launch_cost: 30,
+        science: 1,
+        interval: 1,
+    ),
+)

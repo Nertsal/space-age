@@ -10,6 +10,7 @@ pub type Coord = R32;
 pub type Science = i64;
 
 pub struct Model {
+    pub config: Config,
     pub real_time: Time,
     pub camera: Camera2d,
 
@@ -18,8 +19,9 @@ pub struct Model {
 }
 
 impl Model {
-    pub fn new() -> Self {
+    pub fn new(config: &Config) -> Self {
         let mut model = Self {
+            config: config.clone(),
             real_time: Time::ZERO,
             camera: Camera2d {
                 center: vec2::ZERO,
@@ -32,7 +34,7 @@ impl Model {
             },
 
             science: 0,
-            planet: Planet::new(),
+            planet: Planet::new(&config.home_planet),
         };
         model.init();
         model
@@ -47,14 +49,14 @@ pub struct Planet {
 }
 
 impl Planet {
-    pub fn new() -> Self {
+    pub fn new(config: &PlanetConfig) -> Self {
         Self {
             position: PolarPos {
                 distance: Coord::ZERO,
                 angle: Angle::ZERO,
             },
-            radius: r32(10.0),
-            orbit: Orbit::new(r32(13.0)),
+            radius: config.radius,
+            orbit: Orbit::new(config.radius + config.orbit_distance),
         }
     }
 }

@@ -28,17 +28,17 @@ impl Model {
             science_timer.change(-delta_time - r32(rng.gen_range(-0.01..=0.01)));
             if science_timer.is_min() {
                 science_timer.set_ratio(Time::ONE);
-                self.science += 1;
+                self.science += self.config.satellite.science;
             }
         }
     }
 
     pub fn launch_satellite(&mut self, pay_cost: bool) {
         if pay_cost {
-            if self.science < 30 {
+            if self.science < self.config.satellite.launch_cost {
                 return;
             }
-            self.science -= 30;
+            self.science -= self.config.satellite.launch_cost;
         }
 
         let mut rng = thread_rng();
@@ -70,7 +70,7 @@ impl Model {
             },
             radius: r32(0.3),
             trail: VecDeque::new(),
-            science_timer: Bounded::new_max(r32(1.0)),
+            science_timer: Bounded::new_max(self.config.satellite.interval),
         });
     }
 }
