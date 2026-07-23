@@ -49,6 +49,7 @@ impl GameRender {
         let planet_color = Color::try_from("#1e5c58").unwrap();
         let planet_transform =
             mat3::translate(planet_position) * mat3::scale_uniform(planet.radius);
+
         ugli::draw(
             framebuffer,
             &self.context.assets.shaders.planet,
@@ -59,6 +60,7 @@ impl GameRender {
                     u_model_matrix: planet_transform.as_f32(),
                     u_color: planet_color,
                     u_framebuffer_size: framebuffer.size().as_f32(),
+                    u_time: model.real_time.as_f32(),
                 },
                 camera.uniforms(framebuffer.size().as_f32()),
             ),
