@@ -8,7 +8,7 @@ impl Model {
 
         match action {
             Action::TheoreticResearch => {
-                self.theorizing = true;
+                self.theory_progress += self.config.theoretic_research.clicks.recip();
             }
             Action::Launch(ty) => self.launch_satellite(true, ty),
             Action::Deorbit => todo!(),

@@ -6,7 +6,8 @@
 
     // Science gains from Theoretic Research
     theoretic_research: (
-        duration: 5,
+        clicks: 10,
+        duration: 10,
         science: 10,
     ),
     satellites: {

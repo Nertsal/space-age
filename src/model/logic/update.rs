@@ -8,16 +8,14 @@ impl Model {
         let mut rng = thread_rng();
 
         // Theorycrafting
-        if self.theorizing {
-            self.theory_progress.change(delta_time);
-
-            if self.theory_progress.is_max() {
-                let stat = self.get_stat(Stat::Theorycrafting);
-                self.science += (self.config.theoretic_research.science as f32 * stat.as_f32())
-                    .ceil() as Science;
-                self.theory_progress.set_ratio(Time::ZERO);
-                self.theorizing = false;
-            }
+        // if auto_theory {
+        //     self.theory_progress.change(delta_time);
+        // }
+        while self.theory_progress > R32::ONE {
+            let stat = self.get_stat(Stat::Theorycrafting);
+            self.science +=
+                (self.config.theoretic_research.science as f32 * stat.as_f32()).ceil() as Science;
+            self.theory_progress -= R32::ONE;
         }
 
         self.movement(delta_time);
