@@ -33,6 +33,7 @@ pub struct ResearchConfig {
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct ResearchItemConfig {
     pub name: Arc<str>,
+    pub description: Arc<str>,
     pub id: u64,
     pub after: Vec<u64>,
     pub cost: Science,

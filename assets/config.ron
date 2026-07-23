@@ -17,6 +17,7 @@
         items: [
             (
                 name: "Orbit Program",
+                description: "Unlocks satellites",
                 id: 1,
                 after: [],
                 cost: 10,

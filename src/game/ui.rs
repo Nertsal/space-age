@@ -7,6 +7,7 @@ use crate::{
 
 pub struct GameUi {
     pub pixel_scale: f32,
+    pub screen: Aabb2<f32>,
     pub research_button: WidgetState,
     pub science: WidgetState,
     pub actions: Vec<(WidgetState, GameAction)>,
@@ -27,6 +28,7 @@ impl GameUi {
     pub fn new(context: &Context) -> Self {
         let mut ui = Self {
             pixel_scale: 1.0,
+            screen: Aabb2::ZERO.extend_positive(vec2(1600.0, 900.0)),
             research_button: WidgetState::new(),
             science: WidgetState::new(),
             actions: vec![
@@ -81,6 +83,7 @@ impl GameUi {
         // let layout_size = screen.height() * 0.05;
         let pixel_scale = get_pixel_scale(screen.size().map(|x| x as usize));
         self.pixel_scale = pixel_scale;
+        self.screen = screen;
 
         let mut panel = screen
             .align_aabb(vec2(screen.width() * 0.25, screen.height()), vec2(0.0, 0.5))

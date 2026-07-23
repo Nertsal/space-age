@@ -182,6 +182,7 @@ impl GameRender {
         let color_expensive = Color::try_from("#E36987").unwrap();
         let color_locked = Color::try_from("#D8315B").unwrap();
 
+        let mut hovered = None;
         for item in &ui.research_items {
             let state = model.get_research_state(item.id);
             let color = match state {
@@ -201,6 +202,75 @@ impl GameRender {
                 item.state.position.center(),
                 item.state.position.width() / 2.0,
                 color,
+            );
+
+            if item.state.hovered {
+                hovered = Some((item.id, item.state.position));
+            }
+        }
+
+        // Hover info
+        if let Some((id, position)) = hovered
+            && let Some(research) = model
+                .config
+                .research
+                .items
+                .iter()
+                .find(|item| item.id == id)
+        {
+            let position = position.top_right() + vec2(10.0, 10.0) * ui.pixel_scale;
+            let mut position = Aabb2::point(position)
+                .extend_right(120.0 * ui.pixel_scale)
+                .extend_down(75.0 * ui.pixel_scale);
+            let bounds = ui.research.position;
+            if position.min.y < bounds.min.y {
+                position = position.translate(vec2(0.0, bounds.min.y - position.min.y));
+            }
+
+            // Boundary
+            let width = ui.pixel_scale * 4.0;
+            self.ui.fill_quad_width(
+                position,
+                width,
+                Color::try_from("#1E1B18").unwrap(),
+                framebuffer,
+            );
+            self.ui.draw_outline(
+                position,
+                width,
+                Color::try_from("#0A2463").unwrap(),
+                framebuffer,
+            );
+
+            // Info
+            let font_size = 10.0 * ui.pixel_scale;
+            let options = TextRenderOptions::new(font_size)
+                .color(Color::try_from("#F5F5F5").unwrap())
+                .align(vec2(0.0, 0.5));
+
+            let mut position = position.extend_uniform(-8.0 * ui.pixel_scale);
+            let name = position.cut_top(font_size);
+            self.util
+                .draw_text_fit(&research.name, name, font, options, camera, framebuffer);
+
+            if !matches!(model.get_research_state(id), ResearchState::Researched) {
+                let cost = position.cut_top(font_size);
+                self.util.draw_text_fit(
+                    format!("Cost: {}", research.cost),
+                    cost,
+                    font,
+                    options,
+                    camera,
+                    framebuffer,
+                );
+            }
+            self.util.draw_text_wrap(
+                &research.description,
+                position,
+                font,
+                options,
+                camera,
+                framebuffer,
             );
         }
     }
