@@ -42,12 +42,26 @@ impl GameRender {
         let camera = &model.camera;
 
         let planet_position = planet.position.to_cartesian();
-        self.context.geng.draw2d().circle(
+        let planet_color = Color::try_from("#1e5c58").unwrap();
+        let planet_transform =
+            mat3::translate(planet_position) * mat3::scale_uniform(planet.radius);
+        ugli::draw(
             framebuffer,
-            camera,
-            planet_position.as_f32(),
-            planet.radius.as_f32(),
-            Color::try_from("#1e5c58").unwrap(),
+            &self.context.assets.shaders.planet,
+            ugli::DrawMode::TriangleFan,
+            &self.util.unit_quad,
+            (
+                ugli::uniforms! {
+                    u_model_matrix: planet_transform.as_f32(),
+                    u_color: planet_color,
+                    u_framebuffer_size: framebuffer.size().as_f32(),
+                },
+                camera.uniforms(framebuffer.size().as_f32()),
+            ),
+            ugli::DrawParameters {
+                blend_mode: Some(ugli::BlendMode::straight_alpha()),
+                ..Default::default()
+            },
         );
 
         for (pos, radius, trail) in query!(

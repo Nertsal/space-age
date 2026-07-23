@@ -33,6 +33,7 @@ pub struct Shaders {
     pub texture: Rc<ugli::Program>,
     pub splitcut: Rc<ugli::Program>,
     pub solid: Rc<ugli::Program>,
+    pub planet: Rc<ugli::Program>,
 }
 
 #[derive(geng::asset::Load)]
