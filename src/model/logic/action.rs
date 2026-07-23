@@ -2,7 +2,7 @@ use super::*;
 
 impl Model {
     pub fn action(&mut self, action: Action) {
-        if !self.abilities.contains(&Ability::Action(action.clone())) {
+        if !self.abilities.contains(&action.ability()) {
             return;
         }
 
@@ -11,7 +11,23 @@ impl Model {
                 self.theory_progress += self.config.theoretic_research.clicks.recip();
             }
             Action::Launch(ty) => self.launch_satellite(true, ty),
-            Action::Deorbit => todo!(),
+            Action::Deorbit(target) => self.deorbit(target),
+        }
+    }
+
+    fn deorbit(&mut self, target: InteractiveId) {
+        let planet = &mut self.planet;
+        let orbit = &mut planet.orbit;
+        let deorbiting = match target {
+            InteractiveId::Satellite(id) => {
+                get!(orbit.satellites, id, (&mut deorbiting))
+            }
+            InteractiveId::Debris(id) => {
+                get!(orbit.debris, id, (&mut deorbiting))
+            }
+        };
+        if let Some(deorbiting) = deorbiting {
+            *deorbiting = true;
         }
     }
 
@@ -44,6 +60,7 @@ impl Model {
             trail: VecDeque::new(),
             science_timer: Bounded::new_max(config.interval),
             lifetime: Bounded::new_max(config.lifetime),
+            deorbiting: false,
         });
     }
 

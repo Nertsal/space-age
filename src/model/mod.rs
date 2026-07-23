@@ -52,7 +52,7 @@ impl Model {
             },
 
             researched: HashSet::new(),
-            abilities: hashset! {Ability::Action(Action::TheoreticResearch)},
+            abilities: hashset! { Ability::TheoreticResearch },
             stats: HashMap::new(),
 
             science: 0,
@@ -92,18 +92,30 @@ pub enum Stat {
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum Ability {
-    Action(Action),
-    DeorbitAuto,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
-pub enum Action {
     TheoreticResearch,
     Launch(SatelliteKind),
     Deorbit,
+    DeorbitAuto,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, PartialEq)]
+pub enum Action {
+    TheoreticResearch,
+    Launch(SatelliteKind),
+    Deorbit(InteractiveId),
+}
+
+impl Action {
+    pub fn ability(&self) -> Ability {
+        match self {
+            Action::TheoreticResearch => Ability::TheoreticResearch,
+            Action::Launch(kind) => Ability::Launch(*kind),
+            Action::Deorbit(_) => Ability::Deorbit,
+        }
+    }
+}
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Eq, Hash)]
 pub enum SatelliteKind {
     Basic,
     Communication,
@@ -157,6 +169,7 @@ pub struct Satellite {
     pub trail: VecDeque<SpherePos>,
     pub science_timer: Bounded<Time>,
     pub lifetime: Bounded<Time>,
+    pub deorbiting: bool,
 }
 
 #[derive(SplitFields, Debug, Clone, PartialEq, Eq)]
@@ -166,6 +179,7 @@ pub struct Debris {
     pub visual_radius: Coord,
     pub radius: Coord,
     pub trail: VecDeque<SpherePos>,
+    pub deorbiting: bool,
 }
 
 pub struct PolarPos {

@@ -52,27 +52,60 @@ impl Model {
     }
 
     fn movement(&mut self, delta_time: Time) {
-        let orbit = &mut self.planet.orbit;
-
-        // Update positions
-        for (position, velocity, trail) in query!(
-            [orbit.satellites, orbit.debris],
-            (&mut position, &velocity, &mut trail)
-        ) {
-            position.add_velocity(*velocity, delta_time);
-            if trail.len() >= ORBIT_OBJECT_TRAIL_LEN {
-                trail.pop_back();
-            }
-            trail.push_front(*position);
-        }
-
-        // Check collisions
         #[derive(Clone, Copy)]
         enum Id {
             Satellite(ArenaId),
             Debris(ArenaId),
         }
 
+        let planet = &mut self.planet;
+        let orbit = &mut planet.orbit;
+
+        // Update positions
+        let mut destroyed = Vec::new();
+        let mut move_object = |id,
+                               position: &mut SpherePos,
+                               velocity: &SphereVelocity,
+                               trail: &mut VecDeque<SpherePos>,
+                               deorbiting: bool| {
+            position.add_velocity(*velocity, delta_time);
+            if deorbiting {
+                position.distance -= r32(1.0) * delta_time;
+                if position.distance < planet.radius {
+                    destroyed.push(id);
+                }
+            }
+            if trail.len() >= ORBIT_OBJECT_TRAIL_LEN {
+                trail.pop_back();
+            }
+            trail.push_front(*position);
+        };
+        for (id, position, velocity, trail, &deorbiting) in query!(
+            orbit.satellites,
+            (id, &mut position, &velocity, &mut trail, &deorbiting)
+        ) {
+            move_object(Id::Satellite(id), position, velocity, trail, deorbiting);
+        }
+        for (id, position, velocity, trail, &deorbiting) in query!(
+            orbit.debris,
+            (id, &mut position, &velocity, &mut trail, &deorbiting)
+        ) {
+            move_object(Id::Debris(id), position, velocity, trail, deorbiting);
+        }
+
+        // Remove destroyed objects
+        for id in destroyed {
+            match id {
+                Id::Satellite(id) => {
+                    orbit.satellites.remove(id);
+                }
+                Id::Debris(id) => {
+                    orbit.debris.remove(id);
+                }
+            }
+        }
+
+        // Check collisions
         macro_rules! get_object {
             ($arch:expr, $id:expr) => {
                 get!($arch, $id, (&position, &radius))
@@ -127,6 +160,7 @@ impl Model {
                         visual_radius: satellite.visual_radius / r32(2.0),
                         radius: satellite.radius / r32(4.0),
                         trail: trail.take().unwrap_or_default(),
+                        deorbiting: false,
                     });
                 }
             }

@@ -36,7 +36,7 @@
                 after: [],
                 pos: (0, 0),
                 cost: 10,
-                effect: Unlock(Action(Launch(Basic))),
+                effect: Unlock(Launch(Basic)),
             ),
             (
                 name: "Crashlanding",
@@ -45,7 +45,7 @@
                 after: [1],
                 pos: (0, -1),
                 cost: 300,
-                effect: Unlock(Action(Deorbit)),
+                effect: Unlock(Deorbit),
             ),
             (
                 name: "Automation I",
@@ -121,7 +121,7 @@
                 after: [1],
                 pos: (1, 0),
                 cost: 1000,
-                effect: Unlock(Action(Launch(Communication))),
+                effect: Unlock(Launch(Communication)),
             ),
         ],
     ),
