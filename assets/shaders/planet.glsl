@@ -24,8 +24,8 @@ void main() {
 
 uniform vec4 u_color;
 
-const float planet_size = 0.3;
-const float sky_size = 0.35;
+const float planet_size = 0.25; // this isnt properly adjustable hacky half size of quad
+const float sky_size = 0.3;
 
 const float ground_coverage = 0.58;
 const float sky_coverage = 0.55;
