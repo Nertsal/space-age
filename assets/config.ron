@@ -6,22 +6,116 @@
 
     // Science gains from Theoretic Research
     theoretic_research: 10,
-    satellite: (
-        launch_cost: 30,
-        // Science gains from active satellites
-        science: 1,
-        interval: 1,
-    ),
+    satellites: {
+        Basic: (
+            launch_cost: 30,
+            // Science gains from active satellites
+            science: 1,
+            interval: 1,
+        ),
+        Communication: (
+            launch_cost: 200,
+            science: 0,
+            interval: 1,
+        ),
+    },
 
     research: (
         items: [
+            // -- 0 Orbit Program --
             (
                 name: "Orbit Program",
                 description: "Unlocks satellites",
                 id: 1,
                 after: [],
+                pos: (0, 0),
                 cost: 10,
-                effect: Unlock(Launch(Basic)),
+                effect: Unlock(Action(Launch(Basic))),
+            ),
+            (
+                name: "Crashlanding",
+                description: "Unlocks the ability to deorbit space objects",
+                id: 2,
+                after: [1],
+                pos: (0, -1),
+                cost: 300,
+                effect: Unlock(Action(Deorbit)),
+            ),
+            (
+                name: "Automation I",
+                description: "Satellites automatically deorbit upon reaching the end of their lifespan",
+                id: 3,
+                after: [2],
+                pos: (0, -2),
+                cost: 5000,
+                effect: Unlock(DeorbitAuto),
+            ),
+            // -- 10 Theorycrafting --
+            (
+                name: "Theorycrafting I",
+                description: "Enhances efficiency of developing new theories",
+                id: 10,
+                after: [1],
+                pos: (-1, 0),
+                cost: 50,
+                effect: Upgrade(Theorycrafting, 0.5),
+            ),
+            (
+                name: "Theorycrafting II",
+                description: "Enhances efficiency of developing new theories",
+                id: 11,
+                after: [10],
+                pos: (-2, 0),
+                cost: 200,
+                effect: Upgrade(Theorycrafting, 0.5),
+            ),
+            // -- 20 Engineering --
+            (
+                name: "Engineering I",
+                description: "Increases longevity of satellites",
+                id: 20,
+                after: [1],
+                pos: (-0.6, 1),
+                cost: 100,
+                effect: Upgrade(SatelliteLongevity, 0.5),
+            ),
+            (
+                name: "Engineering II",
+                description: "Increases longevity of satellites",
+                id: 21,
+                after: [20],
+                pos: (-1.2, 2),
+                cost: 500,
+                effect: Upgrade(SatelliteLongevity, 0.5),
+            ),
+            // -- 30 Data Compression --
+            (
+                name: "Data Compression I",
+                description: "Increases efficiency of satellites",
+                id: 30,
+                after: [1],
+                pos: (0.6, 1),
+                cost: 100,
+                effect: Upgrade(SatelliteEfficiency, 0.5),
+            ),
+            (
+                name: "Data Compression II",
+                description: "Increases efficiency of satellites",
+                id: 31,
+                after: [30],
+                pos: (1.2, 2),
+                cost: 500,
+                effect: Upgrade(SatelliteEfficiency, 0.5),
+            ),
+            // -- 40 Satellites --
+            (
+                name: "Communications",
+                description: "Unlocks communication satellites",
+                id: 40,
+                after: [1],
+                pos: (1, 0),
+                cost: 1000,
+                effect: Unlock(Action(Launch(Communication))),
             ),
         ],
     ),
