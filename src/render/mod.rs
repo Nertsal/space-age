@@ -110,18 +110,29 @@ impl GameRender {
         &mut self,
         model: &Model,
         id: InteractiveId,
-        color: Color,
+        mut color: Color,
         rotation: Angle<Coord>,
         framebuffer: &mut ugli::Framebuffer,
     ) {
         let planet = &model.planet;
         let orbit = &planet.orbit;
-        let Some((pos, &radius)) = (match id {
-            InteractiveId::Satellite(id) => get!(orbit.satellites, id, (&position, &visual_radius)),
-            InteractiveId::Debris(id) => get!(orbit.debris, id, (&position, &visual_radius)),
+        let Some((pos, &radius, &deorbiting)) = (match id {
+            InteractiveId::Satellite(id) => get!(
+                orbit.satellites,
+                id,
+                (&position, &visual_radius, &deorbiting)
+            ),
+            InteractiveId::Debris(id) => {
+                get!(orbit.debris, id, (&position, &visual_radius, &deorbiting))
+            }
         }) else {
             return;
         };
+
+        if deorbiting {
+            color = Color::try_from("#B61639").unwrap();
+        }
+
         let planet_pos = planet.position.to_cartesian();
         let pos = pos.to_cartesian(planet_pos);
         let pixel_scale = 0.1;
