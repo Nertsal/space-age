@@ -7,6 +7,9 @@ impl Model {
         self.real_time += delta_time;
         let mut rng = thread_rng();
 
+        self.hovered_rotation += Angle::from_degrees(r32(15.0) * delta_time);
+        self.selected_rotation -= Angle::from_degrees(r32(15.0) * delta_time);
+
         // Theorycrafting
         // if auto_theory {
         //     self.theory_progress.change(delta_time);

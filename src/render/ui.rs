@@ -100,6 +100,7 @@ impl UiRender {
             color,
             texture,
             scale,
+            Angle::ZERO,
             &geng::PixelPerfectCamera,
             framebuffer,
         );
@@ -126,6 +127,7 @@ impl UiRender {
             color,
             texture,
             scale,
+            Angle::ZERO,
             &geng::PixelPerfectCamera,
             framebuffer,
         );

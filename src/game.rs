@@ -13,10 +13,17 @@ pub struct Game {
     context: Context,
     post: PostRender,
     render: GameRender,
+    framebuffer_size: vec2<usize>,
     world_texture: ugli::Texture,
+    cursor: Cursor,
 
     model: Model,
     ui: GameUi,
+}
+
+struct Cursor {
+    pub screen_pos: vec2<f32>,
+    pub world_pos: vec2<Coord>,
 }
 
 #[derive(Debug, Clone)]
@@ -33,7 +40,12 @@ impl Game {
             ui_context: UiContext::new(context.clone()),
             post: PostRender::new(&context),
             render: GameRender::new(context.clone()),
+            framebuffer_size: vec2(1, 1),
             world_texture: geng_utils::texture::new_texture(context.geng.ugli(), vec2(1, 1)),
+            cursor: Cursor {
+                screen_pos: vec2::ZERO,
+                world_pos: vec2::ZERO,
+            },
 
             model: Model::new(&context.assets.config),
             ui: GameUi::new(&context),
@@ -54,6 +66,10 @@ impl Game {
             }
         }
     }
+
+    fn click(&mut self) {
+        self.model.select_hovered();
+    }
 }
 
 impl geng::State for Game {
@@ -62,6 +78,7 @@ impl geng::State for Game {
         self.context.update(delta_time);
         self.ui_context.update(delta_time);
         let delta_time = Time::new(delta_time);
+        self.model.update_cursor(self.cursor.world_pos);
         self.model.update(delta_time);
     }
 
@@ -72,12 +89,25 @@ impl geng::State for Game {
             }
             geng::Event::CursorMove { position } => {
                 self.ui_context.cursor.cursor_move(position.as_f32());
+                self.cursor.screen_pos = position.as_f32();
+                self.cursor.world_pos = self
+                    .model
+                    .camera
+                    .screen_to_world(self.framebuffer_size.as_f32(), self.cursor.screen_pos)
+                    .as_r32();
+            }
+            geng::Event::MousePress {
+                button: geng::MouseButton::Left,
+            } => {
+                self.click();
             }
             _ => (),
         }
     }
 
     fn draw(&mut self, screen_buffer: &mut ugli::Framebuffer) {
+        self.framebuffer_size = screen_buffer.size();
+
         // Update texture size
         let world_size = (screen_buffer.size().as_f32()
             / crate::render::get_pixel_scale(screen_buffer.size()))

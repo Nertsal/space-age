@@ -40,11 +40,65 @@ impl GameRender {
 
     pub fn draw(&mut self, model: &Model, framebuffer: &mut ugli::Framebuffer) {
         self.draw_planet(model, &model.planet, framebuffer);
+
+        // Selection
+        if let Some(id) = model.hovered_object
+            && model.hovered_object != model.selected_object
+        {
+            self.draw_selection(
+                model,
+                id,
+                Color::try_from("#ADD7F6").unwrap(),
+                model.hovered_rotation,
+                framebuffer,
+            );
+        }
+        if let Some(id) = model.selected_object {
+            self.draw_selection(
+                model,
+                id,
+                Color::try_from("#87BFFF").unwrap(),
+                model.selected_rotation,
+                framebuffer,
+            );
+        }
+    }
+
+    fn draw_selection(
+        &mut self,
+        model: &Model,
+        id: InteractiveId,
+        color: Color,
+        rotation: Angle<Coord>,
+        framebuffer: &mut ugli::Framebuffer,
+    ) {
+        let planet = &model.planet;
+        let orbit = &planet.orbit;
+        let Some((pos, &radius)) = (match id {
+            InteractiveId::Satellite(id) => get!(orbit.satellites, id, (&position, &visual_radius)),
+            InteractiveId::Debris(id) => get!(orbit.debris, id, (&position, &visual_radius)),
+        }) else {
+            return;
+        };
+        let planet_pos = planet.position.to_cartesian();
+        let pos = pos.to_cartesian(planet_pos);
+        let pixel_scale = 0.1;
+        let pos = Aabb2::point(pos.xy()).extend_uniform(radius + r32(pixel_scale * 4.0));
+        self.util.draw_nine_slice(
+            pos.as_f32(),
+            color,
+            &self.context.assets.sprites.selected,
+            pixel_scale,
+            rotation.as_f32(),
+            &model.camera,
+            framebuffer,
+        );
     }
 
     fn draw_planet(&mut self, model: &Model, planet: &Planet, framebuffer: &mut ugli::Framebuffer) {
         let camera = &model.camera;
 
+        // Planet
         let planet_position = planet.position.to_cartesian();
         let planet_color = Color::try_from("#1e5c58").unwrap();
         let planet_transform =
@@ -70,6 +124,7 @@ impl GameRender {
             },
         );
 
+        // Orbit
         let draw_object = |pos: &SpherePos,
                            radius: Coord,
                            trail: &VecDeque<SpherePos>,

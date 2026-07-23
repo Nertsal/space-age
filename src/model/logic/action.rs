@@ -70,6 +70,56 @@ impl Model {
             }
         }
     }
+
+    pub fn update_cursor(&mut self, cursor_pos: vec2<Coord>) {
+        let old_hover = self.hovered_object.take();
+
+        // Find the hovered object
+        let mut closest_dist = Coord::ZERO;
+        let leeway = r32(0.5);
+
+        let planet = &self.planet;
+        let planet_pos = planet.position.to_cartesian();
+
+        let mut check_hover = |id, pos: &SpherePos, radius| -> bool {
+            let pos = pos.to_cartesian(vec2::ZERO);
+            let behind_planet = pos.z < Coord::ZERO && pos.xy().len() < planet.radius;
+            let distance = (pos.xy() + planet_pos - cursor_pos).len();
+            if !behind_planet && distance < radius + leeway {
+                if self.hovered_object.is_none() || distance < closest_dist {
+                    closest_dist = distance;
+                    self.hovered_object = Some(id);
+                    true
+                } else {
+                    false
+                }
+            } else {
+                false
+            }
+        };
+
+        let orbit = &planet.orbit;
+        for (id, pos, &radius) in query!(orbit.satellites, (id, &position, &visual_radius)) {
+            if check_hover(InteractiveId::Satellite(id), pos, radius) {
+                return;
+            }
+        }
+        for (id, pos, &radius) in query!(orbit.debris, (id, &position, &visual_radius)) {
+            if check_hover(InteractiveId::Debris(id), pos, radius) {
+                return;
+            }
+        }
+
+        // Update hover
+        if old_hover != self.hovered_object {
+            self.hovered_rotation = random_angle(&mut thread_rng());
+        }
+    }
+
+    pub fn select_hovered(&mut self) {
+        self.selected_object = self.hovered_object;
+        self.selected_rotation = random_angle(&mut thread_rng());
+    }
 }
 
 pub fn random_orbit_velocity(position: SpherePos, rng: &mut impl Rng) -> SphereVelocity {

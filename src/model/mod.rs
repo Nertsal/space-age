@@ -23,6 +23,17 @@ pub struct Model {
     pub planet: Planet,
 
     pub theory_progress: R32,
+
+    pub hovered_object: Option<InteractiveId>,
+    pub selected_object: Option<InteractiveId>,
+    pub hovered_rotation: Angle<Coord>,
+    pub selected_rotation: Angle<Coord>,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub enum InteractiveId {
+    Satellite(ArenaId),
+    Debris(ArenaId),
 }
 
 impl Model {
@@ -48,6 +59,11 @@ impl Model {
             planet: Planet::new(&config.home_planet),
 
             theory_progress: R32::ZERO,
+
+            hovered_object: None,
+            selected_object: None,
+            hovered_rotation: Angle::ZERO,
+            selected_rotation: Angle::ZERO,
         };
         model.init();
         model

@@ -89,16 +89,21 @@ impl UtilRender {
     //     self.draw_nine_slice(pos, color, texture, scale, camera, framebuffer)
     // }
 
+    #[allow(clippy::too_many_arguments)]
     pub fn draw_nine_slice(
         &self,
         pos: Aabb2<f32>,
         color: Color,
         texture: &ugli::Texture,
         scale: f32,
+        rotation: Angle<f32>,
         camera: &impl geng::AbstractCamera2d,
         framebuffer: &mut ugli::Framebuffer,
     ) {
         let whole = Aabb2::ZERO.extend_positive(vec2::splat(1.0));
+
+        let translate = pos.center();
+        let pos = pos.translate(-translate);
 
         // TODO: configurable
         let mid = Aabb2 {
@@ -156,7 +161,7 @@ impl UtilRender {
             &slices,
             (
                 ugli::uniforms! {
-                    u_model_matrix: mat3::identity(),
+                    u_model_matrix: mat3::translate(translate) * mat3::rotate(rotation),
                     u_color: color,
                     u_texture: texture,
                 },
