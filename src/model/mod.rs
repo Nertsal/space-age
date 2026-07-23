@@ -14,6 +14,9 @@ pub struct Model {
     pub real_time: Time,
     pub camera: Camera2d,
 
+    pub researched: HashSet<u64>,
+    pub actions: HashSet<Action>,
+
     pub science: Science,
     pub planet: Planet,
 }
@@ -33,12 +36,38 @@ impl Model {
                 },
             },
 
+            researched: HashSet::new(),
+            actions: hashset! {Action::TheoreticResearch},
+
             science: 0,
             planet: Planet::new(&config.home_planet),
         };
         model.init();
         model
     }
+}
+
+#[derive(Debug, Clone)]
+pub enum ResearchState {
+    Researched,
+    Available { cost: Science },
+    Locked,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub enum Research {
+    Unlock(Action),
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
+pub enum Action {
+    TheoreticResearch,
+    Launch(SatelliteType),
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
+pub enum SatelliteType {
+    Basic,
 }
 
 pub struct Planet {

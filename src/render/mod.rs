@@ -100,6 +100,24 @@ impl GameRender {
         let camera = &geng::PixelPerfectCamera;
         let font = &self.context.assets.fonts.default;
 
+        {
+            let color = if ui.research_button.mouse_left.pressed.is_some() {
+                Color::GRAY
+            } else if ui.research_button.hovered {
+                Color::try_from("#aaaaaa").unwrap()
+            } else {
+                Color::WHITE
+            };
+            self.util.draw_text_fit(
+                "Scientific Research",
+                ui.research_button.position,
+                font,
+                TextRenderOptions::new(ui.pixel_scale * 10.0).color(color),
+                camera,
+                framebuffer,
+            );
+        }
+
         self.util.draw_text_fit(
             format!("Science: {}", model.science),
             ui.science.position,
@@ -124,6 +142,65 @@ impl GameRender {
                 TextRenderOptions::new(ui.pixel_scale * 10.0).color(color),
                 camera,
                 framebuffer,
+            );
+        }
+
+        self.draw_ui_research(model, ui, framebuffer);
+    }
+
+    fn draw_ui_research(
+        &mut self,
+        model: &Model,
+        ui: &GameUi,
+        framebuffer: &mut ugli::Framebuffer,
+    ) {
+        if !ui.research.visible {
+            return;
+        }
+
+        let camera = &geng::PixelPerfectCamera;
+        let font = &self.context.assets.fonts.default;
+
+        // Background
+        let width = ui.pixel_scale * 4.0;
+        self.ui.fill_quad_width(
+            ui.research.position,
+            width,
+            Color::try_from("#1E1B18").unwrap(),
+            framebuffer,
+        );
+        self.ui.draw_outline(
+            ui.research.position,
+            width,
+            Color::try_from("#0A2463").unwrap(),
+            framebuffer,
+        );
+
+        // Items
+        let color_researched = Color::try_from("#F2F3D9").unwrap();
+        let color_available = Color::try_from("#3E92CC").unwrap();
+        let color_expensive = Color::try_from("#E36987").unwrap();
+        let color_locked = Color::try_from("#D8315B").unwrap();
+
+        for item in &ui.research_items {
+            let state = model.get_research_state(item.id);
+            let color = match state {
+                ResearchState::Researched => color_researched,
+                ResearchState::Available { cost } => {
+                    if model.science >= cost {
+                        color_available
+                    } else {
+                        color_expensive
+                    }
+                }
+                ResearchState::Locked => color_locked,
+            };
+            self.context.geng.draw2d().circle(
+                framebuffer,
+                camera,
+                item.state.position.center(),
+                item.state.position.width() / 2.0,
+                color,
             );
         }
     }

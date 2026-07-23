@@ -33,7 +33,20 @@ impl Model {
         }
     }
 
-    pub fn launch_satellite(&mut self, pay_cost: bool) {
+    pub fn action(&mut self, action: Action) {
+        if !self.actions.contains(&action) {
+            return;
+        }
+
+        match action {
+            Action::TheoreticResearch => {
+                self.science += self.config.theoretic_research;
+            }
+            Action::Launch(ty) => self.launch_satellite(true, ty),
+        }
+    }
+
+    fn launch_satellite(&mut self, pay_cost: bool, ty: SatelliteType) {
         if pay_cost {
             if self.science < self.config.satellite.launch_cost {
                 return;
@@ -72,5 +85,43 @@ impl Model {
             trail: VecDeque::new(),
             science_timer: Bounded::new_max(self.config.satellite.interval),
         });
+    }
+
+    pub fn get_research_state(&self, id: u64) -> ResearchState {
+        if self.researched.contains(&id) {
+            return ResearchState::Researched;
+        }
+
+        let Some(research) = self.config.research.items.iter().find(|item| item.id == id) else {
+            return ResearchState::Locked;
+        };
+        if research.after.iter().all(|id| self.researched.contains(id)) {
+            ResearchState::Available {
+                cost: research.cost,
+            }
+        } else {
+            ResearchState::Locked
+        }
+    }
+
+    pub fn research(&mut self, id: u64) {
+        if self.researched.contains(&id) {
+            return;
+        }
+
+        let Some(research) = self.config.research.items.iter().find(|item| item.id == id) else {
+            return;
+        };
+        if self.science < research.cost {
+            return;
+        }
+
+        self.science -= research.cost;
+        self.researched.insert(id);
+        match &research.effect {
+            Research::Unlock(action) => {
+                self.actions.insert(action.clone());
+            }
+        }
     }
 }

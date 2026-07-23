@@ -19,8 +19,8 @@ pub struct Game {
 
 #[derive(Debug, Clone)]
 pub enum GameAction {
-    TheoreticResearch,
-    LaunchSatellite,
+    Research(u64),
+    Action(Action),
 }
 
 impl Game {
@@ -38,10 +38,12 @@ impl Game {
 
     fn execute(&mut self, action: GameAction) {
         match action {
-            GameAction::TheoreticResearch => {
-                self.model.science += self.model.config.theoretic_research;
+            GameAction::Research(id) => {
+                self.model.research(id);
             }
-            GameAction::LaunchSatellite => self.model.launch_satellite(true),
+            GameAction::Action(action) => {
+                self.model.action(action);
+            }
         }
     }
 }

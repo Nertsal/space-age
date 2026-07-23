@@ -96,6 +96,11 @@ impl WidgetState {
         }
     }
 
+    pub fn hidden(mut self) -> Self {
+        self.hide();
+        self
+    }
+
     pub fn show(&mut self) {
         self.visible = true;
     }
@@ -106,6 +111,14 @@ impl WidgetState {
         self.hovered_time = None;
         self.mouse_left = WidgetMouseState::default();
         self.mouse_right = WidgetMouseState::default();
+    }
+
+    pub fn toggle_visibility(&mut self) {
+        if self.visible {
+            self.hide()
+        } else {
+            self.show()
+        }
     }
 }
 
