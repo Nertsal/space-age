@@ -5,7 +5,10 @@
     ),
 
     // Science gains from Theoretic Research
-    theoretic_research: 10,
+    theoretic_research: (
+        duration: 5,
+        science: 10,
+    ),
     satellites: {
         Basic: (
             launch_cost: 30,
