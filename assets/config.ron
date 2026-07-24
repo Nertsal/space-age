@@ -1,7 +1,7 @@
 (
     home_planet: (
         radius: 10.0,
-        orbit_distance: 3.0,
+        orbit_distance: 4.5,
     ),
 
     // Science gains from Theoretic Research
@@ -19,7 +19,7 @@
             lifetime: 61,
         ),
         Communication: (
-            launch_cost: 200,
+            launch_cost: 100,
             science: 0,
             interval: 1,
             lifetime: 120,
@@ -31,7 +31,7 @@
             lifetime: 180,
         ),
     },
-    communications_bonus_requirement: 4,
+    communications_bonus_requirement: 3,
     communications_bonus: 0.5,
     debris_cleaner_range: 1.0,
 
