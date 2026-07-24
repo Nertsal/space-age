@@ -259,6 +259,7 @@ impl GameRender {
 
         let satellite_color = Color::try_from("#526985").unwrap();
         let satellite_comms_color = Color::try_from("#4E6BDE").unwrap();
+        let satellite_debris_color = Color::try_from("#A5B452").unwrap();
         let debris_color = Color::try_from("#4B2F1B").unwrap();
         let satellite_active_color = Color::try_from("#1789FC").unwrap();
         let satellite_inactive_color = Color::try_from("#D72638").unwrap();
@@ -269,6 +270,7 @@ impl GameRender {
             let color = match kind {
                 SatelliteKind::Basic => satellite_color,
                 SatelliteKind::Communication => satellite_comms_color,
+                SatelliteKind::DebrisCleaner => satellite_debris_color,
             };
             let Some(scale) = draw_object(pos, radius, trail, color, framebuffer) else {
                 continue;

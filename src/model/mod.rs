@@ -142,6 +142,7 @@ impl Action {
 pub enum SatelliteKind {
     Basic,
     Communication,
+    DebrisCleaner,
 }
 
 pub struct Planet {

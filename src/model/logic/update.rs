@@ -3,19 +3,6 @@ use super::*;
 impl Model {
     pub fn update(&mut self, delta_time: Time) {
         self.real_time += delta_time;
-        let mut rng = thread_rng();
-
-        let planet_science_bonus = if query!(self.planet.orbit.satellites, (&lifetime, &kind))
-            .filter(|(lifetime, kind)| {
-                lifetime.is_above_min() && matches!(kind, SatelliteKind::Communication)
-            })
-            .count()
-            >= self.config.communications_bonus_requirement
-        {
-            R32::ONE + self.config.communications_bonus
-        } else {
-            R32::ONE
-        };
 
         self.hovered_rotation += Angle::from_degrees(r32(15.0) * delta_time);
         self.selected_rotation -= Angle::from_degrees(r32(15.0) * delta_time);
@@ -24,6 +11,7 @@ impl Model {
         // if auto_theory {
         //     self.theory_progress.change(delta_time);
         // }
+        let planet_science_bonus = self.planet_science_bonus();
         while self.theory_progress > R32::ONE {
             let stat = self.get_stat(Stat::Theorycrafting);
             let gained = (self.config.theoretic_research.science as f32
@@ -42,11 +30,33 @@ impl Model {
         }
 
         self.movement(delta_time);
+        self.update_satellites(delta_time);
+        self.update_particles(delta_time);
+    }
+
+    fn planet_science_bonus(&self) -> R32 {
+        if query!(self.planet.orbit.satellites, (&lifetime, &kind))
+            .filter(|(lifetime, kind)| {
+                lifetime.is_above_min() && matches!(kind, SatelliteKind::Communication)
+            })
+            .count()
+            >= self.config.communications_bonus_requirement
+        {
+            R32::ONE + self.config.communications_bonus
+        } else {
+            R32::ONE
+        }
+    }
+
+    pub fn update_satellites(&mut self, delta_time: Time) {
+        let mut rng = thread_rng();
 
         // Update satellites production
+        let planet_science_bonus = self.planet_science_bonus();
         let sat_eff = self.get_stat(Stat::SatelliteEfficiency);
         let longevity = self.get_stat(Stat::SatelliteLongevity);
-        let orbit = &mut self.planet.orbit;
+        let planet = &mut self.planet;
+        let orbit = &mut planet.orbit;
         for (kind, science_timer, lifetime, deorbiting) in query!(
             orbit.satellites,
             (&kind, &mut science_timer, &mut lifetime, &mut deorbiting)
@@ -87,6 +97,25 @@ impl Model {
             }
         }
 
-        self.update_particles(delta_time);
+        // Satellite specific behavior -- Debris Cleaner
+        let planet_position = planet.position.to_cartesian();
+        for (kind, position, &radius, lifetime) in
+            query!(orbit.satellites, (&kind, &position, &radius, &lifetime))
+        {
+            if lifetime.is_min() || !matches!(kind, SatelliteKind::DebrisCleaner) {
+                continue;
+            }
+            let position = position.to_cartesian(planet_position);
+
+            for (target_pos, &target_radius, deorbiting) in
+                query!(orbit.debris, (&position, &radius, &mut deorbiting))
+            {
+                let target_pos = target_pos.to_cartesian(planet_position);
+                let distance = (target_pos - position).len();
+                if distance - radius - target_radius < self.config.debris_cleaner_range {
+                    *deorbiting = true;
+                }
+            }
+        }
     }
 }

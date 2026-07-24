@@ -53,6 +53,10 @@ impl GameUi {
                     WidgetState::new().with_sfx(WidgetSfxConfig::hover_left()),
                     GameAction::Action(Action::Launch(SatelliteKind::Communication)),
                 ),
+                (
+                    WidgetState::new().with_sfx(WidgetSfxConfig::hover_left()),
+                    GameAction::Action(Action::Launch(SatelliteKind::DebrisCleaner)),
+                ),
             ],
 
             research: WidgetState::new().hidden(),

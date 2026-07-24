@@ -10,6 +10,7 @@ pub struct Config {
     pub satellites: HashMap<SatelliteKind, SatelliteConfig>,
     pub communications_bonus_requirement: usize,
     pub communications_bonus: R32,
+    pub debris_cleaner_range: Coord,
 
     pub research: ResearchConfig,
 }

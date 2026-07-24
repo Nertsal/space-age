@@ -24,9 +24,16 @@
             interval: 1,
             lifetime: 120,
         ),
+        DebrisCleaner: (
+            launch_cost: 500,
+            science: 0,
+            interval: 1,
+            lifetime: 180,
+        ),
     },
     communications_bonus_requirement: 4,
     communications_bonus: 0.5,
+    debris_cleaner_range: 1.0,
 
     research: (
         items: [
@@ -139,7 +146,7 @@
                 description: "Display the total number of debris in orbit",
                 id: 41,
                 after: [40],
-                pos: (2, 0.5),
+                pos: (1.8, 0.8),
                 cost: 300,
                 effect: Unlock(RadarDebris),
             ),
@@ -148,9 +155,18 @@
                 description: "Analyses the risk of satellite collisions",
                 id: 42,
                 after: [40],
-                pos: (2, -0.5),
+                pos: (2, 0.0),
                 cost: 1000,
                 effect: Unlock(CollisionAnalysis),
+            ),
+            (
+                name: "Debris Cleaning",
+                description: "Unlocks a debris cleaning satellite",
+                id: 43,
+                after: [40, 50],
+                pos: (1.8, -0.8),
+                cost: 2500,
+                effect: Unlock(Launch(DebrisCleaner)),
             ),
             // -- 50 Automation --
             (
