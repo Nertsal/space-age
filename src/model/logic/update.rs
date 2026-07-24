@@ -49,11 +49,15 @@ impl Model {
         let sat_eff = self.get_stat(Stat::SatelliteEfficiency);
         let longevity = self.get_stat(Stat::SatelliteLongevity);
         let orbit = &mut self.planet.orbit;
-        for (kind, science_timer, lifetime) in
-            query!(orbit.satellites, (&kind, &mut science_timer, &mut lifetime))
-        {
+        for (kind, science_timer, lifetime, deorbiting) in query!(
+            orbit.satellites,
+            (&kind, &mut science_timer, &mut lifetime, &mut deorbiting)
+        ) {
             if lifetime.is_min() {
                 // This satellite is non-functioning
+                if self.abilities.contains(&Ability::DeorbitAuto) {
+                    *deorbiting = true;
+                }
                 continue;
             }
             lifetime.change(-delta_time / longevity - r32(rng.gen_range(-0.01..=0.01)));

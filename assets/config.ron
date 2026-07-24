@@ -45,18 +45,9 @@
                 description: "Unlocks the ability to deorbit space objects",
                 id: 2,
                 after: [1],
-                pos: (0, -1),
+                pos: (-0.6, -1),
                 cost: 300,
                 effect: Unlock(Deorbit),
-            ),
-            (
-                name: "Automation I",
-                description: "Satellites automatically deorbit upon reaching the end of their lifespan",
-                id: 3,
-                after: [2],
-                pos: (0, -2),
-                cost: 5000,
-                effect: Unlock(DeorbitAuto),
             ),
             // -- 10 Theorycrafting --
             (
@@ -143,6 +134,25 @@
                 cost: 1000,
                 effect: Unlock(CollisionAnalysis),
             ),
+            // -- 50 Automation --
+            (
+                name: "Automation I",
+                description: "Satellites automatically deorbit upon reaching the end of their lifespan",
+                id: 50,
+                after: [1],
+                pos: (0.6, -1),
+                cost: 1000,
+                effect: Unlock(DeorbitAuto),
+            ),
+            // (
+            //     name: "Collision Avoidance I",
+            //     description: "Satellites actively try to avoid collisions",
+            //     id: 51,
+            //     after: [50],
+            //     pos: (1.2, -2),
+            //     cost: 5000,
+            //     effect: Upgrade(CollisionAvoidance, 0.2),
+            // ),
         ],
     ),
 )

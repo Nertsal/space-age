@@ -107,6 +107,7 @@ pub enum Stat {
     Theorycrafting,
     SatelliteLongevity,
     SatelliteEfficiency,
+    CollisionAvoidance,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq, Hash)]
