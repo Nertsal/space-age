@@ -45,4 +45,23 @@ impl Model {
             CollisionRisk::Severe
         }
     }
+
+    pub fn active_satellites(&self) -> usize {
+        let orbit = &self.planet.orbit;
+        query!(orbit.satellites, (&lifetime))
+            .filter(|lifetime| lifetime.is_above_min())
+            .count()
+    }
+
+    pub fn inactive_satellites(&self) -> usize {
+        let orbit = &self.planet.orbit;
+        query!(orbit.satellites, (&lifetime))
+            .filter(|lifetime| lifetime.is_min())
+            .count()
+    }
+
+    pub fn debris(&self) -> usize {
+        let orbit = &self.planet.orbit;
+        orbit.debris.ids().count()
+    }
 }

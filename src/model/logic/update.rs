@@ -39,11 +39,11 @@ impl Model {
         for (kind, science_timer, lifetime) in
             query!(orbit.satellites, (&kind, &mut science_timer, &mut lifetime))
         {
-            lifetime.change(-delta_time / longevity - r32(rng.gen_range(-0.01..=0.01)));
             if lifetime.is_min() {
                 // This satellite is non-functioning
                 continue;
             }
+            lifetime.change(-delta_time / longevity - r32(rng.gen_range(-0.01..=0.01)));
 
             let config = self
                 .config

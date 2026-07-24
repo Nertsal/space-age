@@ -384,6 +384,31 @@ impl GameRender {
             );
         }
 
+        self.util.draw_text_fit(
+            format!("Active Satellites: {}", model.active_satellites()),
+            ui.active_satellites.position,
+            font,
+            TextRenderOptions::new(ui.pixel_scale * 10.0).align(vec2(0.0, 0.5)),
+            camera,
+            framebuffer,
+        );
+        self.util.draw_text_fit(
+            format!("Dysfunctional Satellites: {}", model.inactive_satellites()),
+            ui.inactive_satellites.position,
+            font,
+            TextRenderOptions::new(ui.pixel_scale * 10.0).align(vec2(0.0, 0.5)),
+            camera,
+            framebuffer,
+        );
+        self.util.draw_text_fit(
+            format!("Debris: {}", model.debris()),
+            ui.debris.position,
+            font,
+            TextRenderOptions::new(ui.pixel_scale * 10.0).align(vec2(0.0, 0.5)),
+            camera,
+            framebuffer,
+        );
+
         self.draw_ui_research(model, ui, framebuffer);
     }
 
