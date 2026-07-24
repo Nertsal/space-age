@@ -15,6 +15,7 @@ pub struct Game {
     render: GameRender,
     framebuffer_size: vec2<usize>,
     world_texture: ugli::Texture,
+    world_depth: ugli::Renderbuffer<ugli::DepthComponent>,
     cursor: Cursor,
 
     model: Model,
@@ -42,6 +43,7 @@ impl Game {
             render: GameRender::new(context.clone()),
             framebuffer_size: vec2(1, 1),
             world_texture: geng_utils::texture::new_texture(context.geng.ugli(), vec2(1, 1)),
+            world_depth: ugli::Renderbuffer::new(context.geng.ugli(), vec2(1, 1)),
             cursor: Cursor {
                 screen_pos: vec2::ZERO,
                 world_pos: vec2::ZERO,
@@ -117,11 +119,12 @@ impl geng::State for Game {
         let world_size = (screen_buffer.size().as_f32()
             / crate::render::get_pixel_scale(screen_buffer.size()))
         .map(|x| x.round() as usize);
-        geng_utils::texture::update_texture_size(
-            &mut self.world_texture,
-            world_size,
-            self.context.geng.ugli(),
-        );
+        if self.world_texture.size() != world_size {
+            self.world_texture =
+                ugli::Texture::new_with(self.context.geng.ugli(), world_size, |_| Rgba::BLACK);
+            self.world_texture.set_filter(ugli::Filter::Nearest);
+            self.world_depth = ugli::Renderbuffer::new(self.context.geng.ugli(), world_size);
+        }
 
         // UI
         let mut actions = Vec::new();
@@ -142,11 +145,12 @@ impl geng::State for Game {
             .begin(screen_buffer.size(), crate::render::BACKGROUND_COLOR);
 
         // Render world
-        let world_buffer = &mut geng_utils::texture::attach_texture(
-            &mut self.world_texture,
+        let world_buffer = &mut ugli::Framebuffer::new(
             self.context.geng.ugli(),
+            ugli::ColorAttachment::Texture(&mut self.world_texture),
+            ugli::DepthAttachment::Renderbuffer(&mut self.world_depth),
         );
-        ugli::clear(world_buffer, Some(Color::BLACK), None, None);
+        ugli::clear(world_buffer, Some(Color::BLACK), Some(1.0), None);
         self.render.draw(&self.model, world_buffer);
         geng_utils::texture::DrawTexture::new(&self.world_texture)
             .fit_screen(vec2(0.5, 0.5), framebuffer)

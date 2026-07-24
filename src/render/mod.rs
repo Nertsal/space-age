@@ -22,6 +22,18 @@ pub fn get_pixel_scale(framebuffer_size: vec2<usize>) -> f32 {
     ratio.x.min(ratio.y)
 }
 
+pub fn draw_parameters() -> ugli::DrawParameters {
+    ugli::DrawParameters {
+        blend_mode: Some(ugli::BlendMode::straight_alpha()),
+        depth_func: Some(ugli::DepthFunc::Less),
+        ..default()
+    }
+}
+
+pub fn z_depth(z: Coord) -> f32 {
+    -z.as_f32() / 50.0
+}
+
 #[allow(dead_code)]
 pub struct GameRender {
     pub context: Context,
@@ -52,6 +64,7 @@ impl GameRender {
         struct ParticleInstance {
             pub i_color: Color,
             pub i_model_matrix: mat3<f32>,
+            pub i_z: f32,
         }
         let instances: Vec<_> = query!(model.particles, (&color, &position, &radius, &lifetime))
             .filter_map(|(&color, &position, &radius, lifetime)| {
@@ -67,6 +80,7 @@ impl GameRender {
                 Some(ParticleInstance {
                     i_color: color,
                     i_model_matrix: transform,
+                    i_z: z_depth(position.z),
                 })
             })
             .collect();
@@ -80,7 +94,7 @@ impl GameRender {
                 ugli::uniforms! {},
                 model.camera.uniforms(framebuffer.size().as_f32()),
             ),
-            ugli::DrawParameters { ..default() },
+            draw_parameters(),
         );
 
         // Selection
@@ -171,10 +185,7 @@ impl GameRender {
                 },
                 camera.uniforms(framebuffer.size().as_f32()),
             ),
-            ugli::DrawParameters {
-                blend_mode: Some(ugli::BlendMode::straight_alpha()),
-                ..Default::default()
-            },
+            draw_parameters(),
         );
 
         // Orbit

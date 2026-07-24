@@ -8,6 +8,7 @@ uniform mat3 u_projection_matrix;
 attribute vec2 a_pos;
 attribute vec2 a_vt;
 attribute vec4 i_color;
+attribute float i_z;
 
 attribute mat3 i_model_matrix;
 
@@ -16,7 +17,7 @@ void main() {
     v_pos = a_pos;
     vec3 pos = i_model_matrix * vec3(a_pos, 1.0);
     pos = u_projection_matrix * u_view_matrix * pos;
-    gl_Position = vec4(pos.xy, 0.0, pos.z);
+    gl_Position = vec4(pos.xy, i_z, pos.z);
 }
 #endif
 
