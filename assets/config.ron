@@ -14,9 +14,9 @@
         Basic: (
             launch_cost: 30,
             // Science gains from active satellites
-            science: 1,
-            interval: 1,
-            lifetime: 60,
+            science: 5,
+            interval: 5,
+            lifetime: 61,
         ),
         Communication: (
             launch_cost: 200,
@@ -25,6 +25,8 @@
             lifetime: 120,
         ),
     },
+    communications_bonus_requirement: 4,
+    communications_bonus: 0.5,
 
     research: (
         items: [
@@ -113,15 +115,33 @@
                 cost: 500,
                 effect: Upgrade(SatelliteEfficiency, 0.5),
             ),
-            // -- 40 Satellites --
+            // -- 40 Communications --
             (
                 name: "Communications",
                 description: "Unlocks communication satellites",
                 id: 40,
                 after: [1],
                 pos: (1, 0),
-                cost: 1000,
+                cost: 500,
                 effect: Unlock(Launch(Communication)),
+            ),
+            (
+                name: "Orbit Observation",
+                description: "Display the total number of debris in orbit",
+                id: 41,
+                after: [40],
+                pos: (2, 0.5),
+                cost: 300,
+                effect: Unlock(RadarDebris),
+            ),
+            (
+                name: "Collision Risk Analysis",
+                description: "Analyses the risk of satellite collisions",
+                id: 42,
+                after: [40],
+                pos: (2, -0.5),
+                cost: 1000,
+                effect: Unlock(CollisionAnalysis),
             ),
         ],
     ),
