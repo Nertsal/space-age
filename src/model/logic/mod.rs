@@ -32,15 +32,20 @@ impl Model {
     }
 
     pub fn collision_risk(&self) -> CollisionRisk {
+        let avoidance = self.get_stat(Stat::CollisionAvoidance);
+
         let orbit = &self.planet.orbit;
         let satellites = orbit.satellites.ids().count();
         let debris = orbit.debris.ids().count();
         let total = satellites + debris;
-        if total <= 5 {
+
+        let boundary = |n: usize| -> usize { (n as f32 * avoidance.as_f32()).floor() as usize };
+
+        if total <= boundary(5) {
             CollisionRisk::Safe
-        } else if total <= 8 {
+        } else if total <= boundary(8) {
             CollisionRisk::Caution
-        } else if total <= 15 {
+        } else if total <= boundary(15) {
             CollisionRisk::Moderate
         } else {
             CollisionRisk::Severe
