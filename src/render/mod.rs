@@ -353,6 +353,10 @@ impl GameRender {
         );
 
         for (state, action) in &ui.actions {
+            if !state.visible {
+                continue;
+            }
+
             let color = if state.mouse_left.pressed.is_some() {
                 Color::GRAY
             } else if state.hovered {

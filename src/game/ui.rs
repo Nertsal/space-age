@@ -46,6 +46,10 @@ impl GameUi {
                     WidgetState::new().with_sfx(WidgetSfxConfig::hover_left()),
                     GameAction::Action(Action::Launch(SatelliteKind::Basic)),
                 ),
+                (
+                    WidgetState::new().with_sfx(WidgetSfxConfig::hover_left()),
+                    GameAction::Action(Action::Launch(SatelliteKind::Communication)),
+                ),
             ],
 
             research: WidgetState::new().hidden(),
@@ -76,7 +80,7 @@ impl GameUi {
         for item in &config.research.items {
             self.research_items.push(ResearchItemWidget {
                 position: Aabb2::point(item.pos.as_f32()).extend_symmetric(vec2::splat(0.4) / 2.0),
-                state: WidgetState::new(),
+                state: WidgetState::new().with_sfx(WidgetSfxConfig::hover_left()),
                 id: item.id,
             });
         }
@@ -109,12 +113,15 @@ impl GameUi {
         let science = panel.cut_top(pixel_scale * 20.0);
         self.science.update(science, context);
 
-        // Items
+        // Actions
         let rows = panel
             .clone()
             .cut_top(25.0 * pixel_scale)
             .stack(vec2(0.0, -25.0 * pixel_scale), self.actions.len());
         for ((state, action), row) in itertools::izip![&mut self.actions, rows] {
+            if let GameAction::Action(action) = action {
+                state.set_visibility(model.abilities.contains(&action.ability()));
+            }
             state.update(row, context);
             if state.mouse_left.clicked {
                 actions.push(action.clone());
