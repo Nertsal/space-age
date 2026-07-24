@@ -258,14 +258,19 @@ impl GameRender {
         };
 
         let satellite_color = Color::try_from("#526985").unwrap();
+        let satellite_comms_color = Color::try_from("#4E6BDE").unwrap();
         let debris_color = Color::try_from("#4B2F1B").unwrap();
         let satellite_active_color = Color::try_from("#1789FC").unwrap();
         let satellite_inactive_color = Color::try_from("#D72638").unwrap();
-        for (pos, &radius, trail, lifetime) in query!(
+        for (pos, &radius, trail, lifetime, kind) in query!(
             planet.orbit.satellites,
-            (&position, &visual_radius, &trail, &lifetime)
+            (&position, &visual_radius, &trail, &lifetime, &kind)
         ) {
-            let Some(scale) = draw_object(pos, radius, trail, satellite_color, framebuffer) else {
+            let color = match kind {
+                SatelliteKind::Basic => satellite_color,
+                SatelliteKind::Communication => satellite_comms_color,
+            };
+            let Some(scale) = draw_object(pos, radius, trail, color, framebuffer) else {
                 continue;
             };
             let blink_pos = pos.to_cartesian(planet_position).xy()
