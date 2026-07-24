@@ -15,6 +15,12 @@ pub struct GameUi {
     pub research: WidgetState,
     pub research_camera: Camera2d,
     pub research_items: Vec<ResearchItemWidget>,
+
+    pub active_satellites: WidgetState,
+    pub inactive_satellites: WidgetState,
+    pub debris: WidgetState,
+
+    pub collision_risk: WidgetState,
 }
 
 pub struct ResearchItemWidget {
@@ -53,6 +59,12 @@ impl GameUi {
                 },
             },
             research_items: Vec::new(),
+
+            active_satellites: WidgetState::new(),
+            inactive_satellites: WidgetState::new(),
+            debris: WidgetState::new(),
+
+            collision_risk: WidgetState::new(),
         };
         ui.populate_research(&context.assets.config);
         ui
@@ -136,5 +148,25 @@ impl GameUi {
                 }
             }
         }
+
+        // Top panel
+        let collision_risk = screen
+            .align_aabb(vec2(150.0, 20.0) * pixel_scale, vec2(0.5, 1.0))
+            .translate(vec2(0.0, -10.0) * pixel_scale);
+        self.collision_risk.update(collision_risk, context);
+
+        // Right panel
+        let mut panel = screen
+            .align_aabb(vec2(screen.width() * 0.25, screen.height()), vec2(1.0, 0.5))
+            .extend_uniform(-pixel_scale * 20.0);
+        panel.cut_top(pixel_scale * 50.0);
+
+        // Radar
+        let active = panel.cut_top(pixel_scale * 20.0);
+        self.active_satellites.update(active, context);
+        let inactive = panel.cut_top(pixel_scale * 20.0);
+        self.inactive_satellites.update(inactive, context);
+        let debris = panel.cut_top(pixel_scale * 20.0);
+        self.debris.update(debris, context);
     }
 }

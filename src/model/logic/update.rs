@@ -79,6 +79,7 @@ impl Model {
             Debris(ArenaId),
         }
 
+        let collision_risk = self.collision_risk();
         let planet = &mut self.planet;
         let planet_pos = planet.position.to_cartesian();
         let orbit = &mut planet.orbit;
@@ -184,63 +185,65 @@ impl Model {
             }
         }
 
-        // Check collisions
-        macro_rules! get_object {
-            ($arch:expr, $id:expr) => {
-                get!($arch, $id, (&position, &radius))
+        if collision_risk > CollisionRisk::Safe {
+            // Check collisions
+            macro_rules! get_object {
+                ($arch:expr, $id:expr) => {
+                    get!($arch, $id, (&position, &radius))
+                };
+            }
+            let get_object = |id: Id| match id {
+                Id::Satellite(id) => get_object!(orbit.satellites, id),
+                Id::Debris(id) => get_object!(orbit.debris, id),
             };
-        }
-        let get_object = |id: Id| match id {
-            Id::Satellite(id) => get_object!(orbit.satellites, id),
-            Id::Debris(id) => get_object!(orbit.debris, id),
-        };
 
-        // Find collisions
-        let mut collisions = Vec::new();
-        let mut check = |id_a, id_b| {
-            if let Some((pos_a, &rad_a)) = get_object(Id::Satellite(id_a))
-                && let Some((pos_b, &rad_b)) = get_object(id_b)
-            {
-                let delta = pos_b.to_cartesian(vec2::ZERO) - pos_a.to_cartesian(vec2::ZERO);
-                let distance = delta.len();
-                if distance < rad_a + rad_b {
-                    collisions.push((id_a, id_b));
+            // Find collisions
+            let mut collisions = Vec::new();
+            let mut check = |id_a, id_b| {
+                if let Some((pos_a, &rad_a)) = get_object(Id::Satellite(id_a))
+                    && let Some((pos_b, &rad_b)) = get_object(id_b)
+                {
+                    let delta = pos_b.to_cartesian(vec2::ZERO) - pos_a.to_cartesian(vec2::ZERO);
+                    let distance = delta.len();
+                    if distance < rad_a + rad_b {
+                        collisions.push((id_a, id_b));
+                    }
+                }
+            };
+            let satellite_ids: Vec<_> = orbit.satellites.ids().collect();
+            for (&id_a, &id_b) in itertools::izip![&satellite_ids, satellite_ids.iter().skip(1)] {
+                check(id_a, Id::Satellite(id_b));
+                for id_b in orbit.debris.ids() {
+                    check(id_a, Id::Debris(id_b));
                 }
             }
-        };
-        let satellite_ids: Vec<_> = orbit.satellites.ids().collect();
-        for (&id_a, &id_b) in itertools::izip![&satellite_ids, satellite_ids.iter().skip(1)] {
-            check(id_a, Id::Satellite(id_b));
-            for id_b in orbit.debris.ids() {
-                check(id_a, Id::Debris(id_b));
-            }
-        }
 
-        // Resolve collisions
-        let mut rng = thread_rng();
-        for id in collisions
-            .into_iter()
-            .flat_map(|(a, b)| {
-                let b = if let Id::Satellite(b) = b {
-                    Some(b)
-                } else {
-                    None
-                };
-                [Some(a), b]
-            })
-            .flatten()
-        {
-            if let Some(satellite) = orbit.satellites.remove(id) {
-                let mut trail = Some(satellite.trail);
-                for _ in 0..4 {
-                    orbit.debris.insert(Debris {
-                        position: satellite.position,
-                        velocity: random_orbit_velocity(satellite.position, &mut rng),
-                        visual_radius: satellite.visual_radius / r32(2.0),
-                        radius: satellite.radius / r32(4.0),
-                        trail: trail.take().unwrap_or_default(),
-                        deorbiting: false,
-                    });
+            // Resolve collisions
+            let mut rng = thread_rng();
+            for id in collisions
+                .into_iter()
+                .flat_map(|(a, b)| {
+                    let b = if let Id::Satellite(b) = b {
+                        Some(b)
+                    } else {
+                        None
+                    };
+                    [Some(a), b]
+                })
+                .flatten()
+            {
+                if let Some(satellite) = orbit.satellites.remove(id) {
+                    let mut trail = Some(satellite.trail);
+                    for _ in 0..4 {
+                        orbit.debris.insert(Debris {
+                            position: satellite.position,
+                            velocity: random_orbit_velocity(satellite.position, &mut rng),
+                            visual_radius: satellite.visual_radius / r32(2.0),
+                            radius: satellite.radius / r32(4.0),
+                            trail: trail.take().unwrap_or_default(),
+                            deorbiting: false,
+                        });
+                    }
                 }
             }
         }

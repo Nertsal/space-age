@@ -29,4 +29,20 @@ impl Model {
             ResearchState::Locked
         }
     }
+
+    pub fn collision_risk(&self) -> CollisionRisk {
+        let orbit = &self.planet.orbit;
+        let satellites = orbit.satellites.ids().count();
+        let debris = orbit.debris.ids().count();
+        let total = satellites + debris;
+        if total <= 5 {
+            CollisionRisk::Safe
+        } else if total <= 8 {
+            CollisionRisk::Caution
+        } else if total <= 15 {
+            CollisionRisk::Moderate
+        } else {
+            CollisionRisk::Severe
+        }
+    }
 }

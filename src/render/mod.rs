@@ -295,6 +295,37 @@ impl GameRender {
         let font = &self.context.assets.fonts.default;
 
         {
+            // Collision risk
+            let mut risk = ui.collision_risk.position;
+            let left = risk.split_left(0.5);
+            self.util.draw_text_fit(
+                "Collision Risk: ",
+                left,
+                font,
+                TextRenderOptions::new(ui.pixel_scale * 15.0).align(vec2(1.0, 0.0)),
+                camera,
+                framebuffer,
+            );
+            let collision_risk = model.collision_risk();
+            let color = match collision_risk {
+                CollisionRisk::Safe => Color::try_from("#2AFC98").unwrap(),
+                CollisionRisk::Caution => Color::try_from("#CFF137").unwrap(),
+                CollisionRisk::Moderate => Color::try_from("#EF8A17").unwrap(),
+                CollisionRisk::Severe => Color::try_from("#B61639").unwrap(),
+            };
+            self.util.draw_text_fit(
+                format!("  {:?}", collision_risk),
+                risk,
+                font,
+                TextRenderOptions::new(ui.pixel_scale * 15.0)
+                    .align(vec2(0.0, 0.0))
+                    .color(color),
+                camera,
+                framebuffer,
+            );
+        }
+
+        {
             let color = if ui.research_button.mouse_left.pressed.is_some() {
                 Color::GRAY
             } else if ui.research_button.hovered {

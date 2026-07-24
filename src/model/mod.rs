@@ -37,6 +37,14 @@ pub struct Model {
     pub selected_rotation: Angle<Coord>,
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+pub enum CollisionRisk {
+    Safe,
+    Caution,
+    Moderate,
+    Severe,
+}
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum InteractiveId {
     Satellite(ArenaId),
