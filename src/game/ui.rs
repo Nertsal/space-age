@@ -5,6 +5,8 @@ use crate::{
     ui::widget::{WidgetSfxConfig, WidgetState},
 };
 
+use geng_utils::interpolation::SecondOrderState;
+
 pub struct GameUi {
     pub pixel_scale: f32,
     pub screen: Aabb2<f32>,
@@ -14,6 +16,7 @@ pub struct GameUi {
 
     pub research: WidgetState,
     pub research_camera: Camera2d,
+    pub research_fov: SecondOrderState<vec2<f32>>,
     pub research_items: Vec<ResearchItemWidget>,
 
     pub active_satellites: WidgetState,
@@ -62,6 +65,7 @@ impl GameUi {
                     scale: 1.0,
                 },
             },
+            research_fov: SecondOrderState::new(3.0, 1.0, 0.0, vec2::splat(3.0)),
             research_items: Vec::new(),
 
             active_satellites: WidgetState::new(),
@@ -132,7 +136,14 @@ impl GameUi {
         if self.research.visible {
             let research = screen.extend_uniform(-50.0 * pixel_scale);
             self.research.update(research, context);
+            self.research_fov.update(context.delta_time);
+            self.research_camera.fov = Camera2dFov::Cover {
+                width: self.research_fov.current.x,
+                height: self.research_fov.current.y,
+                scale: 1.0,
+            };
 
+            let mut bounds = Aabb2::ZERO;
             for item in &mut self.research_items {
                 let position = item.position.map_bounds(|p| {
                     self.research_camera
@@ -147,6 +158,9 @@ impl GameUi {
                     state,
                     ResearchState::Researched | ResearchState::Available { .. }
                 ));
+                if item.state.visible {
+                    bounds = crate::util::extend_cover(bounds, item.position);
+                }
 
                 if let ResearchState::Available { .. } = state
                     && item.state.mouse_left.clicked
@@ -154,6 +168,12 @@ impl GameUi {
                     actions.push(GameAction::Research(item.id));
                 }
             }
+
+            let view_area = vec2(
+                (-bounds.min.x).max(bounds.max.x),
+                (-bounds.min.y).max(bounds.max.y),
+            );
+            self.research_fov.target = view_area * 2.0 + vec2::splat(2.0);
         }
 
         // Top panel

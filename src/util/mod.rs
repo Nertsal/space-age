@@ -49,3 +49,14 @@ pub fn wrap_text(font: &Font, text: &str, target_width: f32) -> Vec<String> {
     }
     lines
 }
+
+pub fn extend_point(s: Aabb2<f32>, point: vec2<f32>) -> Aabb2<f32> {
+    Aabb2 {
+        min: vec2(s.min.x.min(point.x), s.min.y.min(point.y)),
+        max: vec2(s.max.x.max(point.x), s.max.y.max(point.y)),
+    }
+}
+
+pub fn extend_cover(s: Aabb2<f32>, other: Aabb2<f32>) -> Aabb2<f32> {
+    extend_point(extend_point(s, other.min), other.max)
+}
