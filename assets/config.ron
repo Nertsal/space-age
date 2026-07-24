@@ -14,9 +14,9 @@
         Basic: (
             launch_cost: 30,
             // Science gains from active satellites
-            science: 1,
-            interval: 1,
-            lifetime: 60,
+            science: 5,
+            interval: 5,
+            lifetime: 61,
         ),
         Communication: (
             launch_cost: 200,

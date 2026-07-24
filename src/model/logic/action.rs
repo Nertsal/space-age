@@ -100,7 +100,7 @@ impl Model {
                 self.abilities.insert(ability.clone());
             }
             &Research::Upgrade(stat, change) => {
-                *self.stats.entry(stat).or_insert(R32::ONE) += change;
+                *self.stats.entry(stat).or_insert(R32::ONE) *= r32(1.0) + change;
             }
         }
     }
