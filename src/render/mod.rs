@@ -451,6 +451,37 @@ impl GameRender {
             framebuffer,
         );
 
+        // Connections
+        let connection_color = Color::try_from("#526985").unwrap();
+        for item in &ui.research_items {
+            if !item.state.visible {
+                continue;
+            }
+            let Some(config) = model
+                .config
+                .research
+                .items
+                .iter()
+                .find(|res| res.id == item.id)
+            else {
+                continue;
+            };
+            for &after in &config.after {
+                let Some(other) = ui.research_items.iter().find(|item| item.id == after) else {
+                    continue;
+                };
+                self.util.draw_segment(
+                    framebuffer,
+                    camera,
+                    &draw2d::Segment::new(
+                        Segment(item.state.position.center(), other.state.position.center()),
+                        4.0 * ui.pixel_scale,
+                        connection_color,
+                    ),
+                );
+            }
+        }
+
         // Items
         let color_researched = Color::try_from("#F2F3D9").unwrap();
         let color_available = Color::try_from("#3E92CC").unwrap();
