@@ -22,6 +22,22 @@ impl Model {
         for id in old {
             self.particles.remove(id);
         }
+
+        // Move texticles
+        let mut old = Vec::new();
+        for (id, position, velocity, lifetime) in query!(
+            self.texticles,
+            (id, &mut position, &velocity, &mut lifetime)
+        ) {
+            *position += *velocity * delta_time;
+            lifetime.change(-delta_time);
+            if lifetime.is_min() {
+                old.push(id);
+            }
+        }
+        for id in old {
+            self.texticles.remove(id);
+        }
     }
 
     pub fn spawn_particles(&mut self, options: SpawnParticles) {

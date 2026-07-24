@@ -97,6 +97,25 @@ impl GameRender {
             draw_parameters(),
         );
 
+        // Texticles
+        for (text, &position, &size, &color, lifetime) in query!(
+            model.texticles,
+            (&text, &position, &size, &color, &lifetime)
+        ) {
+            let font = &self.context.assets.fonts.default;
+            let t = lifetime.get_ratio().sqrt();
+            let size = size * t;
+            self.util.draw_text(
+                text,
+                position.xy().as_f32(),
+                font,
+                TextRenderOptions::new(size.as_f32())
+                    .color(crate::util::with_alpha(color, t.as_f32())),
+                &model.camera,
+                framebuffer,
+            );
+        }
+
         // Selection
         if let Some(id) = model.hovered_object
             && model.hovered_object != model.selected_object

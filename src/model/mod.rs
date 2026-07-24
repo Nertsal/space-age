@@ -23,9 +23,11 @@ pub struct Model {
     pub stats: HashMap<Stat, R32>,
 
     pub science: Science,
+    pub science_counter_pos: vec2<Coord>,
     pub planet: Planet,
     pub particles: StructOf<Arena<Particle>>,
     pub queued_particles: Vec<SpawnParticles>,
+    pub texticles: StructOf<Arena<FloatingText>>,
 
     pub theory_progress: R32,
 
@@ -61,9 +63,11 @@ impl Model {
             stats: HashMap::new(),
 
             science: 0,
+            science_counter_pos: vec2::ZERO,
             planet: Planet::new(&config.home_planet),
             particles: default(),
             queued_particles: Vec::new(),
+            texticles: default(),
 
             theory_progress: R32::ZERO,
 

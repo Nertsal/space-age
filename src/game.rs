@@ -138,6 +138,14 @@ impl geng::State for Game {
         for action in actions {
             self.execute(action);
         }
+        self.model.science_counter_pos = self
+            .model
+            .camera
+            .screen_to_world(
+                self.framebuffer_size.as_f32(),
+                self.ui.science.position.align_pos(vec2(0.6, 0.5)),
+            )
+            .as_r32();
 
         ugli::clear(screen_buffer, Some(Rgba::BLACK), None, None);
         let framebuffer = &mut self

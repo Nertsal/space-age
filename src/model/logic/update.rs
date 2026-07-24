@@ -16,9 +16,18 @@ impl Model {
         // }
         while self.theory_progress > R32::ONE {
             let stat = self.get_stat(Stat::Theorycrafting);
-            self.science +=
+            let gained =
                 (self.config.theoretic_research.science as f32 * stat.as_f32()).ceil() as Science;
+            self.science += gained;
             self.theory_progress -= R32::ONE;
+            self.texticles.insert(FloatingText {
+                text: format!("+{}", gained).into(),
+                position: (self.science_counter_pos + vec2(0.0, 1.0).as_r32()).extend(Coord::ZERO),
+                velocity: vec3(1.0, 0.0, 0.0).as_r32(),
+                size: r32(2.0),
+                color: Color::try_from("#2AFC98").unwrap(),
+                lifetime: Bounded::new_max(r32(1.0)),
+            });
         }
 
         self.movement(delta_time);
@@ -46,7 +55,17 @@ impl Model {
             science_timer.change(-delta_time - r32(rng.gen_range(-0.01..=0.01)));
             if science_timer.is_min() {
                 science_timer.set_ratio(Time::ONE);
-                self.science += (config.science as f32 * sat_eff.as_f32()).ceil() as Science;
+                let gained = (config.science as f32 * sat_eff.as_f32()).ceil() as Science;
+                self.science += gained;
+                self.texticles.insert(FloatingText {
+                    text: format!("+{}", gained).into(),
+                    position: (self.science_counter_pos + vec2(0.0, 1.0).as_r32())
+                        .extend(Coord::ZERO),
+                    velocity: vec3(1.0, 0.0, 0.0).as_r32(),
+                    size: r32(2.0),
+                    color: Color::try_from("#2AFC98").unwrap(),
+                    lifetime: Bounded::new_max(r32(1.0)),
+                });
             }
         }
 

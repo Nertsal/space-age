@@ -22,9 +22,38 @@ pub struct Assets {
     pub config: Config,
 }
 
-#[derive(geng::asset::Load)]
 pub struct Fonts {
     pub default: Rc<geng::Font>,
+}
+
+impl geng::asset::Load for Fonts {
+    type Options = ();
+
+    fn load(
+        manager: &geng::asset::Manager,
+        path: &std::path::Path,
+        &(): &Self::Options,
+    ) -> geng::asset::Future<Self> {
+        let manager = manager.clone();
+        let path = path.to_owned();
+        async move {
+            Ok(Self {
+                default: manager
+                    .load_with(
+                        path.join("default.ttf"),
+                        &geng::font::Options {
+                            antialias: false,
+                            distance_mode: geng::font::DistanceMode::Max,
+                            ..default()
+                        },
+                    )
+                    .await?,
+            })
+        }
+        .boxed_local()
+    }
+
+    const DEFAULT_EXT: Option<&'static str> = None;
 }
 
 #[derive(geng::asset::Load)]

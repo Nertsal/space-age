@@ -41,6 +41,14 @@ impl Model {
                 return;
             }
             self.science -= config.launch_cost;
+            self.texticles.insert(FloatingText {
+                text: format!("-{}", config.launch_cost).into(),
+                position: (self.science_counter_pos + vec2(0.0, -1.0).as_r32()).extend(Coord::ZERO),
+                velocity: vec3(1.0, 0.0, 0.0).as_r32(),
+                size: r32(2.0),
+                color: Color::try_from("#B61639").unwrap(),
+                lifetime: Bounded::new_max(r32(1.0)),
+            });
         }
 
         let mut rng = thread_rng();
@@ -77,6 +85,15 @@ impl Model {
         }
 
         self.science -= research.cost;
+        self.texticles.insert(FloatingText {
+            text: format!("-{}", research.cost).into(),
+            position: (self.science_counter_pos + vec2(0.0, -1.0).as_r32()).extend(Coord::ZERO),
+            velocity: vec3(1.0, 0.0, 0.0).as_r32(),
+            size: r32(2.0),
+            color: Color::try_from("#B61639").unwrap(),
+            lifetime: Bounded::new_max(r32(1.0)),
+        });
+
         self.researched.insert(id);
         match &research.effect {
             Research::Unlock(ability) => {
