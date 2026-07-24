@@ -294,7 +294,7 @@ impl GameRender {
         let camera = &geng::PixelPerfectCamera;
         let font = &self.context.assets.fonts.default;
 
-        {
+        if model.abilities.contains(&Ability::CollisionAnalysis) {
             // Collision risk
             let mut risk = ui.collision_risk.position;
             let left = risk.split_left(0.5);
@@ -400,14 +400,16 @@ impl GameRender {
             camera,
             framebuffer,
         );
-        self.util.draw_text_fit(
-            format!("Debris: {}", model.debris()),
-            ui.debris.position,
-            font,
-            TextRenderOptions::new(ui.pixel_scale * 10.0).align(vec2(0.0, 0.5)),
-            camera,
-            framebuffer,
-        );
+        if model.abilities.contains(&Ability::RadarDebris) {
+            self.util.draw_text_fit(
+                format!("Debris: {}", model.debris()),
+                ui.debris.position,
+                font,
+                TextRenderOptions::new(ui.pixel_scale * 10.0).align(vec2(0.0, 0.5)),
+                camera,
+                framebuffer,
+            );
+        }
 
         self.draw_ui_research(model, ui, framebuffer);
     }

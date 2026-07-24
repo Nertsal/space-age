@@ -115,6 +115,8 @@ pub enum Ability {
     Launch(SatelliteKind),
     Deorbit,
     DeorbitAuto,
+    RadarDebris,
+    CollisionAnalysis,
 }
 
 #[derive(Debug, Clone, PartialEq)]
