@@ -56,16 +56,18 @@ impl Model {
             if science_timer.is_min() {
                 science_timer.set_ratio(Time::ONE);
                 let gained = (config.science as f32 * sat_eff.as_f32()).ceil() as Science;
-                self.science += gained;
-                self.texticles.insert(FloatingText {
-                    text: format!("+{}", gained).into(),
-                    position: (self.science_counter_pos + vec2(0.0, 1.0).as_r32())
-                        .extend(Coord::ZERO),
-                    velocity: vec3(1.0, 0.0, 0.0).as_r32(),
-                    size: r32(2.0),
-                    color: Color::try_from("#2AFC98").unwrap(),
-                    lifetime: Bounded::new_max(r32(1.0)),
-                });
+                if gained > 0 {
+                    self.science += gained;
+                    self.texticles.insert(FloatingText {
+                        text: format!("+{}", gained).into(),
+                        position: (self.science_counter_pos + vec2(0.0, 1.0).as_r32())
+                            .extend(Coord::ZERO),
+                        velocity: vec3(1.0, 0.0, 0.0).as_r32(),
+                        size: r32(2.0),
+                        color: Color::try_from("#2AFC98").unwrap(),
+                        lifetime: Bounded::new_max(r32(1.0)),
+                    });
+                }
             }
         }
 
