@@ -83,9 +83,27 @@
                 description: "Increases longevity of satellites",
                 id: 21,
                 after: [20],
-                pos: (-1.2, 2),
+                pos: (-0.8, 2),
                 cost: 500,
                 effect: Upgrade(SatelliteLongevity, 0.5),
+            ),
+            (
+                name: "Structural Integrity I",
+                description: "Satellites break into fewer pieces on collision",
+                id: 22,
+                after: [20],
+                pos: (-1.6, 1.2),
+                cost: 1000,
+                effect: Upgrade(SatelliteIntegrity, 1.0),
+            ),
+            (
+                name: "Structural Integrity II",
+                description: "Satellites break into fewer pieces on collision",
+                id: 23,
+                after: [22],
+                pos: (-2.6, 1.4),
+                cost: 5000,
+                effect: Upgrade(SatelliteIntegrity, 1.0),
             ),
             // -- 30 Data Compression --
             (

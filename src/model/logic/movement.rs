@@ -9,6 +9,10 @@ impl Model {
         }
 
         let avoidance = self.get_stat(Stat::CollisionAvoidance).recip();
+        let integrity = self.get_stat(Stat::SatelliteIntegrity);
+        let collision_fragments =
+            ((r32(5.0) - integrity + r32(1.0)).as_f32().ceil() as usize).max(2);
+
         let collision_risk = self.collision_risk();
         let planet = &mut self.planet;
         let planet_pos = planet.position.to_cartesian();
@@ -164,7 +168,8 @@ impl Model {
             {
                 if let Some(satellite) = orbit.satellites.remove(id) {
                     let mut trail = Some(satellite.trail);
-                    for _ in 0..4 {
+                    log::debug!("Collision of {:?}, fragments: {}", id, collision_fragments);
+                    for _ in 0..collision_fragments {
                         orbit.debris.insert(Debris {
                             position: satellite.position,
                             velocity: action::random_orbit_velocity(satellite.position, &mut rng),

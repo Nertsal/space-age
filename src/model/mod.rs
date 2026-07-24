@@ -107,6 +107,7 @@ pub enum Stat {
     Theorycrafting,
     SatelliteLongevity,
     SatelliteEfficiency,
+    SatelliteIntegrity,
     CollisionAvoidance,
 }
 
