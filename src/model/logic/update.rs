@@ -7,6 +7,18 @@ impl Model {
         self.real_time += delta_time;
         let mut rng = thread_rng();
 
+        let planet_science_bonus = if query!(self.planet.orbit.satellites, (&lifetime, &kind))
+            .filter(|(lifetime, kind)| {
+                lifetime.is_above_min() && matches!(kind, SatelliteKind::Communication)
+            })
+            .count()
+            >= self.config.communications_bonus_requirement
+        {
+            R32::ONE + self.config.communications_bonus
+        } else {
+            R32::ONE
+        };
+
         self.hovered_rotation += Angle::from_degrees(r32(15.0) * delta_time);
         self.selected_rotation -= Angle::from_degrees(r32(15.0) * delta_time);
 
@@ -16,8 +28,9 @@ impl Model {
         // }
         while self.theory_progress > R32::ONE {
             let stat = self.get_stat(Stat::Theorycrafting);
-            let gained =
-                (self.config.theoretic_research.science as f32 * stat.as_f32()).ceil() as Science;
+            let gained = (self.config.theoretic_research.science as f32
+                * (stat * planet_science_bonus).as_f32())
+            .ceil() as Science;
             self.science += gained;
             self.theory_progress -= R32::ONE;
             self.texticles.insert(FloatingText {
@@ -55,7 +68,8 @@ impl Model {
             science_timer.change(-delta_time - r32(rng.gen_range(-0.01..=0.01)));
             if science_timer.is_min() {
                 science_timer.set_ratio(Time::ONE);
-                let gained = (config.science as f32 * sat_eff.as_f32()).ceil() as Science;
+                let gained = (config.science as f32 * (sat_eff * planet_science_bonus).as_f32())
+                    .ceil() as Science;
                 if gained > 0 {
                     self.science += gained;
                     self.texticles.insert(FloatingText {

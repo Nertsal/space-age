@@ -25,6 +25,8 @@
             lifetime: 120,
         ),
     },
+    communications_bonus_requirement: 4,
+    communications_bonus: 0.5,
 
     research: (
         items: [

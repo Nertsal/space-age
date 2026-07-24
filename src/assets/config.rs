@@ -8,6 +8,8 @@ pub struct Config {
     pub home_planet: PlanetConfig,
     pub theoretic_research: TheoryConfig,
     pub satellites: HashMap<SatelliteKind, SatelliteConfig>,
+    pub communications_bonus_requirement: usize,
+    pub communications_bonus: R32,
 
     pub research: ResearchConfig,
 }
