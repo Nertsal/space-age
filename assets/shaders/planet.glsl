@@ -2,6 +2,8 @@ uniform mat3 u_projection_matrix;
 uniform mat3 u_view_matrix;
 uniform mat3 u_model_matrix;
 uniform float u_time;
+// 0 = base planet, 1 = cloud
+uniform int u_layer;
 varying vec2 v_quad_pos;
 varying vec2 v_vt;
 
@@ -226,6 +228,15 @@ void main() {
         fbm3(back_pos * 3.5)
     );
 
+    if (u_layer == 1) {
+        float cloud_mask = sky_circle * front_clouds;
+        if (cloud_mask < 0.5) {
+            discard;
+        }
+        gl_FragColor = vec4(cloud_col - light_sky * 0.5, 1.0);
+        return;
+    }
+
     vec4 final = vec4(0.0);
     
     //atmosphere
@@ -247,37 +258,6 @@ void main() {
         planet_circle
     );
 
-    final = mix(
-        final,
-        vec4(cloud_col - light_sky * 0.5, 1.0),
-        sky_circle * front_clouds
-    );
-    
-    // really ugly depth write
-    // might not actually do anything lule
-    float cloud_height = depth(uv, sky_size);
-    float planet_height = depth(uv, planet_size);
-
-    // // were checkig random hardcoded depth relative to the mesh z
-    // float depth = gl_FragCoord.z;
-
-    // if (sky_circle * front_clouds > 0.5) {
-    //     depth -= DEPTH_SPAN * cloud_height;
-    // }
-    // else if (planet_circle > 0.5) {
-    //     depth -= DEPTH_SPAN
-    //         * (planet_size / sky_size)
-    //         * planet_height;
-    // }
-    // else if (sky_circle * back_clouds > 0.5) {
-    //     depth += DEPTH_SPAN * cloud_height;
-    // }
-    // else if (final.a <= 0.001) { // skip at low alpha cus atmosphere
-    //     discard;
-    // }
-    
-    // gl_FragDepth = clamp(depth, 0.0, 1.0);
     gl_FragColor = final;
 }
 #endif
-
