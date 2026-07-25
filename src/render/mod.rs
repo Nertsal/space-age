@@ -634,13 +634,57 @@ impl GameRender {
                 }
                 ResearchState::Locked => color_locked,
             };
-            self.context.geng.draw2d().circle(
-                framebuffer,
-                camera,
-                item.state.position.center(),
-                item.state.position.width() / 2.0,
-                color,
-            );
+
+            let sprites = &self.context.assets.sprites.ui;
+            let texture = model
+                .get_research(item.id)
+                .map_or(&sprites.research.orbit_program, |res| {
+                    sprites.research.get_icon(&res.name)
+                });
+            let scale = item.state.position.size() / texture.size().as_f32();
+            let scale = scale.x.min(scale.y);
+
+            // Background fill
+            // let radius = item.state.position.width() / 2.0;
+            // self.context.geng.draw2d().circle(
+            //     framebuffer,
+            //     camera,
+            //     item.state.position.center(),
+            //     radius - 2.0,
+            //     Color::WHITE,
+            // );
+            geng_utils::texture::DrawTexture::new(&sprites.research.fill)
+                .pixel_perfect(
+                    item.state.position.center(),
+                    vec2(0.5, 0.5),
+                    scale,
+                    camera,
+                    framebuffer,
+                )
+                .draw(camera, &self.context.geng, framebuffer);
+
+            // Icon
+            geng_utils::texture::DrawTexture::new(texture)
+                .pixel_perfect(
+                    item.state.position.center(),
+                    vec2(0.5, 0.5),
+                    scale,
+                    camera,
+                    framebuffer,
+                )
+                .colored(color)
+                .draw(camera, &self.context.geng, framebuffer);
+            // Outline
+            geng_utils::texture::DrawTexture::new(&sprites.research.outline)
+                .pixel_perfect(
+                    item.state.position.center(),
+                    vec2(0.5, 0.5),
+                    scale,
+                    camera,
+                    framebuffer,
+                )
+                .colored(color)
+                .draw(camera, &self.context.geng, framebuffer);
 
             if item.state.hovered {
                 hovered = Some((item.id, item.state.position));

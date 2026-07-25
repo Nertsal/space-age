@@ -14,12 +14,16 @@ impl Model {
         self.stats.get(&stat).copied().unwrap_or(R32::ONE)
     }
 
+    pub fn get_research(&self, id: u64) -> Option<&ResearchItemConfig> {
+        self.config.research.items.iter().find(|item| item.id == id)
+    }
+
     pub fn get_research_state(&self, id: u64) -> ResearchState {
         if self.researched.contains(&id) {
             return ResearchState::Researched;
         }
 
-        let Some(research) = self.config.research.items.iter().find(|item| item.id == id) else {
+        let Some(research) = self.get_research(id) else {
             return ResearchState::Locked;
         };
         if research.after.iter().all(|id| self.researched.contains(id)) {
