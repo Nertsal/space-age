@@ -578,6 +578,20 @@ impl GameRender {
             .fill_quad_width(ui.research.position, width, Color::WHITE, framebuffer);
         self.ui
             .draw_outline(ui.research.position, width, Color::WHITE, framebuffer);
+        // Title
+        let title = ui
+            .research
+            .position
+            .extend_symmetric(-vec2(6.0, 4.0) * ui.pixel_scale)
+            .cut_top(10.0 * ui.pixel_scale);
+        self.util.draw_text_fit(
+            "Scientific Research",
+            title,
+            font,
+            TextRenderOptions::new(title.height()).align(vec2(0.0, 0.5)),
+            camera,
+            framebuffer,
+        );
 
         // Connections
         let connection_color = Color::try_from("#526985").unwrap();
