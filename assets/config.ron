@@ -33,7 +33,7 @@
     },
     communications_bonus_requirement: 3,
     communications_bonus: 0.5,
-    debris_cleaner_range: 1.0,
+    debris_cleaner_range: 3.0,
 
     research: (
         items: [
