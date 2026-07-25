@@ -1,6 +1,6 @@
 (
     home_planet: (
-        radius: 10.0,
+        radius: 15.0,
         orbit_distance: 4.5,
     ),
 
