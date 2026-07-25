@@ -23,6 +23,9 @@ pub struct GameUi {
     pub inactive_satellites: WidgetState,
     pub debris: WidgetState,
 
+    pub selected: WidgetState,
+    pub selected_deorbit: WidgetState,
+
     pub collision_risk: WidgetState,
 }
 
@@ -75,6 +78,9 @@ impl GameUi {
             active_satellites: WidgetState::new(),
             inactive_satellites: WidgetState::new(),
             debris: WidgetState::new(),
+
+            selected: WidgetState::new(),
+            selected_deorbit: WidgetState::new(),
 
             collision_risk: WidgetState::new(),
         };
@@ -201,5 +207,19 @@ impl GameUi {
         self.inactive_satellites.update(inactive, context);
         let debris = panel.cut_top(pixel_scale * 20.0);
         self.debris.update(debris, context);
+
+        // Selected object
+        panel.cut_top(pixel_scale * 50.0);
+        self.selected
+            .update(panel.cut_top(pixel_scale * 20.0), context);
+        self.selected_deorbit
+            .update(panel.cut_top(pixel_scale * 20.0), context);
+        self.selected_deorbit
+            .set_visibility(model.abilities.contains(&Ability::Deorbit));
+        if self.selected_deorbit.mouse_left.clicked
+            && let Some(target) = model.selected_object
+        {
+            actions.push(GameAction::Action(Action::Deorbit(target)));
+        }
     }
 }

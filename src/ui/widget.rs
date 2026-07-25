@@ -91,6 +91,7 @@ impl WidgetState {
             } else {
                 self.hovered_time = Some(0.0);
             }
+            *context.is_hovered.borrow_mut() = true;
         } else {
             self.hovered_time = None;
         }

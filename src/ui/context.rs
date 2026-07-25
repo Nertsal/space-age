@@ -90,6 +90,8 @@ pub struct UiContext {
     pub text_edit: TextEdit,
     // /// Active key modifiers.
     // pub mods: KeyModifiers,
+    // Whether any widget is currently hovered.
+    pub is_hovered: Rc<RefCell<bool>>,
     /// Whether the widget can use the cursor position to get focus.
     pub can_focus: Rc<RefCell<bool>>,
 
@@ -193,6 +195,7 @@ impl UiContext {
 
             text_edit: TextEdit::new(&context.geng),
             // mods: KeyModifiers::default(),
+            is_hovered: Rc::new(false.into()),
             can_focus: Rc::new(true.into()),
 
             total_focus: Rc::new(false.into()),
@@ -216,11 +219,16 @@ impl UiContext {
         }
     }
 
+    pub fn is_hovered(&self) -> bool {
+        *self.is_hovered.borrow()
+    }
+
     pub fn can_focus(&self) -> bool {
         *self.can_focus.borrow()
     }
 
     pub fn reset_focus(&self) {
+        *self.is_hovered.borrow_mut() = false;
         *self.can_focus.borrow_mut() = true;
         *self.total_focus.borrow_mut() = false;
     }

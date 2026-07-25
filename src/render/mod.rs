@@ -479,6 +479,7 @@ impl GameRender {
             );
         }
 
+        // Info
         self.util.draw_text_fit(
             format!("Active Satellites: {}", model.active_satellites()),
             ui.active_satellites.position,
@@ -504,6 +505,41 @@ impl GameRender {
                 camera,
                 framebuffer,
             );
+        }
+
+        if let Some(id) = model.selected_object {
+            // Selected object info
+            let name = match id {
+                InteractiveId::Satellite(id) => get!(model.planet.orbit.satellites, id, (&kind))
+                    .map_or("Satellite".into(), |kind| format!("Satellite {:?}", kind)),
+                InteractiveId::Debris(_) => "Debris".into(),
+            };
+            self.util.draw_text_fit(
+                name,
+                ui.selected.position,
+                font,
+                TextRenderOptions::new(ui.pixel_scale * 10.0),
+                camera,
+                framebuffer,
+            );
+
+            if ui.selected_deorbit.visible {
+                let color = if ui.selected_deorbit.mouse_left.pressed.is_some() {
+                    Color::GRAY
+                } else if ui.selected_deorbit.hovered {
+                    Color::try_from("#aaaaaa").unwrap()
+                } else {
+                    Color::try_from("#B61639").unwrap()
+                };
+                self.util.draw_text_fit(
+                    "Deorbit",
+                    ui.selected_deorbit.position,
+                    font,
+                    TextRenderOptions::new(ui.pixel_scale * 10.0).color(color),
+                    camera,
+                    framebuffer,
+                );
+            }
         }
 
         self.draw_ui_research(model, ui, framebuffer);

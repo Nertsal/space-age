@@ -7,6 +7,22 @@ impl Model {
         self.hovered_rotation += Angle::from_degrees(r32(15.0) * delta_time);
         self.selected_rotation -= Angle::from_degrees(r32(15.0) * delta_time);
 
+        // Update selection
+        if let Some(id) = self.selected_object {
+            let relevant = match id {
+                InteractiveId::Satellite(id) => {
+                    // TODO: better api for this in stecs
+                    get!(self.planet.orbit.satellites, id, (&position)).is_some()
+                }
+                InteractiveId::Debris(id) => {
+                    get!(self.planet.orbit.debris, id, (&position)).is_some()
+                }
+            };
+            if !relevant {
+                self.selected_object = None;
+            }
+        }
+
         // Theorycrafting
         // if auto_theory {
         //     self.theory_progress.change(delta_time);

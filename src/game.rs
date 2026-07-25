@@ -71,6 +71,10 @@ impl Game {
     }
 
     fn click(&mut self) {
+        if self.ui_context.is_hovered() {
+            return;
+        }
+
         self.model.select_hovered();
     }
 }
