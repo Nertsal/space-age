@@ -636,6 +636,7 @@ impl GameRender {
 
         let camera = &geng::PixelPerfectCamera;
         let font = &self.context.assets.fonts.default;
+        let sprites = &self.context.assets.sprites.ui;
 
         // Background
         let width = ui.pixel_scale * 4.0;
@@ -643,6 +644,7 @@ impl GameRender {
             .fill_quad_width(ui.research.position, width, Color::WHITE, framebuffer);
         self.ui
             .draw_outline(ui.research.position, width, Color::WHITE, framebuffer);
+
         // Title
         let title = ui
             .research
@@ -657,6 +659,24 @@ impl GameRender {
             camera,
             framebuffer,
         );
+
+        {
+            // Close button
+            let color = if ui.research_close.mouse_left.pressed.is_some() {
+                Color::GRAY
+            } else if ui.research_close.hovered {
+                Color::try_from("#aaaaaa").unwrap()
+            } else {
+                Color::WHITE
+            };
+            self.ui.draw_texture(
+                ui.research_close.position,
+                &sprites.close,
+                color,
+                1.0,
+                framebuffer,
+            );
+        }
 
         // Connections
         let connection_color = Color::try_from("#526985").unwrap();
@@ -714,7 +734,6 @@ impl GameRender {
                 ResearchState::Locked => color_locked,
             };
 
-            let sprites = &self.context.assets.sprites.ui;
             let texture = model
                 .get_research(item.id)
                 .map_or(&sprites.research.orbit_program, |res| {

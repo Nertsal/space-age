@@ -15,6 +15,7 @@ pub struct GameUi {
     pub actions: Vec<(WidgetState, GameAction)>,
 
     pub research: WidgetState,
+    pub research_close: WidgetState,
     pub research_camera: Camera2d,
     pub research_fov: SecondOrderState<vec2<f32>>,
     pub research_items: Vec<ResearchItemWidget>,
@@ -63,6 +64,7 @@ impl GameUi {
             ],
 
             research: WidgetState::new().hidden(),
+            research_close: WidgetState::new().with_sfx(WidgetSfxConfig::hover_left()),
             research_camera: Camera2d {
                 center: vec2::ZERO,
                 rotation: Angle::ZERO,
@@ -153,6 +155,15 @@ impl GameUi {
                 height: self.research_fov.current.y,
                 scale: 1.0,
             };
+
+            // Close button
+            let close = research
+                .extend_symmetric(-vec2(3.0, 3.0) * pixel_scale)
+                .align_aabb(vec2(10.0, 10.0) * pixel_scale, vec2(1.0, 1.0));
+            self.research_close.update(close, context);
+            if self.research_close.mouse_left.clicked {
+                self.research.hide();
+            }
 
             let mut bounds = Aabb2::ZERO;
             for item in &mut self.research_items {
