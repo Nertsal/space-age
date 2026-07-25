@@ -53,7 +53,8 @@ impl Model {
 
         let mut rng = thread_rng();
 
-        let orbit = &mut self.planet.orbit;
+        let planet = &mut self.planet;
+        let orbit = &mut planet.orbit;
 
         let target = SpherePos {
             distance: orbit.distance,
@@ -65,13 +66,13 @@ impl Model {
             azimuth: random_angle(&mut rng),
         };
 
-        let planet_pos = self.planet.position.to_cartesian();
+        let planet_pos = planet.position.to_cartesian();
         let target_pos = target.to_cartesian(planet_pos);
 
         let target_offset = target_pos.xy() - planet_pos;
         let launch_dir = target_offset.normalize_or_zero();
 
-        let start_pos = (planet_pos + launch_dir * self.planet.radius).extend(Coord::ZERO);
+        let start_pos = (planet_pos + launch_dir * planet.radius).extend(Coord::ZERO);
 
         let payload = Satellite {
             kind,
@@ -85,7 +86,7 @@ impl Model {
             deorbiting: false,
         };
 
-        orbit.rockets.insert(Rocket {
+        planet.rockets.insert(Rocket {
             position: start_pos,
             payload,
             countdown_time: self.real_time,

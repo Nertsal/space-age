@@ -25,6 +25,7 @@ pub struct Model {
     pub science: Science,
     pub science_counter_pos: vec2<Coord>,
     pub planet: Planet,
+
     pub particles: StructOf<Arena<Particle>>,
     pub queued_particles: Vec<SpawnParticles>,
     pub texticles: StructOf<Arena<FloatingText>>,
@@ -119,6 +120,7 @@ pub enum Ability {
     DeorbitAuto,
     RadarDebris,
     CollisionAnalysis,
+    DeployAuto,
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -149,7 +151,10 @@ pub struct Planet {
     /// Position of the planet in the solar system.
     pub position: PolarPos,
     pub radius: Coord,
+
+    pub rockets: StructOf<Arena<Rocket>>,
     pub orbit: Orbit,
+    // pub queued_launches: Vec<Rocket>,
 }
 
 impl Planet {
@@ -160,6 +165,8 @@ impl Planet {
                 angle: Angle::ZERO,
             },
             radius: config.radius,
+
+            rockets: default(),
             orbit: Orbit::new(config.radius + config.orbit_distance),
         }
     }
@@ -169,7 +176,6 @@ pub const ORBIT_OBJECT_TRAIL_LEN: usize = 60;
 
 pub struct Orbit {
     pub distance: Coord,
-    pub rockets: StructOf<Arena<Rocket>>,
     pub satellites: StructOf<Arena<Satellite>>,
     pub debris: StructOf<Arena<Debris>>,
 }
@@ -180,7 +186,6 @@ impl Orbit {
             distance,
             satellites: default(),
             debris: default(),
-            rockets: default(),
         }
     }
 }

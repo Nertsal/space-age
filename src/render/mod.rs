@@ -272,7 +272,7 @@ impl GameRender {
 
         // rockets that havent launched yet draw behind the clouds
         for (position, payload, countdown) in
-            query!(planet.orbit.rockets, (&position, &payload, &countdown))
+            query!(planet.rockets, (&position, &payload, &countdown))
         {
             if *countdown > 0 {
                 self.draw_rocket(model, planet, *position, payload, *countdown, framebuffer);
@@ -373,7 +373,7 @@ impl GameRender {
 
         // launched rockets
         for (position, payload, countdown) in
-            query!(planet.orbit.rockets, (&position, &payload, &countdown))
+            query!(planet.rockets, (&position, &payload, &countdown))
         {
             if *countdown == 0 {
                 self.draw_rocket(model, planet, *position, payload, *countdown, framebuffer);

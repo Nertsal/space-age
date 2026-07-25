@@ -123,13 +123,12 @@ impl Model {
     pub fn update_rockets(&mut self, delta_time: Time) {
         let planet = &mut self.planet;
         let planet_position = planet.position.to_cartesian();
-        let orbit = &mut planet.orbit;
 
         let speed = r32(8.0);
         let mut reached_target = Vec::new();
 
         for (id, position, countdown_time, countdown, payload) in query!(
-            orbit.rockets,
+            planet.rockets,
             (
                 id,
                 &mut position,
@@ -185,8 +184,9 @@ impl Model {
             }
         }
 
+        let orbit = &mut planet.orbit;
         for id in reached_target {
-            if let Some(rocket) = orbit.rockets.remove(id) {
+            if let Some(rocket) = planet.rockets.remove(id) {
                 orbit.satellites.insert(rocket.payload);
             }
         }
