@@ -607,13 +607,15 @@ impl GameRender {
                 .find(|item| item.id == id)
         {
             let position = position.top_right() + vec2(10.0, 10.0) * ui.pixel_scale;
-            let mut position = Aabb2::point(position)
+            let position = Aabb2::point(position)
                 .extend_right(120.0 * ui.pixel_scale)
                 .extend_down(75.0 * ui.pixel_scale);
-            let bounds = ui.research.position;
-            if position.min.y < bounds.min.y {
-                position = position.translate(vec2(0.0, bounds.min.y - position.min.y));
-            }
+
+            // Limit the window within the bounds
+            // let bounds = ui.research.position;
+            // if position.min.y < bounds.min.y {
+            //     position = position.translate(vec2(0.0, bounds.min.y - position.min.y));
+            // }
 
             // Boundary
             let width = ui.pixel_scale * 4.0;
@@ -628,10 +630,11 @@ impl GameRender {
                 .color(Color::try_from("#F5F5F5").unwrap())
                 .align(vec2(0.0, 0.5));
 
-            let mut position = position.extend_uniform(-8.0 * ui.pixel_scale);
+            let mut position = position.extend_uniform(-4.0 * ui.pixel_scale);
             let name = position.cut_top(font_size);
             self.util
                 .draw_text_fit(&research.name, name, font, options, camera, framebuffer);
+            let mut position = position.extend_symmetric(-vec2(6.0, 1.0) * ui.pixel_scale);
 
             if !matches!(model.get_research_state(id), ResearchState::Researched) {
                 let cost = position.cut_top(font_size);

@@ -54,7 +54,7 @@ impl Game {
             ui: GameUi::new(&context),
         };
         if cheat {
-            game.model.science = 11340;
+            game.model.science = 1000000;
         }
         game
     }

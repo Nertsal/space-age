@@ -94,7 +94,7 @@ impl UiRender {
         // } else {
         //     (&self.context.assets.sprites.border, 4.0 * scale)
         // };
-        let (texture, real_width) = (&self.context.assets.sprites.border, 4.0 * scale);
+        let (texture, real_width) = (&self.context.assets.sprites.border, 2.0 * scale);
         self.util.draw_nine_slice(
             quad.extend_uniform(real_width - width),
             color,
