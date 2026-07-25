@@ -138,7 +138,7 @@ impl GameUi {
 
         // Research window
         if self.research.visible {
-            let research = screen.extend_uniform(-50.0 * pixel_scale);
+            let research = screen.extend_uniform(-40.0 * pixel_scale);
             self.research.update(research, context);
             self.research_fov.update(context.delta_time);
             self.research_camera.fov = Camera2dFov::Cover {

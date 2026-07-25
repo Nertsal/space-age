@@ -524,18 +524,10 @@ impl GameRender {
 
         // Background
         let width = ui.pixel_scale * 4.0;
-        self.ui.fill_quad_width(
-            ui.research.position,
-            width,
-            Color::try_from("#1E1B18").unwrap(),
-            framebuffer,
-        );
-        self.ui.draw_outline(
-            ui.research.position,
-            width,
-            Color::try_from("#0A2463").unwrap(),
-            framebuffer,
-        );
+        self.ui
+            .fill_quad_width(ui.research.position, width, Color::WHITE, framebuffer);
+        self.ui
+            .draw_outline(ui.research.position, width, Color::WHITE, framebuffer);
 
         // Connections
         let connection_color = Color::try_from("#526985").unwrap();
@@ -625,18 +617,10 @@ impl GameRender {
 
             // Boundary
             let width = ui.pixel_scale * 4.0;
-            self.ui.fill_quad_width(
-                position,
-                width,
-                Color::try_from("#1E1B18").unwrap(),
-                framebuffer,
-            );
-            self.ui.draw_outline(
-                position,
-                width,
-                Color::try_from("#0A2463").unwrap(),
-                framebuffer,
-            );
+            self.ui
+                .fill_quad_width(position, width, Color::WHITE, framebuffer);
+            self.ui
+                .draw_outline(position, width, Color::WHITE, framebuffer);
 
             // Info
             let font_size = 10.0 * ui.pixel_scale;
