@@ -417,6 +417,9 @@ impl GameRender {
             );
         }
 
+        // Hovered action tooltip
+        let mut hovered_action = None;
+
         {
             // Scientific Research
             let color = if ui.research_button.mouse_left.pressed.is_some() {
@@ -433,6 +436,13 @@ impl GameRender {
                 1.0,
                 framebuffer,
             );
+            if ui.research_button.hovered {
+                hovered_action = Some((
+                    ui.research_button.position,
+                    "Scientific Research",
+                    "The progress must be made",
+                ));
+            }
         }
 
         self.util.draw_text_fit(
@@ -491,6 +501,61 @@ impl GameRender {
                     framebuffer,
                 );
             }
+
+            if state.hovered
+                && let Some((title, description)) = match action {
+                    GameAction::Research(_) => None,
+                    GameAction::Action(action) => match action {
+                        Action::TheoreticResearch => Some((
+                            "Theoretical Research",
+                            "Advance progress by constructing new theories",
+                        )),
+                        Action::Launch(kind) => match kind {
+                            SatelliteKind::Basic => Some(("Basic Satellite", "")),
+                            SatelliteKind::Communication => Some(("Communications Satellite", "")),
+                            SatelliteKind::DebrisCleaner => Some(("Debris Cleaner Satellite", "")),
+                        },
+                        Action::Deorbit(_) => None,
+                    },
+                }
+            {
+                hovered_action = Some((state.position, title, description));
+            }
+        }
+
+        // Hovered action tip
+        if let Some((position, title, description)) = hovered_action {
+            let position = position.top_right() + vec2(20.0, 10.0) * ui.pixel_scale;
+            let position = Aabb2::point(position)
+                .extend_right(120.0 * ui.pixel_scale)
+                .extend_down(75.0 * ui.pixel_scale);
+
+            // Limit the window within the bounds
+            // let bounds = ui.research.position;
+            // if position.min.y < bounds.min.y {
+            //     position = position.translate(vec2(0.0, bounds.min.y - position.min.y));
+            // }
+
+            // Boundary
+            let width = ui.pixel_scale * 4.0;
+            self.ui
+                .fill_quad_width(position, width, Color::WHITE, framebuffer);
+            self.ui
+                .draw_outline(position, width, Color::WHITE, framebuffer);
+
+            // Info
+            let font_size = 10.0 * ui.pixel_scale;
+            let options = TextRenderOptions::new(font_size)
+                .color(Color::try_from("#F5F5F5").unwrap())
+                .align(vec2(0.0, 0.5));
+
+            let mut position = position.extend_uniform(-4.0 * ui.pixel_scale);
+            let name = position.cut_top(font_size);
+            self.util
+                .draw_text_fit(title, name, font, options, camera, framebuffer);
+            let position = position.extend_symmetric(-vec2(6.0, 1.0) * ui.pixel_scale);
+            self.util
+                .draw_text_wrap(description, position, font, options, camera, framebuffer);
         }
 
         // Info
