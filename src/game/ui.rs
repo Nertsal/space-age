@@ -38,7 +38,7 @@ impl GameUi {
         let mut ui = Self {
             pixel_scale: 1.0,
             screen: Aabb2::ZERO.extend_positive(vec2(1600.0, 900.0)),
-            research_button: WidgetState::new(),
+            research_button: WidgetState::new().with_sfx(WidgetSfxConfig::hover_left()),
             science: WidgetState::new(),
             actions: vec![
                 (

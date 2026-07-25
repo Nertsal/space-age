@@ -70,11 +70,11 @@ impl VolumeOptions {
     }
 
     pub fn music(&self) -> f32 {
-        self.master() * self.volume_music / 100.0
+        self.master() * self.volume_music
     }
 
     pub fn sfx(&self) -> f32 {
-        self.master() * self.volume_sfx / 100.0
+        self.master() * self.volume_sfx
     }
 }
 

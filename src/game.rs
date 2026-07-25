@@ -36,6 +36,7 @@ pub enum GameAction {
 impl Game {
     pub fn new(context: Context, cheat: bool) -> Self {
         log::info!("Game started!");
+        context.music.play(&context.assets.sounds.music, true);
         let mut game = Self {
             context: context.clone(),
             ui_context: UiContext::new(context.clone()),

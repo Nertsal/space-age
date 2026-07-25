@@ -68,6 +68,8 @@ pub struct Shaders {
 
 #[derive(geng::asset::Load)]
 pub struct Sounds {
+    pub music: Rc<geng::Sound>,
+
     pub ui_click: Rc<geng::Sound>,
     pub ui_hover: Rc<geng::Sound>,
 }
