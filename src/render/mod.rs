@@ -384,6 +384,7 @@ impl GameRender {
     pub fn draw_ui(&mut self, model: &Model, ui: &GameUi, framebuffer: &mut ugli::Framebuffer) {
         let camera = &geng::PixelPerfectCamera;
         let font = &self.context.assets.fonts.default;
+        let sprites = &self.context.assets.sprites.ui;
 
         if model.abilities.contains(&Ability::CollisionAnalysis) {
             // Collision risk
@@ -417,6 +418,7 @@ impl GameRender {
         }
 
         {
+            // Scientific Research
             let color = if ui.research_button.mouse_left.pressed.is_some() {
                 Color::GRAY
             } else if ui.research_button.hovered {
@@ -424,12 +426,11 @@ impl GameRender {
             } else {
                 Color::WHITE
             };
-            self.util.draw_text_fit(
-                "Scientific Research",
+            self.ui.draw_texture(
                 ui.research_button.position,
-                font,
-                TextRenderOptions::new(ui.pixel_scale * 10.0).color(color),
-                camera,
+                &sprites.scientific_research,
+                color,
+                1.0,
                 framebuffer,
             );
         }

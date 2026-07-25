@@ -112,12 +112,11 @@ impl GameUi {
         self.pixel_scale = pixel_scale;
         self.screen = screen;
 
-        let mut panel = screen
-            .align_aabb(vec2(screen.width() * 0.25, screen.height()), vec2(0.0, 0.5))
-            .extend_uniform(-pixel_scale * 20.0);
+        let panel = screen.extend_uniform(-pixel_scale * 20.0);
+        let mut panel = panel.align_aabb(vec2(pixel_scale * 48.0, panel.height()), vec2(0.0, 0.5));
 
         // Research
-        let research = panel.cut_top(pixel_scale * 20.0);
+        let research = panel.cut_top(pixel_scale * 48.0);
         self.research_button.update(research, context);
         if self.research_button.mouse_left.clicked {
             self.research.toggle_visibility();
@@ -144,7 +143,7 @@ impl GameUi {
 
         // Research window
         if self.research.visible {
-            let research = screen.extend_uniform(-40.0 * pixel_scale);
+            let research = screen.extend_symmetric(-vec2(120.0, 40.0) * pixel_scale);
             self.research.update(research, context);
             self.research_fov.update(context.delta_time);
             self.research_camera.fov = Camera2dFov::Cover {
