@@ -104,11 +104,23 @@ impl geng::State for Game {
             } => {
                 self.click();
             }
-            geng::Event::KeyPress { key: geng::Key::F } => {
-                if let Some(target) = self.model.selected_object {
-                    self.model.action(Action::Deorbit(target));
+            geng::Event::KeyPress { key } => match key {
+                geng::Key::Escape => {
+                    if self.ui.research.visible {
+                        self.ui.research.hide();
+                    } else if self.model.selected_object.take().is_some() {
+                    }
                 }
-            }
+                geng::Key::T => {
+                    self.ui.research.toggle_visibility();
+                }
+                geng::Key::F => {
+                    if let Some(target) = self.model.selected_object {
+                        self.model.action(Action::Deorbit(target));
+                    }
+                }
+                _ => {}
+            },
             _ => (),
         }
     }
