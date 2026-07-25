@@ -80,4 +80,6 @@ pub struct Sprites {
     pub fill: Rc<ugli::Texture>,
     #[load(options(filter = "ugli::Filter::Nearest"))]
     pub selected: Rc<ugli::Texture>,
+    #[load(options(filter = "ugli::Filter::Nearest"))]
+    pub rocket: Rc<ugli::Texture>,
 }

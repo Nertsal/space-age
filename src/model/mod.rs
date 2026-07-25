@@ -169,6 +169,7 @@ pub const ORBIT_OBJECT_TRAIL_LEN: usize = 60;
 
 pub struct Orbit {
     pub distance: Coord,
+    pub rockets: StructOf<Arena<Rocket>>,
     pub satellites: StructOf<Arena<Satellite>>,
     pub debris: StructOf<Arena<Debris>>,
 }
@@ -179,8 +180,19 @@ impl Orbit {
             distance,
             satellites: default(),
             debris: default(),
+            rockets: default(),
         }
     }
+}
+
+#[derive(SplitFields, Debug, Clone)]
+pub struct Rocket {
+    // animated in cartesian
+    pub position: vec3<Coord>,
+    pub payload: Satellite,
+    pub countdown_time: Time,
+    // counts down to 0 for launch
+    pub countdown: u32,
 }
 
 #[derive(SplitFields, Debug, Clone)]

@@ -54,21 +54,38 @@ impl Model {
         let mut rng = thread_rng();
 
         let orbit = &mut self.planet.orbit;
-        let position = SpherePos {
+
+        let target = SpherePos {
             distance: orbit.distance,
             polar: random_angle(&mut rng),
             azimuth: random_angle(&mut rng),
         };
-        orbit.satellites.insert(Satellite {
+
+        let planet_pos = self.planet.position.to_cartesian();
+        let target_pos = target.to_cartesian(planet_pos);
+
+        let target_offset = target_pos.xy() - planet_pos;
+        let launch_dir = target_offset.normalize_or_zero();
+
+        let start_pos = (planet_pos + launch_dir * self.planet.radius).extend(Coord::ZERO);
+
+        let payload = Satellite {
             kind,
-            position,
-            velocity: random_orbit_velocity(position, &mut rng),
+            position: target,
+            velocity: random_orbit_velocity(target, &mut rng),
             visual_radius: r32(0.3),
             radius: r32(0.15),
             trail: VecDeque::new(),
             science_timer: Bounded::new_max(config.interval),
             lifetime: Bounded::new_max(config.lifetime),
             deorbiting: false,
+        };
+
+        orbit.rockets.insert(Rocket {
+            position: start_pos,
+            payload,
+            countdown_time: self.real_time,
+            countdown: 5, //hardcoded
         });
     }
 

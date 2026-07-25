@@ -32,6 +32,7 @@ impl Model {
         self.movement(delta_time);
         self.update_satellites(delta_time);
         self.update_particles(delta_time);
+        self.update_rockets(delta_time);
     }
 
     fn planet_science_bonus(&self) -> R32 {
@@ -115,6 +116,54 @@ impl Model {
                 if distance - radius - target_radius < self.config.debris_cleaner_range {
                     *deorbiting = true;
                 }
+            }
+        }
+    }
+
+    pub fn update_rockets(&mut self, delta_time: Time) {
+        let planet = &mut self.planet;
+        let planet_position = planet.position.to_cartesian();
+        let orbit = &mut planet.orbit;
+
+        let speed = r32(8.0);
+        let mut reached_target = Vec::new();
+
+        for (id, position, countdown_time, countdown, payload) in query!(
+            orbit.rockets,
+            (
+                id,
+                &mut position,
+                &mut countdown_time,
+                &mut countdown,
+                &payload
+            )
+        ) {
+            // has not launched yet
+            if *countdown > 0 {
+                let elapsed = self.real_time - *countdown_time;
+                // countdown every 1 sec i guess
+                if elapsed > r32(1.0) {
+                    *countdown = countdown.saturating_sub(1);
+                    *countdown_time = self.real_time;
+                }
+                continue;
+            }
+
+            let target = payload.position.to_cartesian(planet_position);
+            let offset = target - *position;
+            let step = speed * delta_time;
+
+            if offset.len() <= step {
+                *position = target;
+                reached_target.push(id);
+            } else {
+                *position += offset.normalize_or_zero() * step;
+            }
+        }
+
+        for id in reached_target {
+            if let Some(rocket) = orbit.rockets.remove(id) {
+                orbit.satellites.insert(rocket.payload);
             }
         }
     }

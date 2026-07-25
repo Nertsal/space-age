@@ -181,14 +181,23 @@ impl GameRender {
         );
     }
 
-    fn draw_planet(&mut self, model: &Model, planet: &Planet, framebuffer: &mut ugli::Framebuffer) {
-        let camera = &model.camera;
-
-        // Planet
+    fn draw_planet_layer(
+        &self,
+        model: &Model,
+        planet: &Planet,
+        framebuffer: &mut ugli::Framebuffer,
+        layer: i32,
+    ) {
         let planet_position = planet.position.to_cartesian();
         let planet_color = Color::try_from("#1e5c58").unwrap();
         let planet_transform =
             mat3::translate(planet_position) * mat3::scale_uniform(planet.radius * r32(2.0));
+
+        let mut parameters = draw_parameters();
+        if layer == 1 {
+            parameters.depth_func = None;
+            parameters.write_depth = false;
+        }
 
         ugli::draw(
             framebuffer,
@@ -201,11 +210,77 @@ impl GameRender {
                     u_color: planet_color,
                     u_framebuffer_size: framebuffer.size().as_f32(),
                     u_time: model.real_time.as_f32(),
+                    u_layer: layer,
                 },
-                camera.uniforms(framebuffer.size().as_f32()),
+                model.camera.uniforms(framebuffer.size().as_f32()),
             ),
-            draw_parameters(),
+            parameters,
         );
+    }
+
+    fn draw_rocket(
+        &self,
+        model: &Model,
+        planet: &Planet,
+        position: vec3<Coord>,
+        payload: &Satellite,
+        countdown: u32,
+        framebuffer: &mut ugli::Framebuffer,
+    ) {
+        let planet_position = planet.position.to_cartesian();
+        let camera = &model.camera;
+        let rocket_texture = self.context.assets.sprites.rocket.as_ref();
+
+        if position.z < Coord::ZERO && (position.xy() - planet_position).len() < planet.radius {
+            return;
+        }
+
+        let direction = if countdown > 0 {
+            position.xy() - planet_position
+        } else {
+            let target = payload.position.to_cartesian(planet_position);
+            target.xy() - position.xy()
+        };
+
+        let angle =
+            (Angle::atan2(direction.y, direction.x) - Angle::from_degrees(r32(90.0))).as_f32();
+
+        let depth_scale = (Coord::ONE + position.z / planet.orbit.distance / r32(2.0))
+            .clamp(Coord::ZERO, r32(2.0));
+        let sprite_size = rocket_texture.size().as_f32() * 0.1 * depth_scale.as_f32();
+
+        let quad = draw2d::TexturedQuad::colored(
+            Aabb2::ZERO.extend_symmetric(sprite_size / 2.0),
+            rocket_texture,
+            Color::WHITE,
+        )
+        .transform(mat3::translate(position.xy().as_f32()) * mat3::rotate(angle));
+
+        self.context
+            .geng
+            .draw2d()
+            .draw2d(framebuffer, camera, &quad);
+    }
+
+    fn draw_planet(&mut self, model: &Model, planet: &Planet, framebuffer: &mut ugli::Framebuffer) {
+        let camera = &model.camera;
+
+        let planet_position = planet.position.to_cartesian();
+
+        //planet base layer
+        self.draw_planet_layer(model, planet, framebuffer, 0);
+
+        // rockets that havent launched yet draw behind the clouds
+        for (position, payload, countdown) in
+            query!(planet.orbit.rockets, (&position, &payload, &countdown))
+        {
+            if *countdown > 0 {
+                self.draw_rocket(model, planet, *position, payload, *countdown, framebuffer);
+            }
+        }
+
+        // clouds
+        self.draw_planet_layer(model, planet, framebuffer, 1);
 
         // Orbit
         let draw_object = |pos: &SpherePos,
@@ -294,6 +369,15 @@ impl GameRender {
             query!(planet.orbit.debris, (&position, &visual_radius, &trail))
         {
             draw_object(pos, radius, trail, debris_color, framebuffer);
+        }
+
+        // launched rockets
+        for (position, payload, countdown) in
+            query!(planet.orbit.rockets, (&position, &payload, &countdown))
+        {
+            if *countdown == 0 {
+                self.draw_rocket(model, planet, *position, payload, *countdown, framebuffer);
+            }
         }
     }
 
