@@ -28,6 +28,8 @@ struct Opts {
 
     #[clap(long)]
     cheat: bool,
+    #[clap(long)]
+    volume: Option<f32>,
 
     #[clap(flatten)]
     geng: geng::CliArgs,
@@ -111,6 +113,11 @@ async fn geng_main(geng: Geng, opts: Opts) -> anyhow::Result<()> {
         .ok_or_else(|| anyhow::Error::msg("loading screen failed"))??;
 
     // Run game
+    if let Some(volume) = opts.volume {
+        let mut options = context.get_options();
+        options.volume.volume_master = volume.clamp(0.0, 1.0);
+        context.set_options(options);
+    }
     let state = game::Game::new(context, opts.cheat);
     geng.run_state(state).await;
 

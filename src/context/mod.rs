@@ -21,7 +21,8 @@ pub struct Context {
 impl Context {
     pub fn new(geng: Geng, assets: Rc<Assets>) -> Self {
         let options = Rc::new(RefCell::new(
-            preferences::load(crate::OPTIONS_STORAGE).unwrap_or_default(),
+            // preferences::load(crate::OPTIONS_STORAGE).unwrap_or_default(),
+            default(),
         ));
         Self {
             music: Rc::new(MusicManager::new(geng.clone())),
@@ -54,7 +55,7 @@ impl Context {
 
         self.music.set_volume(options.volume.music());
 
-        preferences::save(crate::OPTIONS_STORAGE, &options);
+        // preferences::save(crate::OPTIONS_STORAGE, &options);
         *old = options;
     }
 }
