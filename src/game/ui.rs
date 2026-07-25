@@ -177,7 +177,9 @@ impl GameUi {
                 (-bounds.min.x).max(bounds.max.x),
                 (-bounds.min.y).max(bounds.max.y),
             );
-            self.research_fov.target = view_area * 2.0 + vec2::splat(2.0);
+            self.research_fov.target =
+                view_area * 2.0 * (screen.size() / self.research.position.size())
+                    + vec2::splat(1.5);
         }
 
         // Top panel
