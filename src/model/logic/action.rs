@@ -10,7 +10,9 @@ impl Model {
             Action::TheoreticResearch => {
                 self.theory_progress += self.config.theoretic_research.clicks.recip();
             }
-            Action::Launch(ty) => self.launch_satellite(true, ty),
+            Action::Launch(ty) => {
+                self.launch_satellite(true, ty);
+            }
             Action::Deorbit(target) => self.deorbit(target),
         }
     }
@@ -31,14 +33,14 @@ impl Model {
         }
     }
 
-    fn launch_satellite(&mut self, pay_cost: bool, kind: SatelliteKind) {
+    pub fn launch_satellite(&mut self, pay_cost: bool, kind: SatelliteKind) -> bool {
         let Some(config) = self.config.satellites.get(&kind) else {
             log::error!("Satellite kind missing config: {:?}", kind);
-            return;
+            return false;
         };
         if pay_cost {
             if self.science < config.launch_cost {
-                return;
+                return false;
             }
             self.science -= config.launch_cost;
             self.texticles.insert(FloatingText {
@@ -92,6 +94,8 @@ impl Model {
             countdown_time: self.real_time,
             countdown: 5, //hardcoded
         });
+
+        true
     }
 
     pub fn research(&mut self, id: u64) {

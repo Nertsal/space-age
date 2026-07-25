@@ -152,9 +152,15 @@ pub struct Planet {
     pub position: PolarPos,
     pub radius: Coord,
 
+    pub queued_launches: Vec<QueuedLaunch>,
     pub rockets: StructOf<Arena<Rocket>>,
     pub orbit: Orbit,
-    // pub queued_launches: Vec<Rocket>,
+}
+
+#[derive(Debug, Clone)]
+pub struct QueuedLaunch {
+    pub payment: bool,
+    pub kind: SatelliteKind,
 }
 
 impl Planet {
@@ -166,6 +172,7 @@ impl Planet {
             },
             radius: config.radius,
 
+            queued_launches: Vec::new(),
             rockets: default(),
             orbit: Orbit::new(config.radius + config.orbit_distance),
         }

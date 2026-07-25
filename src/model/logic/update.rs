@@ -65,6 +65,12 @@ impl Model {
             if lifetime.is_min() {
                 // This satellite is non-functioning
                 if self.abilities.contains(&Ability::DeorbitAuto) {
+                    if !*deorbiting && self.abilities.contains(&Ability::DeployAuto) {
+                        planet.queued_launches.push(QueuedLaunch {
+                            payment: true,
+                            kind: *kind,
+                        });
+                    }
                     *deorbiting = true;
                 }
                 continue;
@@ -121,6 +127,13 @@ impl Model {
     }
 
     pub fn update_rockets(&mut self, delta_time: Time) {
+        // Setup queued rockets
+        for launch in std::mem::take(&mut self.planet.queued_launches) {
+            if !self.launch_satellite(launch.payment, launch.kind) {
+                self.planet.queued_launches.push(launch);
+            }
+        }
+
         let planet = &mut self.planet;
         let planet_position = planet.position.to_cartesian();
 
