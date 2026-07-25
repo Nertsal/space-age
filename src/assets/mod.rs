@@ -76,12 +76,18 @@ pub struct Sounds {
 
 #[derive(geng::asset::Load)]
 pub struct Sprites {
-    #[load(options(filter = "ugli::Filter::Nearest"))]
-    pub border: Rc<ugli::Texture>,
-    #[load(options(filter = "ugli::Filter::Nearest"))]
-    pub fill: Rc<ugli::Texture>,
+    pub ui: SpritesUi,
+
     #[load(options(filter = "ugli::Filter::Nearest"))]
     pub selected: Rc<ugli::Texture>,
     #[load(options(filter = "ugli::Filter::Nearest"))]
     pub rocket: Rc<ugli::Texture>,
+}
+
+#[derive(geng::asset::Load)]
+pub struct SpritesUi {
+    #[load(options(filter = "ugli::Filter::Nearest"))]
+    pub border: Rc<ugli::Texture>,
+    #[load(options(filter = "ugli::Filter::Nearest"))]
+    pub fill: Rc<ugli::Texture>,
 }
