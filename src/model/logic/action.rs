@@ -57,7 +57,11 @@ impl Model {
 
         let target = SpherePos {
             distance: orbit.distance,
-            polar: random_angle(&mut rng),
+            polar: {
+                Angle::from_radians(r32(
+                    rng.gen_range(-std::f32::consts::FRAC_PI_2..=std::f32::consts::FRAC_PI_2)
+                ))
+            },
             azimuth: random_angle(&mut rng),
         };
 
