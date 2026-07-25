@@ -122,6 +122,8 @@ impl GameUi {
             self.research.toggle_visibility();
         }
 
+        panel.cut_top(pixel_scale * 20.0);
+
         // Science
         let science = panel.cut_top(pixel_scale * 20.0);
         self.science.update(science, context);
@@ -129,8 +131,8 @@ impl GameUi {
         // Actions
         let rows = panel
             .clone()
-            .cut_top(25.0 * pixel_scale)
-            .stack(vec2(0.0, -25.0 * pixel_scale), self.actions.len());
+            .cut_top(48.0 * pixel_scale)
+            .stack(vec2(0.0, -48.0 * pixel_scale), self.actions.len());
         for ((state, action), row) in itertools::izip![&mut self.actions, rows] {
             if let GameAction::Action(action) = action {
                 state.set_visibility(model.abilities.contains(&action.ability()));

@@ -463,21 +463,34 @@ impl GameRender {
             {
                 let t = model.theory_progress.as_f32().clamp(0.0, 1.0);
                 self.util.draw_quad(
-                    state.position.with_width(state.position.width() * t, 0.0),
+                    state.position.with_height(state.position.height() * t, 0.0),
                     Color::try_from("#333333").unwrap(),
                     camera,
                     framebuffer,
                 );
             }
 
-            self.util.draw_text_fit(
-                format!("{:?}", action),
-                state.position,
-                font,
-                TextRenderOptions::new(ui.pixel_scale * 10.0).color(color),
-                camera,
-                framebuffer,
-            );
+            let texture = match action {
+                GameAction::Research(_) => None,
+                GameAction::Action(action) => match action {
+                    Action::TheoreticResearch => Some(&sprites.theoretic_research),
+                    Action::Launch(kind) => None,
+                    Action::Deorbit(_) => None,
+                },
+            };
+            if let Some(texture) = texture {
+                self.ui
+                    .draw_texture(state.position, texture, color, 1.0, framebuffer);
+            } else {
+                self.util.draw_text_fit(
+                    format!("{:?}", action),
+                    state.position,
+                    font,
+                    TextRenderOptions::new(ui.pixel_scale * 10.0).color(color),
+                    camera,
+                    framebuffer,
+                );
+            }
         }
 
         // Info
