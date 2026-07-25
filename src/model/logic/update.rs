@@ -31,8 +31,8 @@ impl Model {
 
         self.movement(delta_time);
         self.update_satellites(delta_time);
-        self.update_particles(delta_time);
         self.update_rockets(delta_time);
+        self.update_particles(delta_time);
     }
 
     fn planet_science_bonus(&self) -> R32 {
@@ -157,7 +157,31 @@ impl Model {
                 *position = target;
                 reached_target.push(id);
             } else {
-                *position += offset.normalize_or_zero() * step;
+                let direction = offset.normalize_or_zero();
+                *position += direction * step;
+
+                // Trail particles
+                let options = SpawnParticles {
+                    density: r32(1.0),
+                    distribution: ParticleDistribution::Circle {
+                        center: position.xy() - direction.xy() * r32(0.1),
+                        radius: r32(0.3),
+                    },
+                    z: position.z - r32(0.01),
+                    color: Color::try_from("#ADB3C2aa").unwrap(),
+                    velocity: -direction.xy() * step * r32(0.5),
+                    ..default()
+                };
+                self.queued_particles.extend([
+                    SpawnParticles {
+                        color: Color::try_from("#F45866aa").unwrap(),
+                        ..options.clone()
+                    },
+                    SpawnParticles {
+                        color: Color::try_from("#F57932aa").unwrap(),
+                        ..options
+                    },
+                ]);
             }
         }
 

@@ -188,7 +188,7 @@ pub fn random_orbit_velocity(position: SpherePos, rng: &mut impl Rng) -> SphereV
 
     let axis = (perp_a * a + perp_b * b).normalize_or_zero();
 
-    let speed = r32(rng.gen_range(0.5..0.7));
+    let speed = r32(rng.gen_range(0.3..0.4));
     SphereVelocity {
         speed: Angle::from_radians(speed),
         axis,
