@@ -176,7 +176,9 @@ impl Model {
                             visual_radius: satellite.visual_radius / r32(2.0),
                             radius: satellite.radius / r32(4.0),
                             trail: trail.take().unwrap_or_default(),
-                            deorbiting: false,
+                            deorbiting: rng.gen_bool(
+                                self.config.collision_debris_deorbit_chance.as_f32().into(),
+                            ),
                         });
                     }
                 }
