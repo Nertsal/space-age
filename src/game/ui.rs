@@ -25,6 +25,7 @@ pub struct GameUi {
     pub debris: WidgetState,
 
     pub selected: WidgetState,
+    pub selected_lifetime: WidgetState,
     pub selected_deorbit: WidgetState,
 
     pub collision_risk: WidgetState,
@@ -82,6 +83,7 @@ impl GameUi {
             debris: WidgetState::new(),
 
             selected: WidgetState::new(),
+            selected_lifetime: WidgetState::new(),
             selected_deorbit: WidgetState::new(),
 
             collision_risk: WidgetState::new(),
@@ -224,6 +226,10 @@ impl GameUi {
         panel.cut_top(pixel_scale * 50.0);
         self.selected
             .update(panel.cut_top(pixel_scale * 20.0), context);
+        if let Some(InteractiveId::Satellite(_)) = model.selected_object {
+            self.selected_lifetime
+                .update(panel.cut_top(pixel_scale * 20.0), context);
+        }
         self.selected_deorbit
             .update(panel.cut_top(pixel_scale * 20.0), context);
         self.selected_deorbit

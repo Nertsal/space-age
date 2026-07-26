@@ -601,6 +601,19 @@ impl GameRender {
                 camera,
                 framebuffer,
             );
+            if let InteractiveId::Satellite(id) = id
+                && let Some(lifetime) = get!(model.planet.orbit.satellites, id, (&lifetime))
+            {
+                let lifetime = lifetime.value().as_f32().ceil() as i64;
+                self.util.draw_text_fit(
+                    format!("Lifetime: {}", lifetime),
+                    ui.selected_lifetime.position,
+                    font,
+                    TextRenderOptions::new(ui.pixel_scale * 10.0),
+                    camera,
+                    framebuffer,
+                );
+            }
 
             if ui.selected_deorbit.visible {
                 let color = if ui.selected_deorbit.mouse_left.pressed.is_some() {
