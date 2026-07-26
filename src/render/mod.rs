@@ -443,8 +443,8 @@ impl GameRender {
             if ui.research_button.hovered {
                 hovered_action = Some((
                     ui.research_button.position,
-                    "Scientific Research",
-                    "The progress must be made",
+                    "Scientific Research".into(),
+                    "The progress must be made".into(),
                 ));
             }
 
@@ -530,14 +530,14 @@ impl GameRender {
                     GameAction::Research(_) => None,
                     GameAction::Action(action) => match action {
                         Action::TheoreticResearch => Some((
-                            "Theoretical Research",
-                            "Advance progress by constructing new theories",
+                            "Theoretical Research".into(),
+                            "Advance progress by constructing new theories".into(),
                         )),
-                        Action::Launch(kind) => match kind {
-                            SatelliteKind::Basic => Some(("Basic Satellite", "")),
-                            SatelliteKind::Communication => Some(("Communications Satellite", "")),
-                            SatelliteKind::DebrisCleaner => Some(("Debris Cleaner Satellite", "")),
-                        },
+                        Action::Launch(kind) => model
+                            .config
+                            .satellites
+                            .get(kind)
+                            .map(|config| (config.name.clone(), config.description.clone())),
                         Action::Deorbit(_) => None,
                     },
                 }

@@ -12,6 +12,8 @@
     ),
     satellites: {
         Basic: (
+            name: "Basic",
+            description: "Basic",
             launch_cost: 30,
             // Science gains from active satellites
             science: 5,
@@ -19,12 +21,16 @@
             lifetime: 61,
         ),
         Communication: (
+            name: "Communications",
+            description: "Basic",
             launch_cost: 100,
             science: 0,
             interval: 1,
             lifetime: 120,
         ),
         DebrisCleaner: (
+            name: "Debris Cleaner",
+            description: "Basic",
             launch_cost: 500,
             science: 0,
             interval: 1,
