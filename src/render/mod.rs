@@ -438,12 +438,12 @@ impl GameRender {
         {
             // Collision risk
             let mut risk = ui.collision_risk.position;
-            let left = risk.split_left(0.65);
+            let title = risk.split_top(0.5);
             self.util.draw_text_fit(
-                "Collision Risk: ",
-                left,
+                "Collision Risk",
+                title,
                 font,
-                TextRenderOptions::new(ui.pixel_scale * 15.0).align(vec2(1.0, 0.0)),
+                TextRenderOptions::new(ui.pixel_scale * 15.0),
                 camera,
                 framebuffer,
             );
@@ -455,12 +455,10 @@ impl GameRender {
                 CollisionRisk::Severe => Color::try_from("#B61639").unwrap(),
             };
             self.util.draw_text_fit(
-                format!("  {:?}", collision_risk),
+                format!("{:?}", collision_risk),
                 risk,
                 font,
-                TextRenderOptions::new(ui.pixel_scale * 15.0)
-                    .align(vec2(0.0, 0.0))
-                    .color(color),
+                TextRenderOptions::new(ui.pixel_scale * 15.0).color(color),
                 camera,
                 framebuffer,
             );

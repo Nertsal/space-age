@@ -206,8 +206,8 @@ impl GameUi {
 
         // Top panel
         let collision_risk = screen
-            .align_aabb(vec2(150.0, 20.0) * pixel_scale, vec2(0.5, 1.0))
-            .translate(vec2(0.0, -10.0) * pixel_scale);
+            .align_aabb(vec2(150.0, 30.0) * pixel_scale, vec2(0.5, 1.0))
+            .translate(vec2(0.0, -15.0) * pixel_scale);
         self.collision_risk.update(collision_risk, context);
 
         // Right panel

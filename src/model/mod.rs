@@ -58,7 +58,7 @@ impl Model {
             config: config.clone(),
             real_time: Time::ZERO,
             camera: Camera2d {
-                center: vec2::ZERO,
+                center: vec2(0.0, 2.0),
                 rotation: Angle::ZERO,
                 fov: Camera2dFov::Cover {
                     width: 50.0,
