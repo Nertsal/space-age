@@ -212,24 +212,26 @@ impl GameUi {
 
         // Right panel
         let mut panel = screen
-            .align_aabb(vec2(screen.width() * 0.25, screen.height()), vec2(1.0, 0.5))
+            .align_aabb(
+                vec2(screen.width() * 0.25, screen.height() * 0.7),
+                vec2(1.0, 0.5),
+            )
             .extend_uniform(-pixel_scale * 20.0);
-        panel.cut_top(pixel_scale * 50.0);
 
         self.info.update(
             panel
-                .extend_uniform(pixel_scale * 10.0)
-                .extend_up(pixel_scale * 15.0),
+                .extend_uniform(pixel_scale * 12.0)
+                .extend_up(pixel_scale * 5.0),
             context,
         );
 
         // Radar
-        let active = panel.cut_top(pixel_scale * 20.0);
-        self.active_satellites.update(active, context);
-        let inactive = panel.cut_top(pixel_scale * 20.0);
-        self.inactive_satellites.update(inactive, context);
-        let debris = panel.cut_top(pixel_scale * 20.0);
-        self.debris.update(debris, context);
+        self.active_satellites
+            .update(panel.cut_top(pixel_scale * 20.0), context);
+        self.inactive_satellites
+            .update(panel.cut_top(pixel_scale * 20.0), context);
+        self.debris
+            .update(panel.cut_top(pixel_scale * 20.0), context);
 
         // Selected object
         panel.cut_top(pixel_scale * 50.0);

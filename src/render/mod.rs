@@ -671,7 +671,14 @@ impl GameRender {
             // Selected object info
             let name = match id {
                 InteractiveId::Satellite(id) => get!(model.planet.orbit.satellites, id, (&kind))
-                    .map_or("Satellite".into(), |kind| format!("Satellite {:?}", kind)),
+                    .and_then(|kind| {
+                        model
+                            .config
+                            .satellites
+                            .get(kind)
+                            .map(|config| config.name.clone())
+                    })
+                    .unwrap_or("Satellite".into()),
                 InteractiveId::Debris(_) => "Debris".into(),
             };
             self.util.draw_text_fit(
