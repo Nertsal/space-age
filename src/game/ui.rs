@@ -118,7 +118,7 @@ impl GameUi {
         self.pixel_scale = pixel_scale;
         self.screen = screen;
 
-        let panel = screen.extend_uniform(-pixel_scale * 20.0);
+        let panel = screen.extend_symmetric(-vec2(50.0, 40.0) * pixel_scale);
         let mut panel = panel.align_aabb(vec2(pixel_scale * 48.0, panel.height()), vec2(0.0, 0.5));
 
         // Research
