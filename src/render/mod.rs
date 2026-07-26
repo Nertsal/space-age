@@ -687,7 +687,11 @@ impl GameRender {
             {
                 let lifetime = lifetime.value().as_f32().ceil() as i64;
                 self.util.draw_text_fit(
-                    format!("Lifetime: {}", lifetime),
+                    if lifetime > 0 {
+                        format!("Lifetime: {}", lifetime)
+                    } else {
+                        "Dysfunctional".into()
+                    },
                     ui.selected_lifetime.position,
                     font,
                     TextRenderOptions::new(ui.pixel_scale * 10.0),
