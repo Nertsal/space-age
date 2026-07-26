@@ -126,6 +126,9 @@ impl Model {
 
         self.researched.insert(id);
         self.apply_effect(research.effect.clone());
+        self.context
+            .sfx
+            .play(&self.context.assets.sounds.research_complete);
     }
 
     pub fn apply_effect(&mut self, effect: Research) {
