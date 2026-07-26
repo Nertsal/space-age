@@ -9,7 +9,11 @@ impl Model {
         match action {
             Action::TheoreticResearch => {
                 let sfx = &self.context.assets.sounds.research;
-                if let Some(sfx) = sfx.get(self.theory_clicks % sfx.len()) {
+                let mut i = self.theory_clicks % (sfx.len() * 2 - 2);
+                if i >= sfx.len() {
+                    i = sfx.len() * 2 - 2 - i;
+                }
+                if let Some(sfx) = sfx.get(i) {
                     self.context.sfx.play(sfx);
                 }
 
