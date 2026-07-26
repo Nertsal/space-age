@@ -82,7 +82,7 @@ impl Default for VolumeOptions {
     fn default() -> Self {
         Self {
             volume_master: 0.5,
-            volume_music: 1.0,
+            volume_music: 0.5,
             volume_sfx: 1.0,
         }
     }

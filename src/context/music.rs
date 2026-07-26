@@ -17,11 +17,11 @@ struct MusicManagerImpl {
 }
 
 impl MusicManager {
-    pub fn new(geng: Geng) -> Self {
+    pub fn new(geng: Geng, volume: f32) -> Self {
         Self {
             inner: RefCell::new(MusicManagerImpl {
                 geng,
-                volume: SecondOrderState::new(3.0, 1.0, 0.0, 0.5),
+                volume: SecondOrderState::new(3.0, 1.0, 0.0, volume),
                 playing: None,
             }),
         }

@@ -69,13 +69,17 @@ impl WidgetState {
 
             let context = &context.context;
             if self.mouse_left.clicked && self.sfx_config.left_click {
-                context.sfx.play(&context.assets.sounds.ui_click);
+                context
+                    .sfx
+                    .play_random_speed(&context.assets.sounds.ui_click, 1.0);
             }
             if self.mouse_right.clicked && self.sfx_config.right_click {
                 context.sfx.play(&context.assets.sounds.ui_click);
             }
             if !was_hovered && self.hovered && self.sfx_config.hover {
-                context.sfx.play(&context.assets.sounds.ui_hover);
+                context
+                    .sfx
+                    .play_random_speed(&context.assets.sounds.ui_hover, 1.0);
             }
         } else {
             self.mouse_left.just_released = self.mouse_left.pressed.is_some();

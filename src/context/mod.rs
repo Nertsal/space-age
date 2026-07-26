@@ -20,12 +20,12 @@ pub struct Context {
 
 impl Context {
     pub fn new(geng: Geng, assets: Rc<Assets>) -> Self {
-        let options = Rc::new(RefCell::new(
-            // preferences::load(crate::OPTIONS_STORAGE).unwrap_or_default(),
-            default(),
-        ));
+        // preferences::load(crate::OPTIONS_STORAGE).unwrap_or_default(),
+        let options: Options = default();
+        let music = Rc::new(MusicManager::new(geng.clone(), options.volume.music()));
+        let options = Rc::new(RefCell::new(options));
         Self {
-            music: Rc::new(MusicManager::new(geng.clone())),
+            music,
             sfx: Rc::new(SfxManager::new(geng.clone(), options.clone())),
             geng,
             assets,
