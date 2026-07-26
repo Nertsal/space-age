@@ -301,6 +301,7 @@ impl GameRender {
                            radius: Coord,
                            trail: &VecDeque<SpherePos>,
                            color: Color,
+                           texture: Option<&ugli::Texture>,
                            framebuffer: &mut ugli::Framebuffer<'_>|
          -> Option<Coord> {
             let pos = pos.to_cartesian(planet_position);
@@ -335,13 +336,19 @@ impl GameRender {
             }
 
             // Object
-            self.context.geng.draw2d().circle(
-                framebuffer,
-                camera,
-                pos.xy().as_f32(),
-                (radius * scale).as_f32(),
-                color,
-            );
+            let pos = pos.xy().as_f32();
+            let radius = (radius * scale).as_f32();
+            if let Some(texture) = texture {
+                geng_utils::texture::DrawTexture::new(texture)
+                    .fit(Aabb2::point(pos).extend_uniform(radius), vec2(0.5, 0.5))
+                    .colored(color)
+                    .draw(camera, &self.context.geng, framebuffer);
+            } else {
+                self.context
+                    .geng
+                    .draw2d()
+                    .circle(framebuffer, camera, pos, radius, color);
+            }
 
             Some(scale)
         };
@@ -362,11 +369,18 @@ impl GameRender {
             )
         ) {
             let color = satellite_color(kind);
-            let Some(scale) = draw_object(pos, radius, trail, color, framebuffer) else {
+            let Some(scale) = draw_object(
+                pos,
+                radius,
+                trail,
+                color,
+                Some(&self.context.assets.sprites.satellite),
+                framebuffer,
+            ) else {
                 continue;
             };
             let blink_pos = pos.to_cartesian(planet_position).xy()
-                + vec2::splat(r32(std::f32::consts::FRAC_1_SQRT_2)) * r32(0.8) * radius * scale;
+                + vec2(0.25, 0.5).as_r32() * r32(0.8) * radius * scale;
             let blink_color = if lifetime.is_above_min() {
                 if science_timer.value() < r32(0.5) {
                     satellite_science_color
@@ -387,7 +401,7 @@ impl GameRender {
         for (pos, &radius, trail) in
             query!(planet.orbit.debris, (&position, &visual_radius, &trail))
         {
-            draw_object(pos, radius, trail, debris_color, framebuffer);
+            draw_object(pos, radius, trail, debris_color, None, framebuffer);
         }
 
         // launched rockets
