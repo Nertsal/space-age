@@ -189,8 +189,8 @@ impl Model {
 pub fn random_orbit_velocity(position: SpherePos, rng: &mut impl Rng) -> SphereVelocity {
     // Find an axis perpendicular to the position to define the orbit
     let position = position.to_cartesian(vec2::ZERO);
-    let perp_a = vec3(position.y, -position.x, Coord::ZERO);
-    let perp_b = vec3(position.z, Coord::ZERO, -position.x);
+    let perp_a = vec3(position.y, -position.x, Coord::ZERO).normalize_or_zero();
+    let perp_b = vec3(position.z, Coord::ZERO, -position.x).normalize_or_zero();
 
     let a = r32(rng.gen_range(-1.0..=1.0));
     let b = r32(rng.gen_range(-1.0..=1.0));
