@@ -82,6 +82,8 @@ pub struct Sprites {
     pub selected: Rc<ugli::Texture>,
     #[load(options(filter = "ugli::Filter::Nearest"))]
     pub rocket: Rc<ugli::Texture>,
+    #[load(list = "1..=5")]
+    pub countdown: Vec<Rc<ugli::Texture>>,
 }
 
 #[derive(geng::asset::Load)]

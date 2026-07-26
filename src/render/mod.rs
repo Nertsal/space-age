@@ -249,17 +249,31 @@ impl GameRender {
             .clamp(Coord::ZERO, r32(2.0));
         let sprite_size = rocket_texture.size().as_f32() * 0.1 * depth_scale.as_f32();
 
-        let quad = draw2d::TexturedQuad::colored(
-            Aabb2::ZERO.extend_symmetric(sprite_size / 2.0),
-            rocket_texture,
-            Color::WHITE,
-        )
-        .transform(mat3::translate(position.xy().as_f32()) * mat3::rotate(angle));
+        let target = Aabb2::ZERO.extend_symmetric(sprite_size / 2.0);
+        let quad = draw2d::TexturedQuad::colored(target, rocket_texture, Color::WHITE)
+            .transform(mat3::translate(position.xy().as_f32()) * mat3::rotate(angle));
 
         self.context
             .geng
             .draw2d()
             .draw2d(framebuffer, camera, &quad);
+
+        if countdown > 0
+            && let Some(texture) = self
+                .context
+                .assets
+                .sprites
+                .countdown
+                .get(countdown.saturating_sub(1) as usize)
+        {
+            // Countdown
+            geng_utils::texture::DrawTexture::new(texture)
+                .fit(
+                    target.translate(position.xy().as_f32() + vec2(1.0, 1.0)),
+                    vec2(0.5, 0.5),
+                )
+                .draw(camera, &self.context.geng, framebuffer);
+        }
     }
 
     fn draw_planet(&mut self, model: &Model, planet: &Planet, framebuffer: &mut ugli::Framebuffer) {
