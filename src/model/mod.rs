@@ -14,6 +14,7 @@ pub type Coord = R32;
 pub type Science = i64;
 
 pub struct Model {
+    pub context: Context,
     pub config: Config,
     pub real_time: Time,
     pub camera: Camera2d,
@@ -53,8 +54,9 @@ pub enum InteractiveId {
 }
 
 impl Model {
-    pub fn new(config: &Config) -> Self {
+    pub fn new(context: &Context, config: &Config) -> Self {
         let mut model = Self {
+            context: context.clone(),
             config: config.clone(),
             real_time: Time::ZERO,
             camera: Camera2d {
@@ -197,7 +199,7 @@ impl Orbit {
     }
 }
 
-#[derive(SplitFields, Debug, Clone)]
+#[derive(SplitFields)]
 pub struct Rocket {
     // animated in cartesian
     pub position: vec3<Coord>,
@@ -205,6 +207,7 @@ pub struct Rocket {
     pub countdown_time: Time,
     // counts down to 0 for launch
     pub countdown: u32,
+    pub sfx: Option<geng::SoundEffect>,
 }
 
 #[derive(SplitFields, Debug, Clone)]

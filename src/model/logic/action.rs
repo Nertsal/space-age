@@ -97,6 +97,7 @@ impl Model {
             payload,
             countdown_time: self.real_time,
             countdown: 5, //hardcoded
+            sfx: None,
         });
 
         true

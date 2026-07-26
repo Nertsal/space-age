@@ -50,7 +50,7 @@ impl Game {
                 world_pos: vec2::ZERO,
             },
 
-            model: Model::new(&context.assets.config),
+            model: Model::new(&context, &context.assets.config),
             ui: GameUi::new(&context),
         };
         if cheat {

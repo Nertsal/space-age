@@ -156,14 +156,15 @@ impl Model {
         let speed = r32(8.0);
         let mut reached_target = Vec::new();
 
-        for (id, position, countdown_time, countdown, payload) in query!(
+        for (id, position, countdown_time, countdown, payload, sfx) in query!(
             planet.rockets,
             (
                 id,
                 &mut position,
                 &mut countdown_time,
                 &mut countdown,
-                &payload
+                &payload,
+                &mut sfx,
             )
         ) {
             // has not launched yet
@@ -173,6 +174,12 @@ impl Model {
                 if elapsed > r32(1.0) {
                     *countdown = countdown.saturating_sub(1);
                     *countdown_time = self.real_time;
+                    if *countdown == 0 {
+                        // launching now
+                        let mut effect = self.context.sfx.play(&self.context.assets.sounds.rocket);
+                        effect.fade_in(time::Duration::from_secs_f64(0.5));
+                        *sfx = Some(effect);
+                    }
                 }
                 continue;
             }
@@ -183,6 +190,9 @@ impl Model {
 
             if offset.len() <= step {
                 *position = target;
+                if let Some(sfx) = sfx {
+                    sfx.fade_out(time::Duration::from_secs_f64(0.25));
+                }
                 reached_target.push(id);
             } else {
                 let direction = offset.normalize_or_zero();
