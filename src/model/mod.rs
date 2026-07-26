@@ -210,7 +210,7 @@ pub struct Rocket {
     pub sfx: Option<geng::SoundEffect>,
 }
 
-#[derive(SplitFields, Debug, Clone)]
+#[derive(SplitFields)]
 pub struct Satellite {
     pub kind: SatelliteKind,
     pub position: SpherePos,
@@ -223,9 +223,10 @@ pub struct Satellite {
     pub science_timer: Bounded<Time>,
     pub lifetime: Bounded<Time>,
     pub deorbiting: bool,
+    pub burning: Option<geng::SoundEffect>,
 }
 
-#[derive(SplitFields, Debug, Clone, PartialEq, Eq)]
+#[derive(SplitFields)]
 pub struct Debris {
     pub position: SpherePos,
     pub velocity: SphereVelocity,
@@ -233,6 +234,7 @@ pub struct Debris {
     pub radius: Coord,
     pub trail: VecDeque<SpherePos>,
     pub deorbiting: bool,
+    pub burning: Option<geng::SoundEffect>,
 }
 
 pub struct PolarPos {

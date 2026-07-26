@@ -71,6 +71,7 @@ pub struct Sounds {
     pub music: Rc<geng::Sound>,
 
     pub rocket: Rc<geng::Sound>,
+    pub burn: Rc<geng::Sound>,
 
     pub ui_click: Rc<geng::Sound>,
     pub ui_hover: Rc<geng::Sound>,

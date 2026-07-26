@@ -90,6 +90,7 @@ impl Model {
             science_timer: Bounded::new_max(config.interval),
             lifetime: Bounded::new_max(config.lifetime),
             deorbiting: false,
+            burning: None,
         };
 
         planet.rockets.insert(Rocket {

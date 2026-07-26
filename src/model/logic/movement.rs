@@ -22,53 +22,69 @@ impl Model {
 
         // Update positions
         let mut destroyed = Vec::new();
-        let mut move_object = |id,
-                               position: &mut SpherePos,
-                               velocity: &SphereVelocity,
-                               radius: &mut Coord,
-                               trail: &mut VecDeque<SpherePos>,
-                               deorbiting: bool| {
-            position.add_velocity(*velocity, delta_time);
-            if deorbiting {
-                position.distance -= r32(1.0) * delta_time;
-                if position.distance < planet.radius {
-                    destroyed.push(id);
-                }
-                let pos = position.to_cartesian(planet_pos);
-                let options = SpawnParticles {
-                    density: r32(1.0),
-                    distribution: ParticleDistribution::Circle {
-                        center: pos.xy(),
-                        radius: r32(0.3),
-                    },
-                    z: pos.z,
-                    color: Color::try_from("#ADB3C2aa").unwrap(),
-                    ..default()
-                };
-                if position.distance < planet.radius + r32(1.5) {
-                    // Burning particles (realistic)
-                    *radius -= *radius * r32(0.2) * delta_time;
-                    self.queued_particles.extend([
-                        SpawnParticles {
-                            color: Color::try_from("#F45866aa").unwrap(),
-                            ..options.clone()
+        let mut move_object =
+            |id,
+             position: &mut SpherePos,
+             velocity: &SphereVelocity,
+             radius: &mut Coord,
+             trail: &mut VecDeque<SpherePos>,
+             deorbiting: bool,
+             burning: &mut Option<geng::SoundEffect>| {
+                position.add_velocity(*velocity, delta_time);
+                if deorbiting {
+                    position.distance -= r32(1.0) * delta_time;
+                    if position.distance < planet.radius {
+                        destroyed.push(id);
+                        if let Some(sfx) = burning {
+                            sfx.fade_out(time::Duration::from_secs_f64(0.5));
+                        }
+                        return;
+                    }
+                    let pos = position.to_cartesian(planet_pos);
+                    let options = SpawnParticles {
+                        density: r32(1.0),
+                        distribution: ParticleDistribution::Circle {
+                            center: pos.xy(),
+                            radius: r32(0.3),
                         },
-                        SpawnParticles {
-                            color: Color::try_from("#F57932aa").unwrap(),
-                            ..options
-                        },
-                    ]);
-                } else {
-                    // Smoke particles (not realistic but to signal that the object is deorbiting)
-                    self.queued_particles.push(options);
+                        z: pos.z,
+                        color: Color::try_from("#ADB3C2aa").unwrap(),
+                        ..default()
+                    };
+                    if position.distance < planet.radius + r32(1.5) {
+                        // Burning particles (realistic)
+                        *radius -= *radius * r32(0.2) * delta_time;
+                        self.queued_particles.extend([
+                            SpawnParticles {
+                                color: Color::try_from("#F45866aa").unwrap(),
+                                ..options.clone()
+                            },
+                            SpawnParticles {
+                                color: Color::try_from("#F57932aa").unwrap(),
+                                ..options
+                            },
+                        ]);
+                        if burning.is_none() {
+                            let mut effect =
+                                self.context.sfx.play(&self.context.assets.sounds.burn);
+                            effect.set_volume(0.0);
+                            effect.fade_to_volume(
+                                self.context.get_options().volume.sfx() * 0.2,
+                                time::Duration::from_secs_f64(0.5),
+                            );
+                            *burning = Some(effect);
+                        }
+                    } else {
+                        // Smoke particles (not realistic but to signal that the object is deorbiting)
+                        self.queued_particles.push(options);
+                    }
                 }
-            }
-            if trail.len() >= ORBIT_OBJECT_TRAIL_LEN {
-                trail.pop_back();
-            }
-            trail.push_front(*position);
-        };
-        for (id, position, velocity, rot, &rot_speed, radius, trail, &deorbiting) in query!(
+                if trail.len() >= ORBIT_OBJECT_TRAIL_LEN {
+                    trail.pop_back();
+                }
+                trail.push_front(*position);
+            };
+        for (id, position, velocity, rot, &rot_speed, radius, trail, &deorbiting, burning) in query!(
             orbit.satellites,
             (
                 id,
@@ -79,6 +95,7 @@ impl Model {
                 &mut radius,
                 &mut trail,
                 &deorbiting,
+                &mut burning,
             )
         ) {
             move_object(
@@ -88,6 +105,7 @@ impl Model {
                 radius,
                 trail,
                 deorbiting,
+                burning,
             );
             *rot += rot_speed * delta_time;
         }
@@ -97,7 +115,7 @@ impl Model {
         } else {
             R32::ZERO
         };
-        for (id, position, velocity, radius, trail, deorbiting) in query!(
+        for (id, position, velocity, radius, trail, deorbiting, burning) in query!(
             orbit.debris,
             (
                 id,
@@ -105,7 +123,8 @@ impl Model {
                 &velocity,
                 &mut radius,
                 &mut trail,
-                &mut deorbiting
+                &mut deorbiting,
+                &mut burning,
             )
         ) {
             move_object(
@@ -115,6 +134,7 @@ impl Model {
                 radius,
                 trail,
                 *deorbiting,
+                burning,
             );
             if !*deorbiting
                 && deorbit_chance > R32::ZERO
@@ -196,6 +216,7 @@ impl Model {
                             deorbiting: rng.gen_bool(
                                 self.config.collision_debris_deorbit_chance.as_f32().into(),
                             ),
+                            burning: None,
                         });
                     }
                     // Explosion particles

@@ -177,7 +177,11 @@ impl Model {
                     if *countdown == 0 {
                         // launching now
                         let mut effect = self.context.sfx.play(&self.context.assets.sounds.rocket);
-                        effect.fade_in(time::Duration::from_secs_f64(0.5));
+                        effect.set_volume(0.0);
+                        effect.fade_to_volume(
+                            self.context.get_options().volume.sfx(),
+                            time::Duration::from_secs_f64(0.5),
+                        );
                         *sfx = Some(effect);
                     }
                 }
