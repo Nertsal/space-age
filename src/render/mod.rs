@@ -624,6 +624,12 @@ impl GameRender {
         }
 
         // Info
+        self.ui.fill_quad_width(
+            ui.info.position,
+            4.0 * ui.pixel_scale,
+            Color::WHITE,
+            framebuffer,
+        );
         self.ui.draw_outline(
             ui.info.position,
             4.0 * ui.pixel_scale,
