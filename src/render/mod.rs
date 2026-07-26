@@ -332,9 +332,6 @@ impl GameRender {
             Some(scale)
         };
 
-        let satellite_color = Color::try_from("#526985").unwrap();
-        let satellite_comms_color = Color::try_from("#4E6BDE").unwrap();
-        let satellite_debris_color = Color::try_from("#A5B452").unwrap();
         let debris_color = Color::try_from("#4B2F1B").unwrap();
         let satellite_active_color = Color::try_from("#1789FC").unwrap();
         let satellite_science_color = Color::try_from("#2AFC98").unwrap();
@@ -350,11 +347,7 @@ impl GameRender {
                 &science_timer
             )
         ) {
-            let color = match kind {
-                SatelliteKind::Basic => satellite_color,
-                SatelliteKind::Communication => satellite_comms_color,
-                SatelliteKind::DebrisCleaner => satellite_debris_color,
-            };
+            let color = satellite_color(kind);
             let Some(scale) = draw_object(pos, radius, trail, color, framebuffer) else {
                 continue;
             };
@@ -492,14 +485,6 @@ impl GameRender {
                 continue;
             }
 
-            let color = if state.mouse_left.pressed.is_some() {
-                Color::GRAY
-            } else if state.hovered {
-                Color::try_from("#aaaaaa").unwrap()
-            } else {
-                Color::WHITE
-            };
-
             // Action progress
             if let GameAction::Action(Action::TheoreticResearch) = action
                 && model.theory_progress > R32::ZERO
@@ -513,13 +498,20 @@ impl GameRender {
                 );
             }
 
-            let texture = match action {
-                GameAction::Research(_) => None,
+            let (texture, color) = match action {
+                GameAction::Research(_) => (None, Color::WHITE),
                 GameAction::Action(action) => match action {
-                    Action::TheoreticResearch => Some(&sprites.theoretic_research),
-                    Action::Launch(kind) => None,
-                    Action::Deorbit(_) => None,
+                    Action::TheoreticResearch => (Some(&sprites.theoretic_research), Color::WHITE),
+                    Action::Launch(kind) => (Some(&sprites.launch), satellite_color(kind)),
+                    Action::Deorbit(_) => (None, Color::WHITE),
                 },
+            };
+            let color = if state.mouse_left.pressed.is_some() {
+                color.map_rgb(|x| x * 0.7)
+            } else if state.hovered {
+                color.map_rgb(|x| x * 0.8)
+            } else {
+                color
             };
             if let Some(texture) = texture {
                 self.ui
@@ -894,5 +886,13 @@ impl GameRender {
                 framebuffer,
             );
         }
+    }
+}
+
+fn satellite_color(kind: &SatelliteKind) -> Color {
+    match kind {
+        SatelliteKind::Basic => Color::try_from("#526985").unwrap(),
+        SatelliteKind::Communication => Color::try_from("#4E6BDE").unwrap(),
+        SatelliteKind::DebrisCleaner => Color::try_from("#A5B452").unwrap(),
     }
 }

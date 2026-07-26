@@ -99,6 +99,8 @@ pub struct SpritesUi {
     pub scientific_research: Rc<ugli::Texture>,
     #[load(options(filter = "ugli::Filter::Nearest"))]
     pub theoretic_research: Rc<ugli::Texture>,
+    #[load(options(filter = "ugli::Filter::Nearest"))]
+    pub launch: Rc<ugli::Texture>,
 
     pub research: SpritesResearch,
 }
