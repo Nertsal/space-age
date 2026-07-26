@@ -212,6 +212,8 @@ pub struct Satellite {
     pub kind: SatelliteKind,
     pub position: SpherePos,
     pub velocity: SphereVelocity,
+    pub rotation: Angle<Coord>,
+    pub rotation_speed: Angle<Coord>,
     pub visual_radius: Coord,
     pub radius: Coord,
     pub trail: VecDeque<SpherePos>,

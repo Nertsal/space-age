@@ -298,6 +298,7 @@ impl GameRender {
 
         // Orbit
         let draw_object = |pos: &SpherePos,
+                           rotation: Angle<Coord>,
                            radius: Coord,
                            trail: &VecDeque<SpherePos>,
                            color: Color,
@@ -342,6 +343,7 @@ impl GameRender {
                 geng_utils::texture::DrawTexture::new(texture)
                     .fit(Aabb2::point(pos).extend_uniform(radius), vec2(0.5, 0.5))
                     .colored(color)
+                    .transformed(mat3::rotate(rotation.as_f32()))
                     .draw(camera, &self.context.geng, framebuffer);
             } else {
                 self.context
@@ -357,10 +359,11 @@ impl GameRender {
         let satellite_active_color = Color::try_from("#1789FC").unwrap();
         let satellite_science_color = Color::try_from("#2AFC98").unwrap();
         let satellite_inactive_color = Color::try_from("#D72638").unwrap();
-        for (pos, &radius, trail, lifetime, kind, science_timer) in query!(
+        for (pos, &rotation, &radius, trail, lifetime, kind, science_timer) in query!(
             planet.orbit.satellites,
             (
                 &position,
+                &rotation,
                 &visual_radius,
                 &trail,
                 &lifetime,
@@ -371,6 +374,7 @@ impl GameRender {
             let color = satellite_color(kind);
             let Some(scale) = draw_object(
                 pos,
+                rotation,
                 radius,
                 trail,
                 color,
@@ -401,7 +405,15 @@ impl GameRender {
         for (pos, &radius, trail) in
             query!(planet.orbit.debris, (&position, &visual_radius, &trail))
         {
-            draw_object(pos, radius, trail, debris_color, None, framebuffer);
+            draw_object(
+                pos,
+                Angle::ZERO,
+                radius,
+                trail,
+                debris_color,
+                None,
+                framebuffer,
+            );
         }
 
         // launched rockets

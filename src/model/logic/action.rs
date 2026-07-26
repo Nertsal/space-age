@@ -80,6 +80,10 @@ impl Model {
             kind,
             position: target,
             velocity: random_orbit_velocity(target, &mut rng),
+            rotation: random_angle(&mut rng),
+            rotation_speed: Angle::from_degrees(r32(
+                rng.gen_range(10.0..15.0) * if rng.gen_bool(0.5) { 1.0 } else { -1.0 }
+            )),
             visual_radius: r32(0.5),
             radius: r32(0.15),
             trail: VecDeque::new(),

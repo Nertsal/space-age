@@ -68,15 +68,17 @@ impl Model {
             }
             trail.push_front(*position);
         };
-        for (id, position, velocity, radius, trail, &deorbiting) in query!(
+        for (id, position, velocity, rot, &rot_speed, radius, trail, &deorbiting) in query!(
             orbit.satellites,
             (
                 id,
                 &mut position,
                 &velocity,
+                &mut rotation,
+                &rotation_speed,
                 &mut radius,
                 &mut trail,
-                &deorbiting
+                &deorbiting,
             )
         ) {
             move_object(
@@ -87,6 +89,7 @@ impl Model {
                 trail,
                 deorbiting,
             );
+            *rot += rot_speed * delta_time;
         }
         let debris_count = orbit.debris.ids().count();
         let deorbit_chance = if debris_count > self.config.debris_deorbit_threshold {
