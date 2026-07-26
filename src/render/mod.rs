@@ -337,10 +337,18 @@ impl GameRender {
         let satellite_debris_color = Color::try_from("#A5B452").unwrap();
         let debris_color = Color::try_from("#4B2F1B").unwrap();
         let satellite_active_color = Color::try_from("#1789FC").unwrap();
+        let satellite_science_color = Color::try_from("#2AFC98").unwrap();
         let satellite_inactive_color = Color::try_from("#D72638").unwrap();
-        for (pos, &radius, trail, lifetime, kind) in query!(
+        for (pos, &radius, trail, lifetime, kind, science_timer) in query!(
             planet.orbit.satellites,
-            (&position, &visual_radius, &trail, &lifetime, &kind)
+            (
+                &position,
+                &visual_radius,
+                &trail,
+                &lifetime,
+                &kind,
+                &science_timer
+            )
         ) {
             let color = match kind {
                 SatelliteKind::Basic => satellite_color,
@@ -353,7 +361,11 @@ impl GameRender {
             let blink_pos = pos.to_cartesian(planet_position).xy()
                 + vec2::splat(r32(std::f32::consts::FRAC_1_SQRT_2)) * r32(0.8) * radius * scale;
             let blink_color = if lifetime.is_above_min() {
-                satellite_active_color
+                if science_timer.value() < r32(0.5) {
+                    satellite_science_color
+                } else {
+                    satellite_active_color
+                }
             } else {
                 satellite_inactive_color
             };

@@ -25,7 +25,7 @@
             description: "Cost: 100\nWhen there are 3 Communication Satellites in orbit, Science gain is increased",
             launch_cost: 100,
             science: 0,
-            interval: 1,
+            interval: 1000, // Big number so they dont blink
             lifetime: 120,
         ),
         DebrisCleaner: (
@@ -33,7 +33,7 @@
             description: "Cost: 500\nRemoves nearby debris",
             launch_cost: 500,
             science: 0,
-            interval: 1,
+            interval: 1000,
             lifetime: 180,
         ),
     },
