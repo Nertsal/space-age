@@ -181,6 +181,19 @@ impl Model {
                             ),
                         });
                     }
+                    // Explosion particles
+                    let pos = satellite.position.to_cartesian(planet_pos);
+                    let options = SpawnParticles {
+                        density: r32(5.0),
+                        distribution: ParticleDistribution::Circle {
+                            center: pos.xy(),
+                            radius: r32(1.5),
+                        },
+                        z: pos.z + r32(0.01),
+                        color: Color::try_from("#E5302A").unwrap(),
+                        ..default()
+                    };
+                    self.queued_particles.push(options);
                 }
             }
         }
