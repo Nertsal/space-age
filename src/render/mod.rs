@@ -489,7 +489,7 @@ impl GameRender {
                 hovered_action = Some((
                     ui.research_button.position,
                     "Scientific Research".into(),
-                    "The progress must be made".into(),
+                    "Progress must be made".into(),
                 ));
             }
 
@@ -624,8 +624,26 @@ impl GameRender {
         }
 
         // Info
+        self.ui.draw_outline(
+            ui.info.position,
+            4.0 * ui.pixel_scale,
+            Color::WHITE,
+            framebuffer,
+        );
         self.util.draw_text_fit(
-            format!("Active Satellites: {}", model.active_satellites()),
+            "Orbit Analysis",
+            ui.info
+                .position
+                .extend_symmetric(-vec2(6.0, 4.0) * ui.pixel_scale)
+                .with_height(10.0 * ui.pixel_scale, 1.0),
+            font,
+            TextRenderOptions::new(10.0 * ui.pixel_scale).align(vec2(0.0, 0.5)),
+            camera,
+            framebuffer,
+        );
+
+        self.util.draw_text_fit(
+            format!("{} Active Satellites", model.active_satellites()),
             ui.active_satellites.position,
             font,
             TextRenderOptions::new(ui.pixel_scale * 10.0).align(vec2(0.0, 0.5)),
@@ -633,7 +651,7 @@ impl GameRender {
             framebuffer,
         );
         self.util.draw_text_fit(
-            format!("Dysfunctional Satellites: {}", model.inactive_satellites()),
+            format!("{} Dysfunctional Satellites", model.inactive_satellites()),
             ui.inactive_satellites.position,
             font,
             TextRenderOptions::new(ui.pixel_scale * 10.0).align(vec2(0.0, 0.5)),
@@ -642,7 +660,7 @@ impl GameRender {
         );
         if model.abilities.contains(&Ability::RadarDebris) {
             self.util.draw_text_fit(
-                format!("Debris: {}", model.debris()),
+                format!("{} Debris", model.debris()),
                 ui.debris.position,
                 font,
                 TextRenderOptions::new(ui.pixel_scale * 10.0).align(vec2(0.0, 0.5)),

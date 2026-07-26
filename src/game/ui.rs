@@ -20,6 +20,7 @@ pub struct GameUi {
     pub research_fov: SecondOrderState<vec2<f32>>,
     pub research_items: Vec<ResearchItemWidget>,
 
+    pub info: WidgetState,
     pub active_satellites: WidgetState,
     pub inactive_satellites: WidgetState,
     pub debris: WidgetState,
@@ -78,6 +79,7 @@ impl GameUi {
             research_fov: SecondOrderState::new(3.0, 1.0, 0.0, vec2::splat(3.0)),
             research_items: Vec::new(),
 
+            info: WidgetState::new(),
             active_satellites: WidgetState::new(),
             inactive_satellites: WidgetState::new(),
             debris: WidgetState::new(),
@@ -213,6 +215,13 @@ impl GameUi {
             .align_aabb(vec2(screen.width() * 0.25, screen.height()), vec2(1.0, 0.5))
             .extend_uniform(-pixel_scale * 20.0);
         panel.cut_top(pixel_scale * 50.0);
+
+        self.info.update(
+            panel
+                .extend_uniform(pixel_scale * 10.0)
+                .extend_up(pixel_scale * 15.0),
+            context,
+        );
 
         // Radar
         let active = panel.cut_top(pixel_scale * 20.0);
