@@ -13,6 +13,7 @@ pub struct Config {
     pub communications_bonus: R32,
     pub debris_cleaner_range: Coord,
 
+    pub initial_research: Vec<Research>,
     pub research: ResearchConfig,
 }
 

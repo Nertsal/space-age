@@ -36,6 +36,9 @@
     debris_cleaner_range: 3.0,
     collision_debris_deorbit_chance: 0.5,
 
+    initial_research: [
+        Unlock(CollisionAnalysis),
+    ],
     research: (
         items: [
             // -- 0 Orbit Program --
@@ -147,18 +150,9 @@
                 description: "Display the total number of debris in orbit",
                 id: 41,
                 after: [40],
-                pos: (1.8, 0.8),
+                pos: (2.0, 0.0),
                 cost: 300,
                 effect: Unlock(RadarDebris),
-            ),
-            (
-                name: "Collision Risk Analysis",
-                description: "Analyses the risk of satellite collisions",
-                id: 42,
-                after: [40],
-                pos: (2, 0.0),
-                cost: 1000,
-                effect: Unlock(CollisionAnalysis),
             ),
             (
                 name: "Debris Cleaning",

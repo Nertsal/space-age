@@ -8,7 +8,11 @@ use super::*;
 use crate::util::random_angle;
 
 impl Model {
-    pub fn init(&mut self) {}
+    pub fn init(&mut self) {
+        for research in self.config.initial_research.clone() {
+            self.apply_effect(research);
+        }
+    }
 
     pub fn get_stat(&self, stat: Stat) -> R32 {
         self.stats.get(&stat).copied().unwrap_or(R32::ONE)

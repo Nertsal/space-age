@@ -121,11 +121,15 @@ impl Model {
         });
 
         self.researched.insert(id);
-        match &research.effect {
+        self.apply_effect(research.effect.clone());
+    }
+
+    pub fn apply_effect(&mut self, effect: Research) {
+        match effect {
             Research::Unlock(ability) => {
-                self.abilities.insert(ability.clone());
+                self.abilities.insert(ability);
             }
-            &Research::Upgrade(stat, change) => {
+            Research::Upgrade(stat, change) => {
                 *self.stats.entry(stat).or_insert(R32::ONE) *= r32(1.0) + change;
             }
         }
