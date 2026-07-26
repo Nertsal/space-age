@@ -8,7 +8,13 @@ impl Model {
 
         match action {
             Action::TheoreticResearch => {
-                self.theory_progress += self.config.theoretic_research.clicks.recip();
+                let sfx = &self.context.assets.sounds.research;
+                if let Some(sfx) = sfx.get(self.theory_clicks % sfx.len()) {
+                    self.context.sfx.play(sfx);
+                }
+
+                self.theory_progress += 1;
+                self.theory_clicks += 1;
             }
             Action::Launch(ty) => {
                 self.launch_satellite(true, ty);

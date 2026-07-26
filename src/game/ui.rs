@@ -48,7 +48,7 @@ impl GameUi {
             science: WidgetState::new(),
             actions: vec![
                 (
-                    WidgetState::new().with_sfx(WidgetSfxConfig::hover_left()),
+                    WidgetState::new().with_sfx(WidgetSfxConfig::hover()),
                     GameAction::Action(Action::TheoreticResearch),
                 ),
                 (

@@ -68,7 +68,8 @@ pub struct Model {
     pub queued_particles: Vec<SpawnParticles>,
     pub texticles: StructOf<Arena<FloatingText>>,
 
-    pub theory_progress: R32,
+    pub theory_progress: usize,
+    pub theory_clicks: usize,
 
     pub hovered_object: Option<InteractiveId>,
     pub selected_object: Option<InteractiveId>,
@@ -120,7 +121,8 @@ impl Model {
             queued_particles: Vec::new(),
             texticles: default(),
 
-            theory_progress: R32::ZERO,
+            theory_progress: 0,
+            theory_clicks: 0,
 
             hovered_object: None,
             selected_object: None,

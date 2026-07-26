@@ -30,13 +30,13 @@ impl Model {
         //     self.theory_progress.change(delta_time);
         // }
         let planet_science_bonus = self.planet_science_bonus();
-        while self.theory_progress > R32::ONE {
+        while self.theory_progress >= self.config.theoretic_research.clicks {
             let stat = self.get_stat(Stat::Theorycrafting);
             let gained = (self.config.theoretic_research.science as f32
                 * (stat * planet_science_bonus).as_f32())
             .ceil() as Science;
             self.science += gained;
-            self.theory_progress -= R32::ONE;
+            self.theory_progress -= self.config.theoretic_research.clicks;
             self.texticles.insert(FloatingText {
                 text: format!("+{}", gained).into(),
                 position: (self.science_counter_pos + vec2(0.0, 1.0).as_r32()).extend(Coord::ZERO),

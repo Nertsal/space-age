@@ -22,8 +22,7 @@ pub struct Config {
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct TheoryConfig {
-    pub clicks: R32,
-    pub duration: Time,
+    pub clicks: usize,
     pub science: Science,
 }
 
