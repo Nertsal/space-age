@@ -449,13 +449,11 @@ impl GameRender {
             }
 
             // Exlamation mark to indicate possible progress
-            if model
-                .config
-                .research
-                .items
-                .iter()
-                .any(|item| !model.researched.contains(&item.id) && model.science >= item.cost)
-            {
+            if model.config.research.items.iter().any(|item| {
+                !model.researched.contains(&item.id)
+                    && item.after.iter().all(|id| model.researched.contains(id))
+                    && model.science >= item.cost
+            }) {
                 self.ui.draw_texture(
                     ui.research_button
                         .position

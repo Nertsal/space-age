@@ -16,7 +16,7 @@
             description: "Cost: 30\nGenerates Science over time",
             launch_cost: 30,
             // Science gains from active satellites
-            science: 5,
+            science: 10,
             interval: 5,
             lifetime: 61,
         ),
@@ -88,6 +88,15 @@
                 cost: 200,
                 effect: Upgrade(Theorycrafting, 0.5),
             ),
+            (
+                name: "Theorycrafting III",
+                description: "Enhances efficiency of developing new theories",
+                id: 12,
+                after: [11],
+                pos: (-3, 0),
+                cost: 1000,
+                effect: Upgrade(Theorycrafting, 0.5),
+            ),
             // -- 20 Engineering --
             (
                 name: "Engineering I",
@@ -144,6 +153,15 @@
                 cost: 500,
                 effect: Upgrade(SatelliteEfficiency, 0.5),
             ),
+            (
+                name: "Data Compression III",
+                description: "Increases efficiency of satellites",
+                id: 32,
+                after: [31],
+                pos: (1.8, 3),
+                cost: 1500,
+                effect: Upgrade(SatelliteEfficiency, 1.0),
+            ),
             // -- 40 Communications --
             (
                 name: "Communications",
@@ -174,18 +192,27 @@
             ),
             // -- 50 Automation --
             (
-                name: "Collision Avoidance",
+                name: "Collision Avoidance I",
                 description: "Satellites actively try to avoid collisions",
                 id: 50,
                 after: [2],
                 pos: (-0.6, -2),
-                cost: 5000,
+                cost: 3000,
+                effect: Upgrade(CollisionAvoidance, 1.0),
+            ),
+            (
+                name: "Collision Avoidance II",
+                description: "Satellites actively try to avoid collisions",
+                id: 51,
+                after: [50],
+                pos: (-1.2, -3),
+                cost: 7500,
                 effect: Upgrade(CollisionAvoidance, 1.0),
             ),
             (
                 name: "Automation I",
                 description: "Satellites automatically deorbit upon reaching the end of their lifespan",
-                id: 51,
+                id: 52,
                 after: [2],
                 pos: (0.6, -2),
                 cost: 1000,
@@ -194,8 +221,8 @@
             (
                 name: "Automation II",
                 description: "New satellites are automatically deployed to replace old ones",
-                id: 52,
-                after: [51],
+                id: 53,
+                after: [52],
                 pos: (1.2, -3),
                 cost: 10000,
                 effect: Unlock(DeployAuto),
