@@ -92,6 +92,8 @@ pub struct SpritesUi {
     pub fill: Rc<ugli::Texture>,
     #[load(options(filter = "ugli::Filter::Nearest"))]
     pub close: Rc<ugli::Texture>,
+    #[load(options(filter = "ugli::Filter::Nearest"))]
+    pub exclamation: Rc<ugli::Texture>,
 
     #[load(options(filter = "ugli::Filter::Nearest"))]
     pub scientific_research: Rc<ugli::Texture>,

@@ -447,6 +447,25 @@ impl GameRender {
                     "The progress must be made",
                 ));
             }
+
+            // Exlamation mark to indicate possible progress
+            if model
+                .config
+                .research
+                .items
+                .iter()
+                .any(|item| !model.researched.contains(&item.id) && model.science >= item.cost)
+            {
+                self.ui.draw_texture(
+                    ui.research_button
+                        .position
+                        .align_aabb(vec2(10.0, 10.0) * ui.pixel_scale, vec2(1.0, 1.0)),
+                    &sprites.exclamation,
+                    Color::WHITE,
+                    1.0,
+                    framebuffer,
+                );
+            }
         }
 
         self.util.draw_text_fit(
