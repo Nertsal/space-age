@@ -125,26 +125,37 @@ pub struct SpritesResearch {
 
     #[load(options(filter = "ugli::Filter::Nearest"))]
     pub orbit_program: Rc<ugli::Texture>,
+    #[load(options(filter = "ugli::Filter::Nearest"))]
+    pub crashlanding: Rc<ugli::Texture>,
+    #[load(options(filter = "ugli::Filter::Nearest"))]
+    pub structural_integrity: Rc<ugli::Texture>,
+    #[load(options(filter = "ugli::Filter::Nearest"))]
+    pub theorycrafting: Rc<ugli::Texture>,
+    #[load(options(filter = "ugli::Filter::Nearest"))]
+    pub engineering: Rc<ugli::Texture>,
 }
 
 impl SpritesResearch {
     pub fn get_icon(&self, name: &str) -> &Rc<ugli::Texture> {
         match name {
             "Orbit Program" => &self.orbit_program,
-            "Crashlanding" => &self.orbit_program,
-            "Theorycrafting I" => &self.orbit_program,
-            "Theorycrafting II" => &self.orbit_program,
-            "Engineering I" => &self.orbit_program,
-            "Engineering II" => &self.orbit_program,
-            "Structural Integrity I" => &self.orbit_program,
-            "Structural Integrity II" => &self.orbit_program,
+            "Crashlanding" => &self.crashlanding,
+            "Theorycrafting I" => &self.theorycrafting,
+            "Theorycrafting II" => &self.theorycrafting,
+            "Theorycrafting III" => &self.theorycrafting,
+            "Engineering I" => &self.engineering,
+            "Engineering II" => &self.engineering,
+            "Structural Integrity I" => &self.structural_integrity,
+            "Structural Integrity II" => &self.structural_integrity,
             "Data Compression I" => &self.orbit_program,
             "Data Compression II" => &self.orbit_program,
+            "Data Compression III" => &self.orbit_program,
             "Communications" => &self.orbit_program,
             "Orbit Observation" => &self.orbit_program,
             "Collision Risk Analysis" => &self.orbit_program,
             "Debris Cleaning" => &self.orbit_program,
-            "Collision Avoidance" => &self.orbit_program,
+            "Collision Avoidance I" => &self.orbit_program,
+            "Collision Avoidance II" => &self.orbit_program,
             "Automation I" => &self.orbit_program,
             "Automation II" => &self.orbit_program,
             _ => &self.orbit_program,
