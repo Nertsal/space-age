@@ -3,6 +3,8 @@ use super::*;
 impl Model {
     pub fn update(&mut self, delta_time: Time) {
         self.real_time += delta_time;
+        self.sfx_rocket.update(delta_time);
+        self.sfx_burning.update(delta_time);
 
         self.hovered_rotation += Angle::from_degrees(r32(15.0) * delta_time);
         self.selected_rotation -= Angle::from_degrees(r32(15.0) * delta_time);
@@ -156,7 +158,7 @@ impl Model {
         let speed = r32(8.0);
         let mut reached_target = Vec::new();
 
-        for (id, position, countdown_time, countdown, payload, sfx) in query!(
+        for (id, position, countdown_time, countdown, payload) in query!(
             planet.rockets,
             (
                 id,
@@ -164,7 +166,6 @@ impl Model {
                 &mut countdown_time,
                 &mut countdown,
                 &payload,
-                &mut sfx,
             )
         ) {
             // has not launched yet
@@ -174,19 +175,11 @@ impl Model {
                 if elapsed > r32(1.0) {
                     *countdown = countdown.saturating_sub(1);
                     *countdown_time = self.real_time;
-                    if *countdown == 0 {
-                        // launching now
-                        let mut effect = self.context.sfx.play(&self.context.assets.sounds.rocket);
-                        effect.set_volume(0.0);
-                        effect.fade_to_volume(
-                            self.context.get_options().volume.sfx() * 0.5,
-                            time::Duration::from_secs_f64(0.5),
-                        );
-                        *sfx = Some(effect);
-                    }
                 }
                 continue;
             }
+            // flying
+            self.sfx_rocket.set_volume(0.5);
 
             let target = payload.position.to_cartesian(planet_position);
             let offset = target - *position;
@@ -194,9 +187,6 @@ impl Model {
 
             if offset.len() <= step {
                 *position = target;
-                if let Some(sfx) = sfx {
-                    sfx.fade_out(time::Duration::from_secs_f64(0.5));
-                }
                 reached_target.push(id);
             } else {
                 let direction = offset.normalize_or_zero();

@@ -15,10 +15,15 @@ impl SfxManager {
     }
 
     pub fn play_volume(&self, sfx: &geng::Sound, volume: f32) -> geng::SoundEffect {
+        let mut effect = self.effect(sfx, volume);
+        effect.play();
+        effect
+    }
+
+    pub fn effect(&self, sfx: &geng::Sound, volume: f32) -> geng::SoundEffect {
         let options = self.options.borrow();
         let mut effect = sfx.effect(self.geng.audio().default_type());
         effect.set_volume(options.volume.sfx() * volume);
-        effect.play();
         effect
     }
 

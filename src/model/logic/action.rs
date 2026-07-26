@@ -90,7 +90,6 @@ impl Model {
             science_timer: Bounded::new_max(config.interval),
             lifetime: Bounded::new_max(config.lifetime),
             deorbiting: false,
-            burning: None,
         };
 
         planet.rockets.insert(Rocket {
@@ -98,7 +97,6 @@ impl Model {
             payload,
             countdown_time: self.real_time,
             countdown: 5, //hardcoded
-            sfx: None,
         });
 
         true
