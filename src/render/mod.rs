@@ -386,10 +386,14 @@ impl GameRender {
         let font = &self.context.assets.fonts.default;
         let sprites = &self.context.assets.sprites.ui;
 
-        if model.abilities.contains(&Ability::CollisionAnalysis) {
+        let satellites = model.planet.orbit.satellites.ids().count();
+        if model.abilities.contains(&Ability::CollisionAnalysis)
+            && (satellites >= 2
+                || satellites > 0 && model.planet.orbit.debris.ids().next().is_some())
+        {
             // Collision risk
             let mut risk = ui.collision_risk.position;
-            let left = risk.split_left(0.5);
+            let left = risk.split_left(0.65);
             self.util.draw_text_fit(
                 "Collision Risk: ",
                 left,
