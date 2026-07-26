@@ -72,6 +72,10 @@ pub struct Sounds {
 
     pub rocket: Rc<geng::Sound>,
     pub burn: Rc<geng::Sound>,
+    pub collision: Rc<geng::Sound>,
+    pub research_complete: Rc<geng::Sound>,
+    #[load(list = "0..=7")]
+    pub research: Vec<Rc<geng::Sound>>,
 
     pub ui_click: Rc<geng::Sound>,
     pub ui_hover: Rc<geng::Sound>,

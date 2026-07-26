@@ -525,9 +525,11 @@ impl GameRender {
 
             // Action progress
             if let GameAction::Action(Action::TheoreticResearch) = action
-                && model.theory_progress > R32::ZERO
+                && model.theory_progress > 0
             {
-                let t = model.theory_progress.as_f32().clamp(0.0, 1.0);
+                let t = (model.theory_progress as f32
+                    / model.config.theoretic_research.clicks as f32)
+                    .clamp(0.0, 1.0);
                 self.util.draw_quad(
                     state.position.with_height(state.position.height() * t, 0.0),
                     Color::try_from("#333333").unwrap(),

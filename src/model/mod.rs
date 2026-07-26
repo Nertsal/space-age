@@ -1,6 +1,8 @@
 mod logic;
 mod particles;
 
+use geng_utils::interpolation::SecondOrderState;
+
 pub use self::particles::*;
 
 use crate::prelude::*;
@@ -13,8 +15,43 @@ pub type Time = R32;
 pub type Coord = R32;
 pub type Science = i64;
 
+pub struct SingletonSfx {
+    pub context: Context,
+    pub volume: SecondOrderState<f32>,
+    pub effect: geng::SoundEffect,
+}
+
+impl SingletonSfx {
+    pub fn new(context: &Context, sound: &geng::Sound) -> Self {
+        let mut effect = context.sfx.play_volume(sound, 0.0);
+        effect.set_looped(true);
+        Self {
+            context: context.clone(),
+            volume: SecondOrderState::new(1.5, 1.0, 0.0, 0.0),
+            effect,
+        }
+    }
+
+    pub fn set_volume(&mut self, volume: f32) {
+        let volume = volume.clamp(0.0, 1.0);
+        if volume > self.volume.target {
+            self.volume.target = volume;
+        }
+    }
+
+    pub fn update(&mut self, delta_time: Time) {
+        self.volume.update(delta_time.as_f32());
+        self.effect
+            .set_volume(self.volume.current * self.context.get_options().volume.sfx());
+        self.volume.target = 0.0;
+    }
+}
+
 pub struct Model {
     pub context: Context,
+    pub sfx_rocket: SingletonSfx,
+    pub sfx_burning: SingletonSfx,
+
     pub config: Config,
     pub real_time: Time,
     pub camera: Camera2d,
@@ -31,7 +68,8 @@ pub struct Model {
     pub queued_particles: Vec<SpawnParticles>,
     pub texticles: StructOf<Arena<FloatingText>>,
 
-    pub theory_progress: R32,
+    pub theory_progress: usize,
+    pub theory_clicks: usize,
 
     pub hovered_object: Option<InteractiveId>,
     pub selected_object: Option<InteractiveId>,
@@ -57,6 +95,9 @@ impl Model {
     pub fn new(context: &Context, config: &Config) -> Self {
         let mut model = Self {
             context: context.clone(),
+            sfx_rocket: SingletonSfx::new(context, &context.assets.sounds.rocket),
+            sfx_burning: SingletonSfx::new(context, &context.assets.sounds.burn),
+
             config: config.clone(),
             real_time: Time::ZERO,
             camera: Camera2d {
@@ -80,7 +121,8 @@ impl Model {
             queued_particles: Vec::new(),
             texticles: default(),
 
-            theory_progress: R32::ZERO,
+            theory_progress: 0,
+            theory_clicks: 0,
 
             hovered_object: None,
             selected_object: None,
@@ -207,7 +249,6 @@ pub struct Rocket {
     pub countdown_time: Time,
     // counts down to 0 for launch
     pub countdown: u32,
-    pub sfx: Option<geng::SoundEffect>,
 }
 
 #[derive(SplitFields)]
@@ -223,7 +264,6 @@ pub struct Satellite {
     pub science_timer: Bounded<Time>,
     pub lifetime: Bounded<Time>,
     pub deorbiting: bool,
-    pub burning: Option<geng::SoundEffect>,
 }
 
 #[derive(SplitFields)]
@@ -234,7 +274,6 @@ pub struct Debris {
     pub radius: Coord,
     pub trail: VecDeque<SpherePos>,
     pub deorbiting: bool,
-    pub burning: Option<geng::SoundEffect>,
 }
 
 pub struct PolarPos {

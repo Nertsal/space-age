@@ -8,7 +8,13 @@ impl Model {
 
         match action {
             Action::TheoreticResearch => {
-                self.theory_progress += self.config.theoretic_research.clicks.recip();
+                let sfx = &self.context.assets.sounds.research;
+                if let Some(sfx) = sfx.get(self.theory_clicks % sfx.len()) {
+                    self.context.sfx.play(sfx);
+                }
+
+                self.theory_progress += 1;
+                self.theory_clicks += 1;
             }
             Action::Launch(ty) => {
                 self.launch_satellite(true, ty);
@@ -90,7 +96,6 @@ impl Model {
             science_timer: Bounded::new_max(config.interval),
             lifetime: Bounded::new_max(config.lifetime),
             deorbiting: false,
-            burning: None,
         };
 
         planet.rockets.insert(Rocket {
@@ -98,7 +103,6 @@ impl Model {
             payload,
             countdown_time: self.real_time,
             countdown: 5, //hardcoded
-            sfx: None,
         });
 
         true
@@ -128,6 +132,9 @@ impl Model {
 
         self.researched.insert(id);
         self.apply_effect(research.effect.clone());
+        self.context
+            .sfx
+            .play(&self.context.assets.sounds.research_complete);
     }
 
     pub fn apply_effect(&mut self, effect: Research) {
