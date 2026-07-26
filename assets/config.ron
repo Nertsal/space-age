@@ -34,7 +34,10 @@
     communications_bonus_requirement: 3,
     communications_bonus: 0.5,
     debris_cleaner_range: 3.0,
+
     collision_debris_deorbit_chance: 0.5,
+    debris_deorbit_threshold: 8,
+    debris_deorbit_chance: 0.02,
 
     initial_research: [
         Unlock(CollisionAnalysis),

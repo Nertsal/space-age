@@ -2,6 +2,8 @@ use super::*;
 
 impl Model {
     pub fn movement(&mut self, delta_time: Time) {
+        let mut rng = thread_rng();
+
         #[derive(Clone, Copy)]
         enum Id {
             Satellite(ArenaId),
@@ -86,7 +88,13 @@ impl Model {
                 deorbiting,
             );
         }
-        for (id, position, velocity, radius, trail, &deorbiting) in query!(
+        let debris_count = orbit.debris.ids().count();
+        let deorbit_chance = if debris_count > self.config.debris_deorbit_threshold {
+            self.config.debris_deorbit_chance * delta_time
+        } else {
+            R32::ZERO
+        };
+        for (id, position, velocity, radius, trail, deorbiting) in query!(
             orbit.debris,
             (
                 id,
@@ -94,7 +102,7 @@ impl Model {
                 &velocity,
                 &mut radius,
                 &mut trail,
-                &deorbiting
+                &mut deorbiting
             )
         ) {
             move_object(
@@ -103,8 +111,14 @@ impl Model {
                 velocity,
                 radius,
                 trail,
-                deorbiting,
+                *deorbiting,
             );
+            if !*deorbiting
+                && deorbit_chance > R32::ZERO
+                && rng.gen_bool(deorbit_chance.as_f32().into())
+            {
+                *deorbiting = true;
+            }
         }
 
         // Remove destroyed objects
