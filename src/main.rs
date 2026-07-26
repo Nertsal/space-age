@@ -33,6 +33,11 @@ struct Opts {
 
     #[clap(flatten)]
     geng: geng::CliArgs,
+
+    /// Version argument passed by itch or smth.
+    // #[cfg(feature = "itch")]
+    #[clap(long)]
+    v: Option<String>,
 }
 
 fn parse_args<T: clap::Parser>() -> T {
