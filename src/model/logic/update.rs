@@ -179,7 +179,7 @@ impl Model {
                         let mut effect = self.context.sfx.play(&self.context.assets.sounds.rocket);
                         effect.set_volume(0.0);
                         effect.fade_to_volume(
-                            self.context.get_options().volume.sfx(),
+                            self.context.get_options().volume.sfx() * 0.5,
                             time::Duration::from_secs_f64(0.5),
                         );
                         *sfx = Some(effect);
@@ -195,7 +195,7 @@ impl Model {
             if offset.len() <= step {
                 *position = target;
                 if let Some(sfx) = sfx {
-                    sfx.fade_out(time::Duration::from_secs_f64(0.25));
+                    sfx.fade_out(time::Duration::from_secs_f64(0.5));
                 }
                 reached_target.push(id);
             } else {
