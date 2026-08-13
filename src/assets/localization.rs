@@ -17,6 +17,17 @@ pub enum Language {
     Russian,
 }
 
+impl Language {
+    pub fn native(&self) -> &'static str {
+        match self {
+            Language::English => "English",
+            // Language::Spanish => "Español",
+            // Language::Finnish => "Finnish",
+            Language::Russian => "Русский",
+        }
+    }
+}
+
 #[derive(Debug, Deserialize)]
 struct Item {
     en: String,

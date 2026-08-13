@@ -446,7 +446,7 @@ impl GameRender {
                 Color::WHITE
             };
             self.util.draw_text_fit(
-                format!("{:?}", language),
+                language.native(),
                 ui.language.position,
                 font,
                 TextRenderOptions::new(ui.pixel_scale * 12.0)
@@ -636,8 +636,8 @@ impl GameRender {
         if let Some((position, title, description)) = hovered_action {
             let position = position.top_right() + vec2(20.0, 10.0) * ui.pixel_scale;
             let position = Aabb2::point(position)
-                .extend_right(120.0 * ui.pixel_scale)
-                .extend_down(75.0 * ui.pixel_scale);
+                .extend_right(130.0 * ui.pixel_scale)
+                .extend_down(80.0 * ui.pixel_scale);
 
             // Limit the window within the bounds
             // let bounds = ui.research.position;
@@ -812,7 +812,7 @@ impl GameRender {
         let sprites = &self.context.assets.sprites.ui;
 
         let localization = &self.context.assets.localization;
-        let language = Language::English;
+        let language = self.context.get_options().language;
 
         // Background
         let width = ui.pixel_scale * 4.0;
@@ -976,8 +976,8 @@ impl GameRender {
         {
             let position = position.top_right() + vec2(10.0, 10.0) * ui.pixel_scale;
             let position = Aabb2::point(position)
-                .extend_right(120.0 * ui.pixel_scale)
-                .extend_down(75.0 * ui.pixel_scale);
+                .extend_right(130.0 * ui.pixel_scale)
+                .extend_down(80.0 * ui.pixel_scale);
 
             // Limit the window within the bounds
             // let bounds = ui.research.position;
