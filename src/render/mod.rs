@@ -431,6 +431,9 @@ impl GameRender {
         let font = &self.context.assets.fonts.default;
         let sprites = &self.context.assets.sprites.ui;
 
+        let localization = &self.context.assets.localization;
+        let language = Language::English;
+
         let satellites = model.planet.orbit.satellites.ids().count();
         if model.abilities.contains(&Ability::CollisionAnalysis)
             && (satellites >= 2
@@ -486,8 +489,10 @@ impl GameRender {
             if ui.research_button.hovered {
                 hovered_action = Some((
                     ui.research_button.position,
-                    "Scientific Research".into(),
-                    "Progress must be made".into(),
+                    localization.get("research.scientific.name", language),
+                    localization
+                        .get("research.scientific.desc", language)
+                        .to_owned(),
                 ));
             }
 
@@ -510,7 +515,11 @@ impl GameRender {
         }
 
         self.util.draw_text_fit(
-            format!("Science: {}", model.science),
+            format!(
+                "{}: {}",
+                localization.get("ui.science", language),
+                model.science
+            ),
             ui.science.position,
             font,
             TextRenderOptions::new(ui.pixel_scale * 10.0).align(vec2(0.0, 0.5)),
@@ -572,14 +581,26 @@ impl GameRender {
                     GameAction::Research(_) => None,
                     GameAction::Action(action) => match action {
                         Action::TheoreticResearch => Some((
-                            "Theoretical Research".into(),
-                            "Advance progress by constructing new theories".into(),
+                            localization.get("research.theoretical.name", language),
+                            localization
+                                .get("research.theoretical.desc", language)
+                                .to_owned(),
                         )),
-                        Action::Launch(kind) => model
-                            .config
-                            .satellites
-                            .get(kind)
-                            .map(|config| (config.name.clone(), config.description.clone())),
+                        Action::Launch(kind) => model.config.satellites.get(kind).map(|config| {
+                            let title =
+                                localization.get(&format!("{}.name", config.name), language);
+                            let description =
+                                localization.get(&format!("{}.desc", config.name), language);
+                            (
+                                title,
+                                format!(
+                                    "{}: {}\n{}",
+                                    localization.get("ui.cost", language),
+                                    config.launch_cost,
+                                    description
+                                ),
+                            )
+                        }),
                         Action::Deorbit(_) => None,
                     },
                 }
@@ -637,7 +658,7 @@ impl GameRender {
             framebuffer,
         );
         self.util.draw_text_fit(
-            "Orbit Analysis",
+            localization.get("ui.orbit_analysis", language),
             ui.info
                 .position
                 .extend_symmetric(-vec2(6.0, 4.0) * ui.pixel_scale)
@@ -649,7 +670,11 @@ impl GameRender {
         );
 
         self.util.draw_text_fit(
-            format!("{} Active Satellites", model.active_satellites()),
+            format!(
+                "{} {}",
+                model.active_satellites(),
+                localization.get("ui.active_satellites", language)
+            ),
             ui.active_satellites.position,
             font,
             TextRenderOptions::new(ui.pixel_scale * 10.0).align(vec2(0.0, 0.5)),
@@ -657,7 +682,11 @@ impl GameRender {
             framebuffer,
         );
         self.util.draw_text_fit(
-            format!("{} Dysfunctional Satellites", model.inactive_satellites()),
+            format!(
+                "{} {}",
+                model.inactive_satellites(),
+                localization.get("ui.dysfunctional_satellites", language)
+            ),
             ui.inactive_satellites.position,
             font,
             TextRenderOptions::new(ui.pixel_scale * 10.0).align(vec2(0.0, 0.5)),
@@ -666,7 +695,11 @@ impl GameRender {
         );
         if model.abilities.contains(&Ability::RadarDebris) {
             self.util.draw_text_fit(
-                format!("{} Debris", model.debris()),
+                format!(
+                    "{} {}",
+                    model.debris(),
+                    localization.get("ui.debris", language)
+                ),
                 ui.debris.position,
                 font,
                 TextRenderOptions::new(ui.pixel_scale * 10.0).align(vec2(0.0, 0.5)),
@@ -686,8 +719,8 @@ impl GameRender {
                             .get(kind)
                             .map(|config| config.name.clone())
                     })
-                    .unwrap_or("Satellite".into()),
-                InteractiveId::Debris(_) => "Debris".into(),
+                    .unwrap_or(localization.get("ui.satellite", language).into()),
+                InteractiveId::Debris(_) => localization.get("ui.debris", language).into(),
             };
             self.util.draw_text_fit(
                 name,
@@ -703,9 +736,13 @@ impl GameRender {
                 let lifetime = lifetime.value().as_f32().ceil() as i64;
                 self.util.draw_text_fit(
                     if lifetime > 0 {
-                        format!("Lifetime: {}", lifetime)
+                        format!(
+                            "{}: {}",
+                            localization.get("ui.lifetime", language),
+                            lifetime
+                        )
                     } else {
-                        "Dysfunctional".into()
+                        localization.get("ui.dysfunctional", language).into()
                     },
                     ui.selected_lifetime.position,
                     font,
@@ -724,7 +761,7 @@ impl GameRender {
                     Color::try_from("#B61639").unwrap()
                 };
                 self.util.draw_text_fit(
-                    "Deorbit",
+                    localization.get("ui.deorbit", language),
                     ui.selected_deorbit.position,
                     font,
                     TextRenderOptions::new(ui.pixel_scale * 10.0).color(color),
@@ -751,6 +788,9 @@ impl GameRender {
         let font = &self.context.assets.fonts.default;
         let sprites = &self.context.assets.sprites.ui;
 
+        let localization = &self.context.assets.localization;
+        let language = Language::English;
+
         // Background
         let width = ui.pixel_scale * 4.0;
         self.ui
@@ -765,7 +805,7 @@ impl GameRender {
             .extend_symmetric(-vec2(6.0, 4.0) * ui.pixel_scale)
             .cut_top(10.0 * ui.pixel_scale);
         self.util.draw_text_fit(
-            "Scientific Research",
+            localization.get("research.scientific.name", language),
             title,
             font,
             TextRenderOptions::new(title.height()).align(vec2(0.0, 0.5)),
@@ -937,14 +977,24 @@ impl GameRender {
 
             let mut position = position.extend_uniform(-4.0 * ui.pixel_scale);
             let name = position.cut_top(font_size);
-            self.util
-                .draw_text_fit(&research.name, name, font, options, camera, framebuffer);
+            self.util.draw_text_fit(
+                localization.get(&format!("{}.name", research.name), language),
+                name,
+                font,
+                options,
+                camera,
+                framebuffer,
+            );
             let mut position = position.extend_symmetric(-vec2(6.0, 1.0) * ui.pixel_scale);
 
             if !matches!(model.get_research_state(id), ResearchState::Researched) {
                 let cost = position.cut_top(font_size);
                 self.util.draw_text_fit(
-                    format!("Cost: {}", research.cost),
+                    format!(
+                        "{}: {}",
+                        localization.get("ui.cost", language),
+                        research.cost
+                    ),
                     cost,
                     font,
                     options,
@@ -953,7 +1003,7 @@ impl GameRender {
                 );
             }
             self.util.draw_text_wrap(
-                &research.description,
+                localization.get(&format!("{}.desc", research.name), language),
                 position,
                 font,
                 options,

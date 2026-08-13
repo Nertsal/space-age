@@ -11,8 +11,7 @@
     ),
     satellites: {
         Basic: (
-            name: "Basic Satellite",
-            description: "Cost: 30\nGenerates Science over time",
+            name: "satellite.basic",
             launch_cost: 30,
             // Science gains from active satellites
             science: 10,
@@ -20,16 +19,14 @@
             lifetime: 61,
         ),
         Communication: (
-            name: "Communications Satellite",
-            description: "Cost: 100\nWhen there are 3 Communication Satellites in orbit, Science gain is increased",
+            name: "satellite.comms",
             launch_cost: 100,
             science: 0,
             interval: 1000, // Big number so they dont blink
             lifetime: 120,
         ),
         DebrisCleaner: (
-            name: "Debris Cleaner Satellite",
-            description: "Cost: 500\nRemoves nearby debris",
+            name: "satellite.debris",
             launch_cost: 500,
             science: 0,
             interval: 1000,
@@ -51,8 +48,7 @@
         items: [
             // -- 0 Orbit Program --
             (
-                name: "Orbit Program",
-                description: "Unlocks satellites",
+                name: "research.orbit_program",
                 id: 1,
                 after: [],
                 pos: (0, 0),
@@ -60,8 +56,7 @@
                 effect: Unlock(Launch(Basic)),
             ),
             (
-                name: "Crashlanding",
-                description: "Unlocks the ability to deorbit space objects",
+                name: "research.crashlanding",
                 id: 2,
                 after: [1],
                 pos: (0.0, -1),
@@ -70,8 +65,7 @@
             ),
             // -- 10 Theorycrafting --
             (
-                name: "Theorycrafting I",
-                description: "Enhances efficiency of developing new theories",
+                name: "research.theorycrafting1",
                 id: 10,
                 after: [1],
                 pos: (-1, 0),
@@ -79,8 +73,7 @@
                 effect: Upgrade(Theorycrafting, 0.5),
             ),
             (
-                name: "Theorycrafting II",
-                description: "Enhances efficiency of developing new theories",
+                name: "research.theorycrafting2",
                 id: 11,
                 after: [10],
                 pos: (-2, 0),
@@ -88,8 +81,7 @@
                 effect: Upgrade(Theorycrafting, 0.5),
             ),
             (
-                name: "Theorycrafting III",
-                description: "Enhances efficiency of developing new theories",
+                name: "research.theorycrafting3",
                 id: 12,
                 after: [11],
                 pos: (-3, 0),
@@ -98,8 +90,7 @@
             ),
             // -- 20 Engineering --
             (
-                name: "Engineering I",
-                description: "Increases longevity of satellites",
+                name: "research.engineering1",
                 id: 20,
                 after: [1],
                 pos: (-0.6, 1),
@@ -107,8 +98,7 @@
                 effect: Upgrade(SatelliteLongevity, 0.5),
             ),
             (
-                name: "Engineering II",
-                description: "Increases longevity of satellites",
+                name: "research.engineering2",
                 id: 21,
                 after: [20],
                 pos: (-0.8, 2),
@@ -116,8 +106,7 @@
                 effect: Upgrade(SatelliteLongevity, 0.5),
             ),
             (
-                name: "Structural Integrity I",
-                description: "Satellites break into fewer pieces on collision",
+                name: "research.structural_integrity1",
                 id: 22,
                 after: [20],
                 pos: (-1.6, 1.2),
@@ -125,8 +114,7 @@
                 effect: Upgrade(SatelliteIntegrity, 1.0),
             ),
             (
-                name: "Structural Integrity II",
-                description: "Satellites break into fewer pieces on collision",
+                name: "research.structural_integrity2",
                 id: 23,
                 after: [22],
                 pos: (-2.6, 1.4),
@@ -135,8 +123,7 @@
             ),
             // -- 30 Data Compression --
             (
-                name: "Data Compression I",
-                description: "Increases efficiency of satellites",
+                name: "research.data_compression1",
                 id: 30,
                 after: [1],
                 pos: (0.6, 1),
@@ -144,8 +131,7 @@
                 effect: Upgrade(SatelliteEfficiency, 0.5),
             ),
             (
-                name: "Data Compression II",
-                description: "Increases efficiency of satellites",
+                name: "research.data_compression2",
                 id: 31,
                 after: [30],
                 pos: (1.2, 2),
@@ -153,8 +139,7 @@
                 effect: Upgrade(SatelliteEfficiency, 0.5),
             ),
             (
-                name: "Data Compression III",
-                description: "Increases efficiency of satellites",
+                name: "research.data_compression3",
                 id: 32,
                 after: [31],
                 pos: (1.8, 3),
@@ -163,8 +148,7 @@
             ),
             // -- 40 Communications --
             (
-                name: "Communications",
-                description: "Unlocks communication satellites",
+                name: "research.communications",
                 id: 40,
                 after: [1],
                 pos: (1, 0),
@@ -172,8 +156,7 @@
                 effect: Unlock(Launch(Communication)),
             ),
             (
-                name: "Orbit Observation",
-                description: "Display the total number of debris in orbit",
+                name: "research.orbit_observation",
                 id: 41,
                 after: [40],
                 pos: (2.0, 0.0),
@@ -181,8 +164,7 @@
                 effect: Unlock(RadarDebris),
             ),
             (
-                name: "Debris Cleaning",
-                description: "Unlocks a debris cleaning satellite",
+                name: "research.debris_cleaning",
                 id: 43,
                 after: [40, 2],
                 pos: (0.8, -0.8),
@@ -191,8 +173,7 @@
             ),
             // -- 50 Automation --
             (
-                name: "Collision Avoidance I",
-                description: "Satellites actively try to avoid collisions",
+                name: "research.collision_avoidance1",
                 id: 50,
                 after: [2],
                 pos: (-0.6, -2),
@@ -200,8 +181,7 @@
                 effect: Upgrade(CollisionAvoidance, 1.0),
             ),
             (
-                name: "Collision Avoidance II",
-                description: "Satellites actively try to avoid collisions",
+                name: "research.collision_avoidance2",
                 id: 51,
                 after: [50],
                 pos: (-1.2, -3),
@@ -209,8 +189,7 @@
                 effect: Upgrade(CollisionAvoidance, 1.0),
             ),
             (
-                name: "Automation I",
-                description: "Satellites automatically deorbit upon reaching the end of their lifespan",
+                name: "research.automation1",
                 id: 52,
                 after: [2],
                 pos: (0.6, -2),
@@ -218,8 +197,7 @@
                 effect: Unlock(DeorbitAuto),
             ),
             (
-                name: "Automation II",
-                description: "New satellites are automatically deployed to replace old ones",
+                name: "research.automation2",
                 id: 53,
                 after: [52],
                 pos: (1.2, -3),

@@ -1,7 +1,8 @@
 mod config;
+mod localization;
 mod options;
 
-pub use self::{config::*, options::*};
+pub use self::{config::*, localization::*, options::*};
 
 use geng::prelude::*;
 
@@ -20,6 +21,7 @@ pub struct Assets {
     pub sounds: Sounds,
     pub sprites: Sprites,
     pub config: Config,
+    pub localization: Localization,
 }
 
 pub struct Fonts {

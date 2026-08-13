@@ -35,7 +35,6 @@ pub struct PlanetConfig {
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct SatelliteConfig {
     pub name: Arc<str>,
-    pub description: Arc<str>,
     pub launch_cost: Science,
     pub science: Science,
     pub interval: Time,
@@ -46,7 +45,6 @@ impl Default for SatelliteConfig {
     fn default() -> Self {
         Self {
             name: "Satellite".into(),
-            description: "Satellite".into(),
             launch_cost: 0,
             science: 0,
             interval: Time::ONE,
@@ -63,7 +61,6 @@ pub struct ResearchConfig {
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct ResearchItemConfig {
     pub name: Arc<str>,
-    pub description: Arc<str>,
     pub id: u64,
     pub after: Vec<u64>,
     pub pos: vec2<Coord>,
