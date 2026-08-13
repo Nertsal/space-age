@@ -20,6 +20,7 @@ where
 #[derive(Default, Debug, Clone, Serialize, Deserialize, PartialEq)]
 #[serde(default)]
 pub struct Options {
+    pub language: Language,
     #[serde(deserialize_with = "ok_or_default")]
     pub volume: VolumeOptions,
     #[serde(deserialize_with = "ok_or_default")]

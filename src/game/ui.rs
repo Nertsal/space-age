@@ -10,6 +10,7 @@ use geng_utils::interpolation::SecondOrderState;
 pub struct GameUi {
     pub pixel_scale: f32,
     pub screen: Aabb2<f32>,
+    pub language: WidgetState,
     pub research_button: WidgetState,
     pub science: WidgetState,
     pub actions: Vec<(WidgetState, GameAction)>,
@@ -44,6 +45,7 @@ impl GameUi {
         let mut ui = Self {
             pixel_scale: 1.0,
             screen: Aabb2::ZERO.extend_positive(vec2(1600.0, 900.0)),
+            language: WidgetState::new().with_sfx(WidgetSfxConfig::hover_left_right()),
             research_button: WidgetState::new().with_sfx(WidgetSfxConfig::hover_left()),
             science: WidgetState::new(),
             actions: vec![
@@ -113,10 +115,28 @@ impl GameUi {
         context: &mut UiContext,
         actions: &mut Vec<GameAction>,
     ) {
+        let options = context.context.get_options();
         // let layout_size = screen.height() * 0.05;
         let pixel_scale = get_pixel_scale(screen.size().map(|x| x as usize));
         self.pixel_scale = pixel_scale;
         self.screen = screen;
+
+        // Language
+        let language = screen
+            .align_aabb(vec2(80.0, 16.0) * pixel_scale, vec2(1.0, 0.0))
+            .translate(vec2(-20.0, 20.0) * pixel_scale);
+        self.language.update(language, context);
+        let mut language = options.language;
+        if self.language.mouse_left.clicked {
+            language = enum_iterator::next_cycle(&language);
+        } else if self.language.mouse_right.clicked {
+            language = enum_iterator::previous_cycle(&language);
+        }
+        if language != options.language {
+            let mut options = options.clone();
+            options.language = language;
+            context.context.set_options(options);
+        }
 
         let panel = screen.extend_symmetric(-vec2(50.0, 40.0) * pixel_scale);
         let mut panel = panel.align_aabb(vec2(pixel_scale * 48.0, panel.height()), vec2(0.0, 0.5));

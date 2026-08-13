@@ -1,21 +1,28 @@
 use super::*;
 
+use enum_iterator::Sequence;
+
 type Id = String;
 
 pub struct Localization {
     records: HashMap<Id, Item>,
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Sequence, Debug, Clone, Copy, Serialize, Deserialize, PartialEq, Default)]
 pub enum Language {
+    #[default]
     English,
-    Spanish,
+    // Spanish,
+    // Finnish,
+    Russian,
 }
 
 #[derive(Debug, Deserialize)]
 struct Item {
     en: String,
-    es: Option<String>,
+    // es: Option<String>,
+    // fi: Option<String>,
+    ru: Option<String>,
 }
 
 #[derive(Debug, Deserialize)]
@@ -27,14 +34,23 @@ struct Record {
 
 impl Localization {
     pub fn get(&self, id: &str, language: Language) -> &str {
-        let Some(record) = self.records.get(id) else {
-            log::error!("missing localization text for key: {:?}", id);
-            return "<OOPS missing text>";
-        };
-        match language {
-            Language::English => &record.en,
-            Language::Spanish => record.es.as_ref().unwrap_or(&record.en), // English fallback
-        }
+        self.records
+            .get(id)
+            .map(|record| {
+                fn fallback<'a>(t: Option<&'a str>, fallback: &'a str) -> &'a str {
+                    t.filter(|t| !t.is_empty()).unwrap_or(fallback)
+                }
+                match language {
+                    Language::English => record.en.as_str(),
+                    // Language::Spanish => fallback(record.es.as_deref(), &record.en),
+                    // Language::Finnish => fallback(record.fi.as_deref(), &record.en),
+                    Language::Russian => fallback(record.ru.as_deref(), &record.en),
+                }
+            })
+            .unwrap_or_else(|| {
+                log::error!("missing localization text for key: {:?}", id);
+                "<OOPS missing text>"
+            })
     }
 }
 

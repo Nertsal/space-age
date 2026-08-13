@@ -432,7 +432,30 @@ impl GameRender {
         let sprites = &self.context.assets.sprites.ui;
 
         let localization = &self.context.assets.localization;
-        let language = Language::English;
+        let language = self.context.get_options().language;
+
+        {
+            // Language
+            let color = if ui.language.mouse_left.pressed.is_some()
+                || ui.language.mouse_right.pressed.is_some()
+            {
+                Color::GRAY
+            } else if ui.language.hovered {
+                Color::try_from("#aaaaaa").unwrap()
+            } else {
+                Color::WHITE
+            };
+            self.util.draw_text_fit(
+                format!("{:?}", language),
+                ui.language.position,
+                font,
+                TextRenderOptions::new(ui.pixel_scale * 12.0)
+                    .align(vec2(1.0, 0.5))
+                    .color(color),
+                camera,
+                framebuffer,
+            );
+        }
 
         let satellites = model.planet.orbit.satellites.ids().count();
         if model.abilities.contains(&Ability::CollisionAnalysis)
