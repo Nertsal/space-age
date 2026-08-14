@@ -463,10 +463,10 @@ impl GameRender {
                 || satellites > 0 && model.planet.orbit.debris.ids().next().is_some())
         {
             // Collision risk
-            let mut risk = ui.collision_risk.position;
-            let title = risk.split_top(0.5);
+            let mut target = ui.collision_risk.position;
+            let title = target.split_top(0.5);
             self.util.draw_text_fit(
-                "Collision Risk",
+                localization.get("ui.collision_risk", language),
                 title,
                 font,
                 TextRenderOptions::new(ui.pixel_scale * 15.0),
@@ -480,9 +480,16 @@ impl GameRender {
                 CollisionRisk::Moderate => Color::try_from("#EF8A17").unwrap(),
                 CollisionRisk::Severe => Color::try_from("#B61639").unwrap(),
             };
+            let risk = match collision_risk {
+                CollisionRisk::Safe => "ui.collision_risk.safe",
+                CollisionRisk::Caution => "ui.collision_risk.caution",
+                CollisionRisk::Moderate => "ui.collision_risk.moderate",
+                CollisionRisk::Severe => "ui.collision_risk.severe",
+            };
+            let risk = localization.get(risk, language);
             self.util.draw_text_fit(
-                format!("{:?}", collision_risk),
                 risk,
+                target,
                 font,
                 TextRenderOptions::new(ui.pixel_scale * 15.0).color(color),
                 camera,
