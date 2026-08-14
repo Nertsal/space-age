@@ -257,14 +257,18 @@ impl GameUi {
         panel.cut_top(pixel_scale * 50.0);
         self.selected
             .update(panel.cut_top(pixel_scale * 20.0), context);
-        if let Some(InteractiveId::Satellite(_)) = model.selected_object {
+        let mut is_deorbiting = false;
+        if let Some(InteractiveId::Satellite(id)) = model.selected_object {
             self.selected_lifetime
                 .update(panel.cut_top(pixel_scale * 20.0), context);
+            if let Some(deorbiting) = get!(model.planet.orbit.satellites, id, (&deorbiting)) {
+                is_deorbiting = *deorbiting;
+            }
         }
         self.selected_deorbit
             .update(panel.cut_top(pixel_scale * 20.0), context);
         self.selected_deorbit
-            .set_visibility(model.abilities.contains(&Ability::Deorbit));
+            .set_visibility(model.abilities.contains(&Ability::Deorbit) && !is_deorbiting);
         if self.selected_deorbit.mouse_left.clicked
             && let Some(target) = model.selected_object
         {

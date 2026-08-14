@@ -736,14 +736,12 @@ impl GameRender {
             let name = match id {
                 InteractiveId::Satellite(id) => get!(model.planet.orbit.satellites, id, (&kind))
                     .and_then(|kind| {
-                        model
-                            .config
-                            .satellites
-                            .get(kind)
-                            .map(|config| config.name.clone())
+                        model.config.satellites.get(kind).map(|config| {
+                            localization.get(&format!("{}.name", config.name.clone()), language)
+                        })
                     })
-                    .unwrap_or(localization.get("ui.satellite", language).into()),
-                InteractiveId::Debris(_) => localization.get("ui.debris", language).into(),
+                    .unwrap_or(localization.get("ui.satellite", language)),
+                InteractiveId::Debris(_) => localization.get("ui.debris", language),
             };
             self.util.draw_text_fit(
                 name,
@@ -754,22 +752,32 @@ impl GameRender {
                 framebuffer,
             );
             if let InteractiveId::Satellite(id) = id
-                && let Some(lifetime) = get!(model.planet.orbit.satellites, id, (&lifetime))
+                && let Some((lifetime, deorbiting)) =
+                    get!(model.planet.orbit.satellites, id, (&lifetime, &deorbiting))
             {
                 let lifetime = lifetime.value().as_f32().ceil() as i64;
-                self.util.draw_text_fit(
-                    if lifetime > 0 {
+                let (status, color) = if *deorbiting {
+                    ("Deorbiting".to_owned(), Color::try_from("#B61639").unwrap())
+                } else if lifetime > 0 {
+                    (
                         format!(
                             "{}: {}",
                             localization.get("ui.lifetime", language),
                             lifetime
-                        )
-                    } else {
-                        localization.get("ui.dysfunctional", language).into()
-                    },
+                        ),
+                        Color::WHITE,
+                    )
+                } else {
+                    (
+                        localization.get("ui.dysfunctional", language).into(),
+                        Color::WHITE,
+                    )
+                };
+                self.util.draw_text_fit(
+                    status,
                     ui.selected_lifetime.position,
                     font,
-                    TextRenderOptions::new(ui.pixel_scale * 10.0),
+                    TextRenderOptions::new(ui.pixel_scale * 10.0).color(color),
                     camera,
                     framebuffer,
                 );
