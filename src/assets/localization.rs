@@ -12,7 +12,7 @@ pub struct Localization {
 pub enum Language {
     #[default]
     English,
-    // Spanish,
+    Spanish,
     // Finnish,
     Russian,
 }
@@ -21,7 +21,7 @@ impl Language {
     pub fn native(&self) -> &'static str {
         match self {
             Language::English => "English",
-            // Language::Spanish => "Español",
+            Language::Spanish => "Español",
             // Language::Finnish => "Finnish",
             Language::Russian => "Русский",
         }
@@ -31,7 +31,7 @@ impl Language {
 #[derive(Debug, Deserialize)]
 struct Item {
     en: String,
-    // es: Option<String>,
+    es: Option<String>,
     // fi: Option<String>,
     ru: Option<String>,
 }
@@ -53,7 +53,7 @@ impl Localization {
                 }
                 match language {
                     Language::English => record.en.as_str(),
-                    // Language::Spanish => fallback(record.es.as_deref(), &record.en),
+                    Language::Spanish => fallback(record.es.as_deref(), &record.en),
                     // Language::Finnish => fallback(record.fi.as_deref(), &record.en),
                     Language::Russian => fallback(record.ru.as_deref(), &record.en),
                 }
