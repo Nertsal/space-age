@@ -15,6 +15,7 @@ pub enum Language {
     Spanish,
     // Finnish,
     Russian,
+    Tatar,
 }
 
 impl Language {
@@ -24,6 +25,7 @@ impl Language {
             Language::Spanish => "Español",
             // Language::Finnish => "Finnish",
             Language::Russian => "Русский",
+            Language::Tatar => "Татар",
         }
     }
 }
@@ -34,6 +36,7 @@ struct Item {
     es: Option<String>,
     // fi: Option<String>,
     ru: Option<String>,
+    tat: Option<String>,
 }
 
 #[derive(Debug, Deserialize)]
@@ -56,6 +59,7 @@ impl Localization {
                     Language::Spanish => fallback(record.es.as_deref(), &record.en),
                     // Language::Finnish => fallback(record.fi.as_deref(), &record.en),
                     Language::Russian => fallback(record.ru.as_deref(), &record.en),
+                    Language::Tatar => fallback(record.tat.as_deref(), &record.en),
                 }
             })
             .unwrap_or_else(|| {

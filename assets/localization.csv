@@ -1,64 +1,64 @@
-id,en,ru,es
-ui.science,"Science","Наука","Ciencia"
-ui.cost,"Cost","Цена","Costo"
-ui.satellite,"Satellite","Спутник","Satélite"
-ui.debris,"Debris","Обломки","Escombros"
-ui.orbit_analysis,"Orbit Analysis","Анализ Орбиты","Análisis de Órbita"
-ui.lifetime,"Lifetime","Время жизни","Vida Útil"
-ui.dysfunctional,"Dysfunctional","Вышел из строя","Disfuncional"
-ui.active_satellites,"Active Satellites","Активные Спутники","Satélites Activos"
-ui.dysfunctional_satellites,"Dysfunctional Satellites","Неисправные Спутники","Satélites Disfuncionales"
-ui.deorbit,"Deorbit","Свести из орбиты","Desorbitar"
-ui.collision_risk,"Collision Risk","Риск Столкновений","Riesgo de Colisión"
-ui.collision_risk.safe,"Safe","Безопасно","Seguro"
-ui.collision_risk.caution,"Caution","Осторожно","Precaución"
-ui.collision_risk.moderate,"Moderate","Умеренный","Moderado"
-ui.collision_risk.severe,"Severe","Высокий","Severo"
-satellite.basic.name,"Basic Satellite","Базовый Спутник","Satélite Básico"
-satellite.basic.desc,"Generates Science over time","Создаёт Науку со временем","Genera Ciencia con el tiempo"
-satellite.comms.name,"Communications Satellite","Коммуникационный Спутник","Satélite de Comunicaciones"
-satellite.comms.desc,"When there are 3 Communication Satellites in orbit, Science gain is increased","Когда в орбите находится 3 Коммуникационных Спутника, прирост Науки увеличен","Cuando hay 3 Satélites de Comunicaciones en órbita, la ganancia de Ciencia aumenta"
-satellite.debris.name,"Debris Cleaner Satellite","Спутник-Уборщик Обломков","Satélite Limpiador de Escombros"
-satellite.debris.desc,"Removes nearby debris","Убирает обломки поблизости","Elimina los escombros cercanos"
-research.scientific.name,"Scientific Research","Научное Исследование","Investigación Científica"
-research.scientific.desc,"Progress must be made","Прогрессу быть","Se debe progresar"
-research.theoretical.name,"Theoretical Research","Теоретическое Исследование","Investigación Teórica"
-research.theoretical.desc,"Advance progress by constructing new theories","Продвинь прогресс за счёт построения новых теорий","Avanza el progreso mediante la construcción de nuevas teorías"
-research.orbit_program.name,"Orbit Program","Орбитная программа","Programa de Órbita"
-research.orbit_program.desc,"Unlocks satellites","Разблокирует спутники","Desbloquea Satélites"
-research.crashlanding.name,"Crashlanding","Аварийная посадка","Aterrizaje Forzoso"
-research.crashlanding.desc,"Unlocks the ability to deorbit space objects","Разблокирует возможность выводить космические объекты из орбиты","Desbloquea la habilidad de desorbitar objetos espaciales"
-research.theorycrafting1.name,"Theorycrafting I","Разработка Теорий I","Teorización I"
-research.theorycrafting1.desc,"Enhances the efficiency of developing new theories","Улучшает эффективность разработки новых теорий","Mejora la eficiencia del desarrollo de nuevas teorías"
-research.theorycrafting2.name,"Theorycrafting II","Разработка Теорий II","Teorización II"
-research.theorycrafting2.desc,"Enhances the efficiency of developing new theories","Улучшает эффективность разработки новых теорий","Mejora la eficiencia del desarrollo de nuevas teorías"
-research.theorycrafting3.name,"Theorycrafting III","Разработка Теорий III","Teorización III"
-research.theorycrafting3.desc,"Enhances the efficiency of developing new theories","Улучшает эффективность разработки новых теорий","Mejora la eficiencia del desarrollo de nuevas teorías"
-research.engineering1.name,"Engineering I","Инженерия I","Ingeniería I"
-research.engineering1.desc,"Increases longevity of satellites","Увеличивает срок службы спутников","Aumenta la duración de los satélites"
-research.engineering2.name,"Engineering II","Инженерия II","Ingeniería II"
-research.engineering2.desc,"Increases longevity of satellites","Увеличивает срок службы спутников","Aumenta la duración de los satélites"
-research.structural_integrity1.name,"Structural Integrity I","Структурная Целостность I","Integridad Estructural I"
-research.structural_integrity1.desc,"Satellites break into fewer pieces on collision","Спутники разбиваются в меньшее количество обломков при столкновении","Los Satélites se rompen en menos pedazos en caso de colisión"
-research.structural_integrity2.name,"Structural Integrity II","Структурная Целостность II","Integridad Estructural II"
-research.structural_integrity2.desc,"Satellites break into fewer pieces on collision","Спутники разбиваются в меньшее количество обломков при столкновении","Los Satélites se rompen en menos pedazos en caso de colisión"
-research.data_compression1.name,"Data Compression I","Сжатие Данных I","Compresión de Datos I"
-research.data_compression1.desc,"Increases efficiency of satellites","Увеличивает эффективность спутников","Aumenta la eficiencia de los satélites"
-research.data_compression2.name,"Data Compression II","Сжатие Данных II","Compresión de Datos II"
-research.data_compression2.desc,"Increases efficiency of satellites","Увеличивает эффективность спутников","Aumenta la eficiencia de los satélites"
-research.data_compression3.name,"Data Compression III","Сжатие Данных III","Compresión de Datos III"
-research.data_compression3.desc,"Increases efficiency of satellites","Увеличивает эффективность спутников","Aumenta la eficiencia de los satélites"
-research.communications.name,"Communications","Связь","Comunicaciones"
-research.communications.desc,"Unlocks Communication satellites","Разблокирует Коммуникационные спутники","Desbloquea satélites de Comunicaciones"
-research.orbit_observation.name,"Orbit Observation","Наблюдения за Орбитой","Observación de Órbita"
-research.orbit_observation.desc,"Display the total number of debris in orbit","Отображет общее количество обломков в орбите","Muestra el número total de escombros en órbita"
-research.debris_cleaning.name,"Debris Cleaning","Чистка Обломков","Limpieza de Desechos"
-research.debris_cleaning.desc,"Unlocks a Debris Cleaning satellite","Разблокирует Спутник-Уборщик Обломков","Desbloquea un Satélite Limpiador de Escombros"
-research.collision_avoidance1.name,"Collision Avoidance I","Предотвращение Столкновений I","Prevención de Colisiciones I"
-research.collision_avoidance1.desc,"Satellites actively try to avoid collisions","Спутники активно пытаются избегать столкновений","Los Satélites evitan activamente las colisiones"
-research.collision_avoidance2.name,"Collision Avoidance II","Предотвращение Столкновений II","Prevención de Colisiciones II"
-research.collision_avoidance2.desc,"Satellites actively try to avoid collisions","Спутники активно пытаются избегать столкновений","Los Satélites evitan activamente las colisiones"
-research.automation1.name,"Automation I","Автоматизация I","Automatización I"
-research.automation1.desc,"Satellites automatically deorbit upon reaching the end of their lifespan","Спутники автоматически выходят с орбиты по завершении срока службы","Los Satélites salen de órbita automáticamente al terminar su vida útil"
-research.automation2.name,"Automation II","Автоматизация II","Automatización II"
-research.automation2.desc,"New satellites are automatically deployed to replace old ones","Новые спутники автоматически запускаются на замену старым","Los Satélites salen de órbita automáticamente al terminar su vida útil"
+id,en,ru,tat,es
+ui.science,Science,Наука,Фән,Ciencia
+ui.cost,Cost,Цена,Бәя,Costo
+ui.satellite,Satellite,Спутник,Иярчен,Satélite
+ui.debris,Debris,Обломки,Калдыклар,Escombros
+ui.orbit_analysis,Orbit Analysis,Анализ Орбиты,Орбита Анализы,Análisis de Órbita
+ui.lifetime,Lifetime,Время жизни,Хезмәт итү вакыты,Vida Útil
+ui.dysfunctional,Dysfunctional,Вышел из строя,Эшләми торган,Disfuncional
+ui.active_satellites,Active Satellites,Активные Спутники,Актив Иярченнәр,Satélites Activos
+ui.dysfunctional_satellites,Dysfunctional Satellites,Неисправные Спутники,Эшләми торган Иярченнәр,Satélites Disfuncionales
+ui.deorbit,Deorbit,Свести из орбиты,Орбитадан чыгару,Desorbitar
+ui.collision_risk,Collision Risk,Риск Столкновений,Бәрелешү куркынычы,Riesgo de Colisión
+ui.collision_risk.safe,Safe,Безопасно,Куркынычсыз,Seguro
+ui.collision_risk.caution,Caution,Осторожно,Игътибар,Precaución
+ui.collision_risk.moderate,Moderate,Умеренный,Уртача,Moderado
+ui.collision_risk.severe,Severe,Высокий,Югары,Severo
+satellite.basic.name,Basic Satellite,Базовый Спутник,Гади Иярчен,Satélite Básico
+satellite.basic.desc,Generates Science over time,Создаёт Науку со временем,Вакыт узу белән Фән җитештерә,Genera Ciencia con el tiempo
+satellite.comms.name,Communications Satellite,Коммуникационный Спутник,Элемтә Иярчене,Satélite de Comunicaciones
+satellite.comms.desc,"When there are 3 Communication Satellites in orbit, Science gain is increased","Когда в орбите находится 3 Коммуникационных Спутника, прирост Науки увеличен","Орбитада 3 Элемтә Иярчене булганда, Фән җитештерү арта","Cuando hay 3 Satélites de Comunicaciones en órbita, la ganancia de Ciencia aumenta"
+satellite.debris.name,Debris Cleaner Satellite,Спутник-Уборщик Обломков,Калдыкларны җыештыручы Иярчен,Satélite Limpiador de Escombros
+satellite.debris.desc,Removes nearby debris,Убирает обломки поблизости,Якындагы калдыкларны җыя,Elimina los escombros cercanos
+research.scientific.name,Scientific Research,Научное Исследование,Фәнни Тикшеренү,Investigación Científica
+research.scientific.desc,Progress must be made,Прогрессу быть,Алгарыш булырга тиеш,Se debe progresar
+research.theoretical.name,Theoretical Research,Теоретическое Исследование,Теоретик Тикшеренү,Investigación Teórica
+research.theoretical.desc,Advance progress by constructing new theories,Продвинь прогресс за счёт построения новых теорий,"Яңа теорияләр төзеп, алга кит",Avanza el progreso mediante la construcción de nuevas teorías
+research.orbit_program.name,Orbit Program,Орбитная программа,Орбита программасы,Programa de Órbita
+research.orbit_program.desc,Unlocks satellites,Разблокирует спутники,Иярченнәрне ача,Desbloquea Satélites
+research.crashlanding.name,Crashlanding,Аварийная посадка,Аварияле утырту,Aterrizaje Forzoso
+research.crashlanding.desc,Unlocks the ability to deorbit space objects,Разблокирует возможность выводить космические объекты из орбиты,Космик объектларны орбитадан чыгару мөмкинлеген ача,Desbloquea la habilidad de desorbitar objetos espaciales
+research.theorycrafting1.name,Theorycrafting I,Разработка Теорий I,Теория булдыру I,Teorización I
+research.theorycrafting1.desc,Enhances the efficiency of developing new theories,Улучшает эффективность разработки новых теорий,Яңа теорияләр булдыру нәтиҗәлелеген арттыра,Mejora la eficiencia del desarrollo de nuevas teorías
+research.theorycrafting2.name,Theorycrafting II,Разработка Теорий II,Теория булдыру II,Teorización II
+research.theorycrafting2.desc,Enhances the efficiency of developing new theories,Улучшает эффективность разработки новых теорий,Яңа теорияләр булдыру нәтиҗәлелеген арттыра,Mejora la eficiencia del desarrollo de nuevas teorías
+research.theorycrafting3.name,Theorycrafting III,Разработка Теорий III,Теория булдыру III,Teorización III
+research.theorycrafting3.desc,Enhances the efficiency of developing new theories,Улучшает эффективность разработки новых теорий,Яңа теорияләр булдыру нәтиҗәлелеген арттыра,Mejora la eficiencia del desarrollo de nuevas teorías
+research.engineering1.name,Engineering I,Инженерия I,Инженерлык I,Ingeniería I
+research.engineering1.desc,Increases longevity of satellites,Увеличивает срок службы спутников,Иярченнәрнең хезмәт итү вакытын арттыра,Aumenta la duración de los satélites
+research.engineering2.name,Engineering II,Инженерия II,Инженерлык II,Ingeniería II
+research.engineering2.desc,Increases longevity of satellites,Увеличивает срок службы спутников,Иярченнәрнең хезмәт итү вакытын арттыра,Aumenta la duración de los satélites
+research.structural_integrity1.name,Structural Integrity I,Структурная Целостность I,Конструкция ныклыгы I,Integridad Estructural I
+research.structural_integrity1.desc,Satellites break into fewer pieces on collision,Спутники разбиваются в меньшее количество обломков при столкновении,Иярченнәр бәрелешкәндә азрак калдыкларга таркалалар,Los Satélites se rompen en menos pedazos en caso de colisión
+research.structural_integrity2.name,Structural Integrity II,Структурная Целостность II,Конструкция ныклыгы II,Integridad Estructural II
+research.structural_integrity2.desc,Satellites break into fewer pieces on collision,Спутники разбиваются в меньшее количество обломков при столкновении,Иярченнәр бәрелешкәндә азрак калдыкларга таркалалар,Los Satélites se rompen en menos pedazos en caso de colisión
+research.data_compression1.name,Data Compression I,Сжатие Данных I,Мәгълүматны кысу I,Compresión de Datos I
+research.data_compression1.desc,Increases efficiency of satellites,Увеличивает эффективность спутников,Иярченнәрнең нәтиҗәлелеген арттыра,Aumenta la eficiencia de los satélites
+research.data_compression2.name,Data Compression II,Сжатие Данных II,Мәгълүматны кысу II,Compresión de Datos II
+research.data_compression2.desc,Increases efficiency of satellites,Увеличивает эффективность спутников,Иярченнәрнең нәтиҗәлелеген арттыра,Aumenta la eficiencia de los satélites
+research.data_compression3.name,Data Compression III,Сжатие Данных III,Мәгълүматны кысу III,Compresión de Datos III
+research.data_compression3.desc,Increases efficiency of satellites,Увеличивает эффективность спутников,Иярченнәрнең нәтиҗәлелеген арттыра,Aumenta la eficiencia de los satélites
+research.communications.name,Communications,Связь,Элемтә,Comunicaciones
+research.communications.desc,Unlocks Communication satellites,Разблокирует Коммуникационные спутники,Элемтә Иярченнәрен ача,Desbloquea satélites de Comunicaciones
+research.orbit_observation.name,Orbit Observation,Наблюдения за Орбитой,Орбитаны күзәтү,Observación de Órbita
+research.orbit_observation.desc,Display the total number of debris in orbit,Отображет общее количество обломков в орбите,Орбитадагы калдыкларның гомуми санын күрсәтә,Muestra el número total de escombros en órbita
+research.debris_cleaning.name,Debris Cleaning,Чистка Обломков,Калдыклардан чистарту,Limpieza de Desechos
+research.debris_cleaning.desc,Unlocks a Debris Cleaning satellite,Разблокирует Спутник-Уборщик Обломков,Калдыкларны җыештыручы Иярченне ача,Desbloquea un Satélite Limpiador de Escombros
+research.collision_avoidance1.name,Collision Avoidance I,Предотвращение Столкновений I,Бәрелешләрне булдырмау I,Prevención de Colisiciones I
+research.collision_avoidance1.desc,Satellites actively try to avoid collisions,Спутники активно пытаются избегать столкновений,Иярченнәр бәрелешләрдән качарга тырыша,Los Satélites evitan activamente las colisiones
+research.collision_avoidance2.name,Collision Avoidance II,Предотвращение Столкновений II,Бәрелешләрне булдырмау II,Prevención de Colisiciones II
+research.collision_avoidance2.desc,Satellites actively try to avoid collisions,Спутники активно пытаются избегать столкновений,Иярченнәр бәрелешләрдән качарга тырыша,Los Satélites evitan activamente las colisiones
+research.automation1.name,Automation I,Автоматизация I,Автоматлаштыру I,Automatización I
+research.automation1.desc,Satellites automatically deorbit upon reaching the end of their lifespan,Спутники автоматически выходят с орбиты по завершении срока службы,"Хезмәт итү вакыты тәмамлангач, Иярченнәр автомат рәвештә орбитадан чыгарыла",Los Satélites salen de órbita automáticamente al terminar su vida útil
+research.automation2.name,Automation II,Автоматизация II,Автоматлаштыру II,Automatización II
+research.automation2.desc,New satellites are automatically deployed to replace old ones,Новые спутники автоматически запускаются на замену старым,Яңа иярченнәр искергәннәрен алмаштыру өчен автомат рәвештә җибәрелә,Los Satélites salen de órbita automáticamente al terminar su vida útil
