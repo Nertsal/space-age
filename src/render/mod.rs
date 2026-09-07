@@ -433,6 +433,7 @@ impl GameRender {
 
         let localization = &self.context.assets.localization;
         let language = self.context.get_options().language;
+        let local_font = &self.context.assets.fonts.get_local(language);
 
         {
             // Language
@@ -448,7 +449,7 @@ impl GameRender {
             self.util.draw_text_fit(
                 language.native(),
                 ui.language.position,
-                font,
+                local_font,
                 TextRenderOptions::new(ui.pixel_scale * 12.0)
                     .align(vec2(1.0, 0.5))
                     .color(color),
@@ -468,7 +469,7 @@ impl GameRender {
             self.util.draw_text_fit(
                 localization.get("ui.collision_risk", language),
                 title,
-                font,
+                local_font,
                 TextRenderOptions::new(ui.pixel_scale * 15.0),
                 camera,
                 framebuffer,
@@ -490,7 +491,7 @@ impl GameRender {
             self.util.draw_text_fit(
                 risk,
                 target,
-                font,
+                local_font,
                 TextRenderOptions::new(ui.pixel_scale * 15.0).color(color),
                 camera,
                 framebuffer,
@@ -551,7 +552,7 @@ impl GameRender {
                 model.science
             ),
             ui.science.position,
-            font,
+            local_font,
             TextRenderOptions::new(ui.pixel_scale * 10.0).align(vec2(0.0, 0.5)),
             camera,
             framebuffer,
@@ -661,17 +662,23 @@ impl GameRender {
 
             // Info
             let font_size = 10.0 * ui.pixel_scale;
-            let options = TextRenderOptions::new(font_size)
+            let local_options = TextRenderOptions::new(font_size)
                 .color(Color::try_from("#F5F5F5").unwrap())
                 .align(vec2(0.0, 0.5));
 
             let mut position = position.extend_uniform(-4.0 * ui.pixel_scale);
             let name = position.cut_top(font_size);
             self.util
-                .draw_text_fit(title, name, font, options, camera, framebuffer);
+                .draw_text_fit(title, name, local_font, local_options, camera, framebuffer);
             let position = position.extend_symmetric(-vec2(6.0, 1.0) * ui.pixel_scale);
-            self.util
-                .draw_text_wrap(description, position, font, options, camera, framebuffer);
+            self.util.draw_text_wrap(
+                description,
+                position,
+                local_font,
+                local_options,
+                camera,
+                framebuffer,
+            );
         }
 
         // Info
@@ -693,7 +700,7 @@ impl GameRender {
                 .position
                 .extend_symmetric(-vec2(6.0, 4.0) * ui.pixel_scale)
                 .with_height(10.0 * ui.pixel_scale, 1.0),
-            font,
+            local_font,
             TextRenderOptions::new(10.0 * ui.pixel_scale).align(vec2(0.0, 0.5)),
             camera,
             framebuffer,
@@ -706,7 +713,7 @@ impl GameRender {
                 localization.get("ui.active_satellites", language)
             ),
             ui.active_satellites.position,
-            font,
+            local_font,
             TextRenderOptions::new(ui.pixel_scale * 10.0).align(vec2(0.0, 0.5)),
             camera,
             framebuffer,
@@ -718,7 +725,7 @@ impl GameRender {
                 localization.get("ui.dysfunctional_satellites", language)
             ),
             ui.inactive_satellites.position,
-            font,
+            local_font,
             TextRenderOptions::new(ui.pixel_scale * 10.0).align(vec2(0.0, 0.5)),
             camera,
             framebuffer,
@@ -731,7 +738,7 @@ impl GameRender {
                     localization.get("ui.debris", language)
                 ),
                 ui.debris.position,
-                font,
+                local_font,
                 TextRenderOptions::new(ui.pixel_scale * 10.0).align(vec2(0.0, 0.5)),
                 camera,
                 framebuffer,
@@ -753,7 +760,7 @@ impl GameRender {
             self.util.draw_text_fit(
                 name,
                 ui.selected.position,
-                font,
+                local_font,
                 TextRenderOptions::new(ui.pixel_scale * 10.0),
                 camera,
                 framebuffer,
@@ -783,7 +790,7 @@ impl GameRender {
                 self.util.draw_text_fit(
                     status,
                     ui.selected_lifetime.position,
-                    font,
+                    local_font,
                     TextRenderOptions::new(ui.pixel_scale * 10.0).color(color),
                     camera,
                     framebuffer,
@@ -801,7 +808,7 @@ impl GameRender {
                 self.util.draw_text_fit(
                     localization.get("ui.deorbit", language),
                     ui.selected_deorbit.position,
-                    font,
+                    local_font,
                     TextRenderOptions::new(ui.pixel_scale * 10.0).color(color),
                     camera,
                     framebuffer,
@@ -823,11 +830,12 @@ impl GameRender {
         }
 
         let camera = &geng::PixelPerfectCamera;
-        let font = &self.context.assets.fonts.default;
+        // let font = &self.context.assets.fonts.default;
         let sprites = &self.context.assets.sprites.ui;
 
         let localization = &self.context.assets.localization;
         let language = self.context.get_options().language;
+        let local_font = &self.context.assets.fonts.get_local(language);
 
         // Background
         let width = ui.pixel_scale * 4.0;
@@ -845,7 +853,7 @@ impl GameRender {
         self.util.draw_text_fit(
             localization.get("research.scientific.name", language),
             title,
-            font,
+            local_font,
             TextRenderOptions::new(title.height()).align(vec2(0.0, 0.5)),
             camera,
             framebuffer,
@@ -1012,14 +1020,15 @@ impl GameRender {
             let options = TextRenderOptions::new(font_size)
                 .color(Color::try_from("#F5F5F5").unwrap())
                 .align(vec2(0.0, 0.5));
+            let local_options = options.size(options.size);
 
             let mut position = position.extend_uniform(-4.0 * ui.pixel_scale);
             let name = position.cut_top(font_size);
             self.util.draw_text_fit(
                 localization.get(&format!("{}.name", research.name), language),
                 name,
-                font,
-                options,
+                local_font,
+                local_options,
                 camera,
                 framebuffer,
             );
@@ -1034,8 +1043,8 @@ impl GameRender {
                         research.cost
                     ),
                     cost,
-                    font,
-                    options,
+                    local_font,
+                    local_options,
                     camera,
                     framebuffer,
                 );
@@ -1043,8 +1052,8 @@ impl GameRender {
             self.util.draw_text_wrap(
                 localization.get(&format!("{}.desc", research.name), language),
                 position,
-                font,
-                options,
+                local_font,
+                local_options,
                 camera,
                 framebuffer,
             );

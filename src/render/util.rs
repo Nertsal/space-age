@@ -2,8 +2,6 @@
 
 use super::*;
 
-use geng::Font;
-
 #[derive(Debug, Clone, Copy)]
 pub struct TextRenderOptions {
     pub size: f32,
@@ -297,7 +295,8 @@ impl UtilRender {
         position: vec2<impl Float>,
         font: &Font,
         mut options: TextRenderOptions,
-        params: ugli::DrawParameters,
+        // TODO
+        _params: ugli::DrawParameters,
         camera: &impl geng::AbstractCamera2d,
         framebuffer: &mut ugli::Framebuffer,
     ) {
@@ -335,20 +334,20 @@ impl UtilRender {
             let measure = font
                 .measure(line, vec2::splat(geng::TextAlign::CENTER))
                 .unwrap_or(Aabb2::ZERO);
-            let size = measure.size() * font_size;
+            let size = measure.size() * font_size * font.scale_y;
 
             // default alignment is (0.0, 1.0)
             let align = vec2(options.align.x, 1.0 - options.align.y);
-            let descent = -font.descender() * font_size;
-            let ascent = font.ascender() * font_size;
+            let descent = -font.inner.descender() * font_size * font.scale_y;
+            let ascent = font.inner.ascender() * font_size * font.scale_y;
             let align = vec2(size.x, descent - ascent) * align;
 
             let transform = mat3::translate(position)
                 * mat3::rotate(options.rotation)
                 * mat3::translate(-align)
-                * mat3::scale_uniform(font_size);
+                * mat3::scale_uniform(font_size * font.scale_y);
 
-            font.draw(
+            font.inner.draw(
                 framebuffer,
                 &geng::PixelPerfectCamera,
                 line,
@@ -385,8 +384,10 @@ impl UtilRender {
 
         let max_height = max_size.y * 0.9;
         let max_width = width; // * 0.85; // Leave some space TODO: move into a parameter or smth
-        let max_size = max_width / measure.width();
-        let size = options.size.min(max_size).min(max_height);
+        let size = options
+            .size
+            .min(max_width / measure.width() / font.scale_y)
+            .min(max_height);
 
         options.size = size;
 
@@ -424,7 +425,8 @@ impl UtilRender {
         };
 
         let max_width = width;
-        let lines = crate::util::wrap_text(font, text, max_width / options.size);
+        let lines =
+            crate::util::wrap_text(&font.inner, text, max_width / options.size / font.scale_y);
         self.draw_text_with(
             &lines,
             target.align_pos(options.align),

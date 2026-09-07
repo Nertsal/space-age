@@ -25,7 +25,32 @@ pub struct Assets {
 }
 
 pub struct Fonts {
-    pub default: Rc<geng::Font>,
+    pub default: Rc<Font>,
+    pub korean: Rc<Font>,
+}
+
+pub struct Font {
+    pub inner: geng::Font,
+    pub scale_y: f32,
+}
+
+impl Font {
+    pub fn measure(&self, text: &str, align: vec2<geng::TextAlign>) -> Option<Aabb2<f32>> {
+        self.inner.measure(text, align).map(|mut measure| {
+            measure.min.y /= self.scale_y;
+            measure.max.y /= self.scale_y;
+            measure
+        })
+    }
+}
+
+impl Fonts {
+    pub fn get_local(&self, language: Language) -> &Rc<Font> {
+        match language {
+            Language::Korean => &self.korean,
+            _ => &self.default,
+        }
+    }
 }
 
 impl geng::asset::Load for Fonts {
@@ -39,17 +64,25 @@ impl geng::asset::Load for Fonts {
         let manager = manager.clone();
         let path = path.to_owned();
         async move {
-            Ok(Self {
-                default: manager
+            let load_font = async |file: &str, scale: f32| -> anyhow::Result<_> {
+                let font: geng::Font = manager
                     .load_with(
-                        path.join("default.ttf"),
+                        path.join(file),
                         &geng::font::Options {
                             antialias: false,
                             distance_mode: geng::font::DistanceMode::Max,
                             ..default()
                         },
                     )
-                    .await?,
+                    .await?;
+                Ok(Rc::new(Font {
+                    inner: font,
+                    scale_y: scale,
+                }))
+            };
+            Ok(Self {
+                default: load_font("default.ttf", 1.0).await?,
+                korean: load_font("x10y12pxDenkiChipHangul.ttf", 0.75).await?,
             })
         }
         .boxed_local()

@@ -1,7 +1,5 @@
 #![allow(dead_code)]
 
-use geng::Font;
-
 use crate::prelude::*;
 
 #[derive(Default, Debug, Clone, Copy)]
