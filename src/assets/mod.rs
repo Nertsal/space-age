@@ -32,6 +32,7 @@ pub struct Fonts {
 pub struct Font {
     pub inner: geng::Font,
     pub scale_y: f32,
+    pub offset_y: f32,
 }
 
 impl Font {
@@ -64,7 +65,7 @@ impl geng::asset::Load for Fonts {
         let manager = manager.clone();
         let path = path.to_owned();
         async move {
-            let load_font = async |file: &str, scale: f32| -> anyhow::Result<_> {
+            let load_font = async |file: &str, scale: f32, offset_y: f32| -> anyhow::Result<_> {
                 let font: geng::Font = manager
                     .load_with(
                         path.join(file),
@@ -78,11 +79,12 @@ impl geng::asset::Load for Fonts {
                 Ok(Rc::new(Font {
                     inner: font,
                     scale_y: scale,
+                    offset_y,
                 }))
             };
             Ok(Self {
-                default: load_font("default.ttf", 1.0).await?,
-                korean: load_font("x10y12pxDenkiChipHangul.ttf", 0.75).await?,
+                default: load_font("default.ttf", 1.0, 0.0).await?,
+                korean: load_font("x10y12pxDenkiChipHangul.ttf", 0.8, -0.2).await?,
             })
         }
         .boxed_local()

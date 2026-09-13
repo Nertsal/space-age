@@ -345,7 +345,8 @@ impl UtilRender {
             let transform = mat3::translate(position)
                 * mat3::rotate(options.rotation)
                 * mat3::translate(-align)
-                * mat3::scale_uniform(font_size * font.scale_y);
+                * mat3::scale_uniform(font_size * font.scale_y)
+                * mat3::translate(vec2(0.0, font.offset_y));
 
             font.inner.draw(
                 framebuffer,
