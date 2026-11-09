@@ -23,7 +23,7 @@ impl SfxManager {
     pub fn effect(&self, sfx: &geng::Sound, volume: f32) -> geng::SoundEffect {
         let options = self.options.borrow();
         let mut effect = sfx.effect(self.geng.audio().default_type());
-        effect.set_volume(options.volume.sfx() * volume);
+        effect.set_volume((options.volume.sfx() * volume).clamp(0.0, 1.0));
         effect
     }
 

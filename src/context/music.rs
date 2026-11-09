@@ -158,7 +158,7 @@ impl Music {
         let volume = volume.clamp(0.0, 1.0);
         self.volume = volume;
         if let Some(effect) = &mut self.effect {
-            effect.set_volume(volume);
+            effect.set_volume(volume.clamp(0.0, 1.0));
         }
     }
 
@@ -171,7 +171,7 @@ impl Music {
     pub fn play_from(&mut self, time: time::Duration, looped: bool) {
         self.stop();
         let mut effect = self.local.effect(self.geng.audio().default_type());
-        effect.set_volume(self.volume);
+        effect.set_volume(self.volume.clamp(0.0, 1.0));
         effect.play_from(time);
         effect.set_looped(looped);
         self.effect = Some(effect);
